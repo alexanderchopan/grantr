@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>grantr — prototype</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --green: #22c55e; --red: #ef4444; --amber: #f59e0b; --blue: #3b82f6;
+  --bg: #000; --card: #0a0a0a; --card-dark: #0f0f0f; --card-inner: #060606;
+  --border: #1f1f1f; --divider: #1a1a1a;
+  --text-1: #fff; --text-2: #a3a3a3; --text-3: #737373; --text-4: #555;
+}
+body {
+  background: #1a1a1a; font-family: 'DM Sans', sans-serif;
+  display: flex; justify-content: center; align-items: center;
+  min-height: 100vh; padding: 40px; -webkit-font-smoothing: antialiased;
+}
+
+/* phone frame */
+.phone {
+  width: 375px; height: 812px; background: var(--bg);
+  border-radius: 40px; overflow: hidden; border: 1px solid #333;
+  display: flex; flex-direction: column; position: relative;
+}
+.status-bar {
+  height: 50px; display: flex; justify-content: space-between; align-items: center;
+  padding: 0 28px; color: var(--text-1); font-size: 14px; font-weight: 500;
+  flex-shrink: 0;
+}
+
+/* screen system */
+.screen { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+.screen.active { display: flex; }
+
+/* onboarding screens (welcome, email, verify, passkey, creating) use padded layout */
+.screen.onboarding { padding: 0 24px; color: var(--text-1); }
+.screen.onboarding .top { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; }
+.back { font-size: 20px; color: var(--text-2); cursor: pointer; width: 20px; user-select: none; }
+.stepper { display: flex; gap: 6px; flex: 1; margin: 0 16px; }
+.stepper-seg { flex: 1; height: 3px; border-radius: 2px; background: #262626; }
+.stepper-seg.done { background: var(--green); }
+.stepper-seg.active { background: var(--text-1); }
+.spacer { width: 20px; }
+
+.brand { padding: 40px 0 0; font-size: 14px; font-weight: 600; color: var(--green); }
+
+.main { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 24px; gap: 24px; }
+.headline { font-size: 44px; font-weight: 700; line-height: 0.95; letter-spacing: -0.03em; }
+.headline.big { font-size: 56px; line-height: 0.95; }
+.accent { color: var(--green); }
+.subcopy { font-size: 16px; color: var(--text-2); line-height: 1.45; max-width: 320px; }
+.sub { font-size: 14px; color: var(--text-3); line-height: 1.5; padding: 0 4px; max-width: 320px; }
+.field { display: flex; flex-direction: column; gap: 8px; }
+.input {
+  width: 100%; background: var(--card-dark); border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px 20px; color: #fff; font-size: 16px;
+  font-family: inherit; outline: none;
+}
+.input::placeholder { color: var(--text-4); }
+.input:focus { border-color: var(--green); }
+.hint { font-size: 12px; color: var(--text-4); padding: 0 4px; }
+
+.bottom { padding-bottom: 32px; display: flex; flex-direction: column; gap: 8px; }
+.btn { width: 100%; padding: 18px; border-radius: 999px; text-align: center; font-size: 16px; font-weight: 500; border: none; font-family: inherit; cursor: pointer; }
+.btn-primary { background: var(--text-1); color: var(--bg); }
+.btn-secondary { background: transparent; color: var(--text-1); border: 1px solid var(--border); }
+
+/* verification waiting specific */
+.email-card { display: flex; align-items: center; gap: 12px; background: var(--card-dark); border-radius: 14px; padding: 14px 16px; }
+.email-card-content { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.email-card-label { font-size: 11px; color: var(--text-4); letter-spacing: 0.3px; }
+.email-card-value { font-size: 14px; color: var(--text-1); font-family: monospace; overflow: hidden; text-overflow: ellipsis; }
+.email-card-status { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--green); flex-shrink: 0; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse-dot 1.5s ease-in-out infinite; }
+@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* creating account stages */
+.gas-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; background: var(--card-dark); border-radius: 999px; font-size: 11px; color: var(--text-3); margin-top: 16px; align-self: flex-start; }
+.gas-pill-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+.stages { display: flex; flex-direction: column; gap: 10px; }
+.stage { display: flex; align-items: center; gap: 14px; background: var(--card-dark); border-radius: 14px; padding: 14px 16px; transition: all 0.3s; }
+.stage.pending { opacity: 0.4; }
+.stage.active { border-color: var(--green); }
+.stage.done { opacity: 0.9; }
+.stage-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.stage-icon .spinner { width: 14px; height: 14px; border: 2px solid var(--text-4); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; }
+.stage-icon .check { color: var(--green); font-size: 14px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.stage-label { flex: 1; font-size: 13px; color: var(--text-1); }
+.stage.pending .stage-label { color: var(--text-3); }
+
+/* tab screens (profile, sessions, activity, addresses) use balance bar + tab bar */
+.screen.tab-screen {}
+.balance-bar { padding: 4px 24px 14px; flex-shrink: 0; }
+.balance-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.balance-label { font-size: 11px; color: var(--text-4); text-transform: lowercase; letter-spacing: 1.5px; }
+.balance-amount { font-size: 48px; font-weight: 700; letter-spacing: -0.04em; line-height: 0.9; color: var(--green); }
+.identity-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.avatar-large { width: 20px; height: 20px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+.avatar-large svg { display: block; width: 100%; height: 100%; }
+.identity-meta { display: flex; align-items: center; gap: 8px; }
+.identity-name { font-size: 12px; color: var(--text-2); }
+.identity-addr { font-size: 11px; color: var(--text-4); font-family: 'DM Mono', monospace; }
+.view-toggle { display: flex; gap: 2px; }
+.toggle-btn { width: 28px; height: 22px; background: transparent; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.toggle-btn:first-child { border-radius: 6px 0 0 6px; }
+.toggle-btn:last-child { border-radius: 0 6px 6px 0; }
+.toggle-btn.active { background: var(--border); }
+.avatar { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; background: var(--green); color: #000; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.avatar svg { display: block; }
+
+/* sessions tab: activity bars hero */
+.activity-hero { padding: 12px 24px 18px; flex-shrink: 0; }
+.activity-hero-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.activity-hero-label { font-size: 10px; color: var(--text-4); text-transform: lowercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+.activity-hero-stat { font-size: 22px; color: var(--text-1); font-weight: 600; line-height: 1; }
+.activity-hero-meta { font-size: 10px; color: var(--text-4); text-align: right; line-height: 1.4; }
+.activity-bars { display: flex; gap: 6px; height: 36px; align-items: flex-end; }
+.activity-bar { flex: 1; height: 100%; display: flex; align-items: flex-end; }
+.activity-bar-fill { width: 100%; height: var(--h, 0%); background: var(--green); border-radius: 2px; min-height: 2px; }
+.activity-bar-fill.muted { background: #222; }
+.activity-days { display: flex; gap: 6px; margin-top: 6px; font-size: 9px; color: #444; text-transform: uppercase; letter-spacing: 0.5px; }
+.activity-days span { flex: 1; text-align: center; }
+
+/* profile: sparkline + tiles */
+.sparkline-hero { padding: 8px 24px 4px; flex-shrink: 0; }
+.sparkline-meta { display: flex; justify-content: space-between; margin-top: 4px; font-size: 10px; color: var(--text-4); }
+.tiles { padding: 8px 18px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; flex: 1; align-content: start; }
+.tile { background: #fff; color: #000; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; min-height: 105px; cursor: pointer; }
+.tile-label { font-size: 10px; color: #6b7280; text-transform: lowercase; letter-spacing: 0.5px; }
+.tile-stat { font-size: 22px; color: #000; font-weight: 600; line-height: 1; }
+.tile-sub { font-size: 9px; color: #6b7280; margin-top: 4px; }
+.tile-dots { display: flex; gap: 6px; align-items: center; margin-bottom: 4px; }
+.tile-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+.list-view { padding: 8px 24px 0; flex: 1; display: none; flex-direction: column; }
+.list-view.active { display: flex; }
+.tiles.hidden { display: none; }
+.list-row { padding: 12px 0; border-bottom: 1px solid #0f0f0f; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.list-row-left { display: flex; flex-direction: column; gap: 2px; }
+.list-row-name { font-size: 13px; color: var(--text-1); font-weight: 500; }
+.list-row-sub { font-size: 10px; color: var(--text-4); }
+.list-row-right { display: flex; align-items: center; gap: 6px; }
+.list-dot { width: 6px; height: 6px; border-radius: 50%; }
+.chevron { font-size: 11px; color: var(--text-4); }
+
+/* sessions feed */
+.summary { padding: 0 24px 10px; font-size: 13px; color: var(--text-2); font-weight: 500; flex-shrink: 0; }
+.feed { flex: 1; overflow-y: auto; padding: 8px 18px 12px; display: flex; flex-direction: column; gap: 10px; }
+.section-label { font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 1px; padding: 0 2px; margin-top: 4px; }
+.section-label + .session-card { margin-top: -2px; }
+.past-sessions-link { background: transparent; border: none; font-family: inherit; color: var(--text-3); font-size: 12px; padding: 14px 6px 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; width: 100%; text-align: left; }
+.past-sessions-link:hover { color: var(--text-2); }
+.past-sessions-group { display: flex; flex-direction: column; gap: 10px; }
+.session-card { background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; }
+.session-card.expired { opacity: 0.4; }
+.session-card.revoked { border-color: #2a1414; }
+.session-card-header { display: flex; align-items: flex-start; gap: 10px; padding-bottom: 10px; }
+.session-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.session-dot.active { background: var(--blue); }
+.session-dot.expired { background: var(--text-4); }
+.session-dot.revoked { background: var(--red); }
+.session-name { font-size: 13px; color: var(--text-1); font-weight: 500; }
+.session-meta { font-size: 10px; color: var(--text-4); }
+.usage-bar { margin-top: 8px; height: 3px; background: #141414; border-radius: 2px; overflow: hidden; }
+.usage-bar-fill { height: 100%; background: var(--blue); border-radius: 2px; }
+.usage-bar-fill.muted { background: var(--text-4); }
+.usage-bar-fill.danger { background: var(--amber); }
+.frame-section { border-top: 1px solid var(--divider); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.frame-row { display: flex; align-items: center; gap: 8px; padding-left: 18px; }
+.frames .frame-row { padding-left: 0; }
+.frame-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.frame-dot.pass { background: var(--green); }
+.frame-dot.fail { background: var(--red); }
+.frame-dot.off { background: var(--text-4); }
+.frame-mode { font-size: 10px; color: var(--text-3); font-family: 'DM Mono', monospace; text-transform: uppercase; width: 50px; flex-shrink: 0; }
+.frame-mode.muted { color: var(--text-4); }
+.frame-desc { font-size: 10px; color: var(--text-2); flex: 1; }
+.frame-desc.muted { color: var(--text-4); }
+.frame-status { font-size: 11px; flex-shrink: 0; }
+.frame-status.pass { color: var(--green); }
+.frame-status.fail { color: var(--red); }
+.card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; padding-left: 18px; }
+.card-footer-text { font-size: 10px; color: var(--text-4); }
+.revoke-link { font-size: 11px; color: var(--red); cursor: pointer; background: none; border: none; font-family: inherit; }
+
+/* activity feed */
+.filters { padding: 0 24px 10px; display: flex; gap: 6px; overflow-x: auto; flex-shrink: 0; }
+.filters::-webkit-scrollbar { display: none; }
+.pill { padding: 6px 12px; border-radius: 999px; border: none; background: #141414; color: var(--text-2); font-size: 11px; font-family: inherit; cursor: pointer; white-space: nowrap; font-weight: 500; }
+.pill.active { background: var(--text-1); color: var(--bg); }
+.entry { background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; }
+.entry.blocked { border-color: #2a1414; }
+.entry-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 10px; }
+.entry-info { display: flex; flex-direction: column; gap: 2px; }
+.entry-title { font-size: 13px; color: var(--text-1); font-weight: 500; }
+.entry-title.red { color: var(--red); }
+.entry-sub { font-size: 10px; color: var(--text-4); }
+.entry-amount { font-size: 12px; font-weight: 500; }
+.entry-amount.white { color: var(--text-1); }
+.entry-amount.green { color: var(--green); }
+.entry-amount.red { color: var(--red); }
+.frames { border-top: 1px solid var(--divider); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+
+/* addresses */
+.addr-filters { padding: 0 24px 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; flex-shrink: 0; }
+.addr-sub { padding: 0 24px 10px; font-size: 11px; color: var(--text-4); flex-shrink: 0; }
+.addr-list { flex: 1; overflow-y: auto; padding: 0 18px 12px; display: flex; flex-direction: column; gap: 2px; }
+.addr-row { display: flex; align-items: center; gap: 10px; padding: 10px 6px; border-radius: 10px; cursor: pointer; }
+.addr-row:hover { background: rgba(255,255,255,0.02); }
+.addr-info { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+.addr-name { font-size: 13px; color: var(--text-1); font-weight: 500; }
+.addr-addr { font-size: 10px; color: var(--text-4); font-family: 'DM Mono', monospace; }
+.addr-pill { font-size: 9px; padding: 3px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
+
+/* tray */
+.tray-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 4; display: none; }
+.tray-overlay.open { display: block; }
+.tray { position: absolute; bottom: 0; left: 0; right: 0; background: var(--card); border-top-left-radius: 20px; border-top-right-radius: 20px; border-top: 1px solid var(--border); display: none; flex-direction: column; z-index: 5; max-height: 70%; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s ease; }
+.tray.open { display: flex; transform: translateY(0); }
+.tray-handle { width: 36px; height: 4px; background: #333; border-radius: 2px; align-self: center; margin: 12px 0 8px; flex-shrink: 0; cursor: pointer; }
+.tray-header { display: flex; justify-content: space-between; align-items: center; padding: 0 24px 12px; flex-shrink: 0; }
+.tray-title { font-size: 14px; color: var(--text-1); font-weight: 500; }
+.tray-badge { font-size: 10px; padding: 3px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px; }
+.tray-list { padding: 0 24px; }
+.tray-row { padding: 10px 0; border-bottom: 1px solid var(--divider); display: flex; justify-content: space-between; align-items: center; }
+.tray-row:last-child { border-bottom: none; }
+.tray-row-name { font-size: 13px; color: var(--text-2); font-weight: 500; }
+.tray-row-sub { font-size: 10px; color: var(--text-4); font-family: 'DM Mono', monospace; }
+.tray-pill { font-size: 9px; padding: 4px 9px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.tray-section { padding: 8px 0 4px; }
+.tray-section-label { font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; }
+.tray-action { padding: 16px 24px; }
+.tray-btn { background: transparent; border: 1px solid var(--border); border-radius: 999px; padding: 12px; color: var(--text-1); font-size: 13px; font-family: inherit; cursor: pointer; width: 100%; text-align: center; }
+.tray-spacer { height: 80px; }
+
+/* tab bar */
+.tab-bar-wrap { padding: 10px 16px 24px; flex-shrink: 0; z-index: 10; position: relative; }
+.tab-bar { background: var(--card); border-radius: 22px; padding: 10px 6px; display: grid; grid-template-columns: repeat(5, 1fr); }
+.tab { background: transparent; border: none; padding: 8px 4px; font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; color: #555; }
+.tab span { font-size: 10px; color: var(--text-2); }
+.tab.active { color: var(--green); }
+.tab.active span { color: var(--green); font-weight: 500; }
+.tab .icon-outlined { display: none; }
+.tab .icon-filled { display: block; }
+.tab-action-btn { background: var(--green); border: none; border-radius: 14px; padding: 10px 4px; font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+.tab-action-btn span { font-size: 10px; color: #000; font-weight: 600; }
+
+/* creating headline smaller */
+.screen.onboarding .headline.small { font-size: 40px; }
+
+/* action sheet */
+.action-sheet { position: absolute; bottom: 0; left: 0; right: 0; background: var(--card); border-top-left-radius: 20px; border-top-right-radius: 20px; border-top: 1px solid var(--border); display: none; flex-direction: column; z-index: 6; }
+.action-sheet.open { display: flex; }
+.action-sheet-handle { width: 36px; height: 4px; background: #333; border-radius: 2px; align-self: center; margin: 12px 0 4px; flex-shrink: 0; cursor: pointer; }
+.action-sheet-label { font-size: 10px; color: var(--text-3); padding: 8px 24px 4px; }
+.action-item { display: flex; align-items: center; gap: 14px; padding: 14px 24px; cursor: pointer; border-top: 1px solid var(--divider); }
+.action-item:first-of-type { border-top: none; }
+.action-item:hover { background: rgba(255,255,255,0.02); }
+.action-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.action-item-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.action-item-name { font-size: 13px; color: var(--text-1); font-weight: 500; }
+.action-item-sub { font-size: 10px; color: var(--text-4); }
+.action-item-badge { font-size: 9px; padding: 2px 7px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
+.action-sheet-spacer { height: 32px; }
+
+/* rebalance flow specific */
+.scope-card { background: var(--card-dark); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.scope-row { display: flex; justify-content: space-between; align-items: center; }
+.scope-label { font-size: 11px; color: var(--text-4); }
+.scope-val { font-size: 12px; color: var(--text-1); font-weight: 500; font-family: 'DM Mono', monospace; }
+.scope-val.green { color: var(--green); font-family: 'DM Sans', sans-serif; }
+
+/* build screen */
+.build-row { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--divider); cursor: pointer; }
+.build-row:last-child { border-bottom: none; }
+.frame-badge { font-size: 9px; padding: 3px 8px; border-radius: 4px; font-family: 'DM Mono', monospace; text-transform: uppercase; flex-shrink: 0; }
+.frame-badge.verify { background: #141414; color: var(--green); }
+.frame-badge.sender { background: #141414; color: var(--text-2); }
+.frame-badge.default { background: #141414; color: var(--blue); }
+.build-row-info { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+.build-row-name { font-size: 13px; color: var(--text-1); font-weight: 500; }
+.build-row-sub { font-size: 10px; color: var(--text-4); }
+
+/* devtools */
+.devtools { position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.8); border: 1px solid #333; border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 4px; z-index: 9999; font-size: 10px; color: #888; }
+.devtools-label { font-size: 9px; color: #555; text-transform: uppercase; letter-spacing: 1px; padding: 4px 6px 0; }
+.dev-btn { background: transparent; border: 1px solid #333; color: #aaa; padding: 4px 8px; font-size: 10px; font-family: inherit; border-radius: 4px; cursor: pointer; text-align: left; white-space: nowrap; }
+.dev-btn:hover { background: #141414; color: #fff; }
+.dev-btn.j-built { border-color: #1f3a26; color: #22c55e; }
+.dev-btn.j-built:hover { background: #0a1f12; color: #4ade80; }
+.dev-btn.j-todo { border-color: #2a2a2a; color: #555; border-style: dashed; }
+.dev-btn.j-todo:hover { background: #0f0f0f; color: #888; }
+</style>
+</head>
+<body>
+
+<!-- devtools panel: 11 demo journeys from the spec -->
+<div class="devtools">
+  <div class="devtools-label">journeys</div>
+  <button class="dev-btn j-built" onclick="journeyAccountCreation()">1 · account creation</button>
+  <button class="dev-btn j-todo" onclick="journeyTodo('email recovery')">2 · email recovery</button>
+  <button class="dev-btn j-todo" onclick="journeyTodo('add guardians')">3 · add guardians</button>
+  <button class="dev-btn j-todo" onclick="journeyTodo('recover via guardians')">4 · recover via guardians</button>
+  <button class="dev-btn j-todo" onclick="journeyTodo('add second device')">5 · add second device</button>
+  <button class="dev-btn j-todo" onclick="journeyTodo('co-sign large tx')">6 · co-sign large tx</button>
+  <button class="dev-btn j-todo" onclick="journeyTodo('grant delegation')">7 · grant delegation</button>
+  <button class="dev-btn j-todo" onclick="journeyTodo('agent acts / blocked')">8 · agent acts / blocked</button>
+  <button class="dev-btn j-todo" onclick="journeyTodo('revoke delegation')">9 · revoke delegation</button>
+  <button class="dev-btn j-built" onclick="journeyRebalance()">10 · rebalance portfolio</button>
+  <button class="dev-btn j-built" onclick="journeyBuild()">11 · build transaction</button>
+
+  <div class="devtools-label">tabs</div>
+  <button class="dev-btn" onclick="go('profile')">profile</button>
+  <button class="dev-btn" onclick="go('sessions')">sessions</button>
+  <button class="dev-btn" onclick="go('activity')">activity</button>
+  <button class="dev-btn" onclick="go('addresses')">addresses</button>
+</div>
+
+<div class="phone">
+  <div class="status-bar"><span>9:41</span><span>•••</span></div>
+
+  <!-- ============== WELCOME ============== -->
+  <div id="screen-welcome" class="screen onboarding active">
+    <div class="brand">grantr</div>
+    <div class="main">
+      <div class="headline big">your<br>address,<br><span class="accent">forever.</span></div>
+      <div class="subcopy">even if you lose your phone, get hacked, or rotate your keys. your account stays.</div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="go('email')">create account</button>
+      <button class="btn btn-secondary" onclick="go('profile')">sign in</button>
+      <div style="text-align: center; font-size: 11px; color: var(--text-4); padding-top: 4px; cursor: pointer;">lost access? <span style="color: var(--text-2);">recover account →</span></div>
+    </div>
+  </div>
+
+  <!-- ============== EMAIL ENTRY ============== -->
+  <div id="screen-email" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('welcome')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">add an email<br>for recovery.</div>
+      <div class="field">
+        <input id="email-input" class="input" type="email" placeholder="you@example.com" value="alice@example.com">
+        <div class="hint">if you lose your device. you can replace it with guardians later.</div>
+      </div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="go('verify')">continue</button>
+    </div>
+  </div>
+
+  <!-- ============== VERIFICATION WAITING ============== -->
+  <div id="screen-verify" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('email')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">check your<br>email.</div>
+      <div class="email-card">
+        <div class="email-card-content">
+          <div class="email-card-label">sent to</div>
+          <div class="email-card-value" id="verify-email">alice@example.com</div>
+        </div>
+        <div class="email-card-status">
+          <div class="status-dot"></div>
+          <span>waiting</span>
+        </div>
+      </div>
+      <div class="sub">open the link to continue. we'll bring you right back.</div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-secondary" onclick="go('passkey')">simulate link click</button>
+    </div>
+  </div>
+
+  <!-- ============== PASSKEY PROMPT ============== -->
+  <div id="screen-passkey" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('verify')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">no phrase.<br>just your device.</div>
+      <div class="sub">your passkey stays on this device. face id or touch id signs transactions — only you can approve.</div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="startCreating()">create passkey</button>
+    </div>
+  </div>
+
+  <!-- ============== CREATING ACCOUNT ============== -->
+  <div id="screen-creating" class="screen onboarding">
+    <div class="top">
+      <div></div>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+    <div class="main">
+      <div>
+        <div class="headline small">setting up<br>your account.</div>
+        <div class="gas-pill">
+          <div class="gas-pill-dot"></div>
+          gas paid by grantr
+        </div>
+      </div>
+      <div class="stages">
+        <div id="stage-1" class="stage active">
+          <div class="stage-icon"><div class="spinner"></div></div>
+          <div class="stage-label">creating passkey</div>
+        </div>
+        <div id="stage-2" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">deploying account</div>
+        </div>
+        <div id="stage-3" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">setting email recovery</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom"></div>
+  </div>
+
+  <!-- ============== PROFILE TAB ============== -->
+  <div id="screen-profile" class="screen tab-screen">
+    <div class="balance-bar">
+      <div class="balance-label-row">
+        <div class="balance-label">balance</div>
+        <div class="view-toggle">
+          <div id="toggle-tiles" class="toggle-btn active" onclick="profileView('tiles')">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="0" y="0" width="5" height="5" rx="1" fill="#a3a3a3"/><rect x="7" y="0" width="5" height="5" rx="1" fill="#a3a3a3"/><rect x="0" y="7" width="5" height="5" rx="1" fill="#a3a3a3"/><rect x="7" y="7" width="5" height="5" rx="1" fill="#a3a3a3"/></svg>
+          </div>
+          <div id="toggle-list" class="toggle-btn" onclick="profileView('list')">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="0" y="1" width="12" height="2" rx="1" fill="#555"/><rect x="0" y="5" width="12" height="2" rx="1" fill="#555"/><rect x="0" y="9" width="12" height="2" rx="1" fill="#555"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="balance-amount">$2,847.30</div>
+      <div class="identity-row">
+        <div class="avatar-large"><svg viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
+        <div class="identity-meta">
+          <span class="identity-name">alice.eth</span>
+          <span class="identity-addr">0x8f2e...4c7a</span>
+        </div>
+      </div>
+    </div>
+    <div class="sparkline-hero">
+      <svg width="100%" height="48" viewBox="0 0 300 48" preserveAspectRatio="none" style="display: block;">
+        <polyline points="0,36 30,32 60,38 90,28 120,30 150,22 180,26 210,18 240,22 270,14 300,10" fill="none" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline points="0,36 30,32 60,38 90,28 120,30 150,22 180,26 210,18 240,22 270,14 300,10 300,48 0,48" fill="url(#gProfile)" stroke="none"/>
+        <defs><linearGradient id="gProfile" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22c55e" stop-opacity="0.18"/><stop offset="100%" stop-color="#22c55e" stop-opacity="0"/></linearGradient></defs>
+      </svg>
+      <div class="sparkline-meta"><span>+2.4% · 7 days</span><span>last: 2 min ago</span></div>
+    </div>
+    <div id="profile-tiles" class="tiles">
+      <div class="tile" onclick="openTray('security')">
+        <div class="tile-label">security</div>
+        <div>
+          <div class="tile-stat">3 guardians</div>
+          <div class="tile-sub">2-of-3 · email backup</div>
+        </div>
+      </div>
+      <div class="tile" onclick="openTray('signing')">
+        <div class="tile-label">signing</div>
+        <div><div class="tile-stat">2 keys</div><div class="tile-sub">phone + laptop</div></div>
+      </div>
+      <div class="tile" onclick="go('sessions')">
+        <div class="tile-label">sessions</div>
+        <div><div class="tile-stat">2 active</div><div class="tile-sub">$12 spent</div></div>
+      </div>
+      <div class="tile" onclick="openTray('account')">
+        <div class="tile-label">account</div>
+        <div><div class="tile-stat" style="font-size: 16px; font-family: 'DM Mono', monospace;">...4c7a</div><div class="tile-sub">etherex · 2 days</div></div>
+      </div>
+    </div>
+    <div id="profile-list" class="list-view">
+      <div class="list-row" onclick="openTray('security')">
+        <div class="list-row-left"><div class="list-row-name">security</div><div class="list-row-sub">email ✓ · 3 guardians · 2-of-3 · 0 approvals</div></div>
+        <div class="list-row-right"><div class="list-dot" style="background: #22c55e;"></div><span class="chevron">›</span></div>
+      </div>
+      <div class="list-row" onclick="openTray('signing')">
+        <div class="list-row-left"><div class="list-row-name">signing</div><div class="list-row-sub">2 passkeys · phone + laptop</div></div>
+        <div class="list-row-right"><div class="list-dot" style="background: #22c55e;"></div><span class="chevron">›</span></div>
+      </div>
+      <div class="list-row" onclick="go('sessions')">
+        <div class="list-row-left"><div class="list-row-name">sessions</div><div class="list-row-sub">2 active · $12 spent · 1 blocked</div></div>
+        <div class="list-row-right"><div class="list-dot" style="background: #3b82f6;"></div><span class="chevron">›</span></div>
+      </div>
+      <div class="list-row" onclick="openTray('account')">
+        <div class="list-row-left"><div class="list-row-name">account</div><div class="list-row-sub" style="font-family: 'DM Mono', monospace;">0x8f2e...4c7a · etherex · 2 days old</div></div>
+        <div class="list-row-right"><span class="chevron">›</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== SESSIONS TAB ============== -->
+  <div id="screen-sessions" class="screen tab-screen">
+    <div class="balance-bar">
+      <div class="balance-label">balance</div>
+      <div class="balance-amount">$2,847.30</div>
+      <div class="identity-row">
+        <div class="avatar-large"><svg viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
+        <div class="identity-meta">
+          <span class="identity-name">alice.eth</span>
+          <span class="identity-addr">0x8f2e...4c7a</span>
+        </div>
+      </div>
+    </div>
+    <div class="activity-hero">
+      <div class="activity-hero-top">
+        <div>
+          <div class="activity-hero-label">agent executions</div>
+          <div class="activity-hero-stat">9</div>
+        </div>
+        <div class="activity-hero-meta">
+          <div style="color:#22c55e;">+3 vs last week</div>
+          <div>7-day view</div>
+        </div>
+      </div>
+      <div class="activity-bars">
+        <div class="activity-bar" style="--h: 33%;"><div class="activity-bar-fill muted"></div></div>
+        <div class="activity-bar" style="--h: 67%;"><div class="activity-bar-fill"></div></div>
+        <div class="activity-bar" style="--h: 50%;"><div class="activity-bar-fill"></div></div>
+        <div class="activity-bar" style="--h: 17%;"><div class="activity-bar-fill muted"></div></div>
+        <div class="activity-bar" style="--h: 83%;"><div class="activity-bar-fill"></div></div>
+        <div class="activity-bar" style="--h: 58%;"><div class="activity-bar-fill"></div></div>
+        <div class="activity-bar" style="--h: 42%;"><div class="activity-bar-fill"></div></div>
+      </div>
+      <div class="activity-days">
+        <span>m</span><span>t</span><span>w</span><span>t</span><span>f</span><span>s</span><span>s</span>
+      </div>
+    </div>
+    <div class="feed">
+      <div class="section-label">active</div>
+      <div class="session-card">
+        <div class="session-card-header">
+          <div class="session-dot active"></div>
+          <div style="flex: 1;">
+            <div class="session-name">lp rebalancer</div>
+            <div class="session-meta">$12.40 of $500 · 29 days left</div>
+            <div class="usage-bar"><div class="usage-bar-fill" style="width: 2.5%;"></div></div>
+          </div>
+        </div>
+        <div class="frame-section">
+          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · scoped selectors</div></div>
+          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">rebalance on uniswap v3</div></div>
+        </div>
+        <div class="card-footer">
+          <div class="card-footer-text">3 executed · 1 blocked</div>
+          <button class="revoke-link">revoke</button>
+        </div>
+      </div>
+      <div class="session-card">
+        <div class="session-card-header">
+          <div class="session-dot active"></div>
+          <div style="flex: 1;">
+            <div class="session-name">ens renewer</div>
+            <div class="session-meta">$0 of $50 · 345 days left</div>
+            <div class="usage-bar"><div class="usage-bar-fill" style="width: 0%;"></div></div>
+          </div>
+        </div>
+        <div class="frame-section">
+          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · renew selector only</div></div>
+          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">renew on ens registrar</div></div>
+        </div>
+        <div class="card-footer">
+          <div class="card-footer-text">0 executed</div>
+          <button class="revoke-link">revoke</button>
+        </div>
+      </div>
+      <button class="past-sessions-link" onclick="togglePastSessions()">
+        <span id="past-sessions-label">past sessions (2)</span>
+        <span id="past-sessions-chevron">›</span>
+      </button>
+      <div id="past-sessions" class="past-sessions-group" style="display: none;">
+        <div class="session-card revoked">
+          <div class="session-card-header">
+            <div class="session-dot revoked"></div>
+            <div style="flex: 1;">
+              <div class="session-name" style="color: #ef4444;">price oracle</div>
+              <div class="session-meta">revoked yesterday · $0 used</div>
+            </div>
+          </div>
+          <div class="frame-section">
+            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">verify</div><div class="frame-desc muted">session key · read selectors</div></div>
+            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted">update price feed</div></div>
+          </div>
+        </div>
+        <div class="session-card expired">
+          <div class="session-card-header">
+            <div class="session-dot expired"></div>
+            <div style="flex: 1;">
+              <div class="session-name">dca bot</div>
+              <div class="session-meta">$420 of $500 · expired 3 days ago</div>
+              <div class="usage-bar"><div class="usage-bar-fill muted" style="width: 84%;"></div></div>
+            </div>
+          </div>
+          <div class="frame-section">
+            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">verify</div><div class="frame-desc muted">session key · swap selector</div></div>
+            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted">swap ETH → USDC weekly</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== ACTIVITY TAB ============== -->
+  <div id="screen-activity" class="screen tab-screen">
+    <div class="balance-bar">
+      <div class="balance-label">balance</div>
+      <div class="balance-amount">$2,847.30</div>
+      <div class="identity-row">
+        <div class="avatar-large"><svg viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
+        <div class="identity-meta">
+          <span class="identity-name">alice.eth</span>
+          <span class="identity-addr">0x8f2e...4c7a</span>
+        </div>
+      </div>
+    </div>
+    <div class="filters">
+      <button class="pill active">all</button>
+      <button class="pill">verify</button>
+      <button class="pill">sender</button>
+      <button class="pill">default</button>
+    </div>
+    <div class="feed">
+      <div class="section-label">today</div>
+      <div class="entry">
+        <div class="entry-header">
+          <div class="entry-info">
+            <div class="entry-title">sent 0.5 ETH to ...9f2b</div>
+            <div class="entry-sub">2 min ago</div>
+          </div>
+          <div class="entry-amount white">-$1,390</div>
+        </div>
+        <div class="frames">
+          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p256</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">send 0.5 ETH to ...9f2b</div><div class="frame-status pass">✓</div></div>
+        </div>
+      </div>
+      <div class="entry blocked">
+        <div class="entry-header">
+          <div class="entry-info">
+            <div class="entry-title red">lp rebalancer blocked</div>
+            <div class="entry-sub">42 min ago · via session</div>
+          </div>
+          <div class="entry-amount red">blocked</div>
+        </div>
+        <div class="frames">
+          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">session key · selector not allowed</div><div class="frame-status fail">✗</div></div>
+          <div class="frame-row"><div class="frame-mode muted">sender</div><div class="frame-desc muted">transfer USDC</div><div class="frame-status" style="color:#555">—</div></div>
+        </div>
+      </div>
+      <div class="entry">
+        <div class="entry-header">
+          <div class="entry-info">
+            <div class="entry-title">lp rebalancer · rebalance</div>
+            <div class="entry-sub">1 hr ago · via session</div>
+          </div>
+        </div>
+        <div class="frames">
+          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">session key · scoped selectors</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">rebalance on uniswap v3</div><div class="frame-status pass">✓</div></div>
+        </div>
+      </div>
+      <div class="entry">
+        <div class="entry-header">
+          <div class="entry-info">
+            <div class="entry-title">session granted · lp rebalancer</div>
+            <div class="entry-sub">3 hrs ago</div>
+          </div>
+        </div>
+        <div class="frames">
+          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p256</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">add session key with scope</div><div class="frame-status pass">✓</div></div>
+        </div>
+      </div>
+      <div class="section-label" style="margin-top: 12px;">earlier this week</div>
+      <div class="entry">
+        <div class="entry-header">
+          <div class="entry-info">
+            <div class="entry-title">received 250 USDC from ...3e8c</div>
+            <div class="entry-sub">yesterday</div>
+          </div>
+          <div class="entry-amount green">+$250</div>
+        </div>
+        <div class="frames">
+          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p256 (sender)</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">transfer 250 USDC from ...3e8c</div><div class="frame-status pass">✓</div></div>
+        </div>
+      </div>
+      <div class="entry">
+        <div class="entry-header">
+          <div class="entry-info">
+            <div class="entry-title">account created</div>
+            <div class="entry-sub">2 days ago · gas by grantr</div>
+          </div>
+        </div>
+        <div class="frames">
+          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p256</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">default</div><div class="frame-desc">deploy account · set email recovery</div><div class="frame-status pass">✓</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== ADDRESSES TAB ============== -->
+  <div id="screen-addresses" class="screen tab-screen">
+    <div class="balance-bar">
+      <div class="balance-label">balance</div>
+      <div class="balance-amount">$2,847.30</div>
+      <div class="identity-row">
+        <div class="avatar-large"><svg viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
+        <div class="identity-meta">
+          <span class="identity-name">alice.eth</span>
+          <span class="identity-addr">0x8f2e...4c7a</span>
+        </div>
+      </div>
+    </div>
+    <div class="addr-filters">
+      <button class="pill" data-addr-filter="own" onclick="filterAddresses('own')">own</button>
+      <button class="pill active" data-addr-filter="guardians" onclick="filterAddresses('guardians')">guardians</button>
+      <button class="pill" data-addr-filter="agents" onclick="filterAddresses('agents')">agents</button>
+      <button class="pill" data-addr-filter="sponsors" onclick="filterAddresses('sponsors')">sponsors</button>
+      <button class="pill" data-addr-filter="contracts" onclick="filterAddresses('contracts')">contracts</button>
+      <button class="pill" data-addr-filter="sent" onclick="filterAddresses('sent')">sent</button>
+    </div>
+    <div class="addr-sub" id="addr-sub">showing 3 guardians · 2-of-3 quorum</div>
+    <div class="addr-list" id="addr-list">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- ============== REBALANCE: PICK POSITION ============== -->
+  <div id="screen-rebalance" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="closeAction(); go('profile')">←</span>
+      <div style="display:flex;gap:6px;flex:1;margin:0 16px;">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding-top:28px;">
+      <div class="headline" style="font-size:28px;margin-bottom:4px;">pick a position.</div>
+      <div style="font-size:13px;color:#737373;margin-bottom:20px;">one of yours stopped earning.</div>
+
+      <!-- hero: out of range -->
+      <div onclick="go('rebalance-authorize')" style="background:#ef4444;border-radius:20px;padding:20px;margin-bottom:8px;cursor:pointer;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="display:flex;">
+              <div style="width:28px;height:28px;border-radius:50%;background:#fff;overflow:hidden;border:2px solid #ef4444;"><img src="https://assets.coingecko.com/coins/images/7598/large/wrapped_bitcoin_wbtc.png" style="width:100%;height:100%;object-fit:cover;"></div>
+              <div style="width:28px;height:28px;border-radius:50%;background:#fff;overflow:hidden;border:2px solid #ef4444;margin-left:-10px;"><img src="https://assets.coingecko.com/coins/images/279/large/ethereum.png" style="width:100%;height:100%;object-fit:cover;"></div>
+            </div>
+            <span style="font-size:16px;font-weight:600;color:#000;">WBTC / ETH</span>
+          </div>
+          <span style="padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;background:#000;color:#ef4444;">out of range</span>
+        </div>
+        <div style="font-size:11px;color:#000;opacity:0.6;margin-bottom:2px;">range</div>
+        <div style="font-size:34px;font-weight:700;letter-spacing:-0.02em;color:#000;margin-bottom:16px;line-height:1;">14.2 – 16.8</div>
+        <div style="display:flex;justify-content:space-between;padding-top:14px;border-top:1px solid rgba(0,0,0,0.15);">
+          <div><div style="font-size:10px;color:#000;opacity:0.6;margin-bottom:3px;">liquidity</div><div style="font-size:14px;font-weight:700;color:#000;">$8,200</div></div>
+          <div><div style="font-size:10px;color:#000;opacity:0.6;margin-bottom:3px;">fees today</div><div style="font-size:14px;font-weight:700;color:#000;">$0</div></div>
+          <div><div style="font-size:10px;color:#000;opacity:0.6;margin-bottom:3px;">potential</div><div style="font-size:14px;font-weight:700;color:#000;">$14/day</div></div>
+        </div>
+      </div>
+
+      <div style="font-size:11px;color:#555;text-transform:lowercase;letter-spacing:0.5px;margin:16px 0 8px;">other positions · in range</div>
+
+      <div style="background:#0f0f0f;border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="display:flex;">
+            <div style="width:24px;height:24px;border-radius:50%;background:#fff;overflow:hidden;"><img src="https://assets.coingecko.com/coins/images/6319/large/usdc.png" style="width:100%;height:100%;object-fit:cover;"></div>
+            <div style="width:24px;height:24px;border-radius:50%;background:#fff;overflow:hidden;margin-left:-8px;"><img src="https://assets.coingecko.com/coins/images/279/large/ethereum.png" style="width:100%;height:100%;object-fit:cover;"></div>
+          </div>
+          <div><div style="font-size:13px;font-weight:500;color:#fff;">USDC / ETH</div><div style="font-size:11px;color:#555;">$12,450 · 1,850 – 2,100</div></div>
+        </div>
+        <span style="padding:3px 8px;border-radius:999px;font-size:10px;font-weight:500;background:#141414;color:#22c55e;">in range</span>
+      </div>
+
+      <div style="background:#0f0f0f;border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="display:flex;">
+            <div style="width:24px;height:24px;border-radius:50%;background:#fff;overflow:hidden;"><img src="https://assets.coingecko.com/coins/images/9956/large/Badge_Dai.png" style="width:100%;height:100%;object-fit:cover;"></div>
+            <div style="width:24px;height:24px;border-radius:50%;background:#fff;overflow:hidden;margin-left:-8px;"><img src="https://assets.coingecko.com/coins/images/6319/large/usdc.png" style="width:100%;height:100%;object-fit:cover;"></div>
+          </div>
+          <div><div style="font-size:13px;font-weight:500;color:#fff;">DAI / USDC</div><div style="font-size:11px;color:#555;">$25,000 · 0.998 – 1.002</div></div>
+        </div>
+        <span style="padding:3px 8px;border-radius:999px;font-size:10px;font-weight:500;background:#141414;color:#22c55e;">in range</span>
+      </div>
+    </div>
+    <div class="bottom" style="padding-top:0;"></div>
+  </div>
+
+  <!-- ============== REBALANCE: AUTHORIZE AGENT ============== -->
+  <div id="screen-rebalance-authorize" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('rebalance')">←</span>
+      <div style="display:flex;gap:6px;flex:1;margin:0 16px;">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+
+    <!-- position bar -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid #1a1a1a;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;">
+          <div style="width:24px;height:24px;border-radius:50%;background:#fff;overflow:hidden;"><img src="https://assets.coingecko.com/coins/images/7598/large/wrapped_bitcoin_wbtc.png" style="width:100%;height:100%;object-fit:cover;"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:#fff;overflow:hidden;margin-left:-8px;"><img src="https://assets.coingecko.com/coins/images/279/large/ethereum.png" style="width:100%;height:100%;object-fit:cover;"></div>
+        </div>
+        <div><div style="font-size:13px;font-weight:500;color:#fff;">WBTC / ETH</div><div style="font-size:11px;color:#555;">14.2 – 16.8</div></div>
+      </div>
+      <span onclick="go('rebalance')" style="font-size:11px;color:#555;text-decoration:underline;cursor:pointer;">change</span>
+    </div>
+
+    <div class="headline" style="font-size:28px;margin-bottom:4px;">authorize agent.</div>
+    <div style="font-size:13px;color:#737373;margin-bottom:20px;">review and set limits.</div>
+
+    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0;">
+      <div style="background:#0f0f0f;border-radius:16px;padding:18px;display:flex;flex-direction:column;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed #1f1f1f;">
+          <span style="font-size:12px;color:#737373;">agent</span>
+          <span style="font-size:11px;color:#22c55e;font-family:'DM Mono',monospace;">grantr lp rebalancer</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed #1f1f1f;">
+          <span style="font-size:12px;color:#737373;">can spend up to</span>
+          <span style="font-size:13px;color:#fff;font-weight:500;">$500 USDC <span style="font-size:11px;color:#555;text-decoration:underline;cursor:pointer;">edit</span></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed #1f1f1f;">
+          <span style="font-size:12px;color:#737373;">access for</span>
+          <span style="font-size:13px;color:#fff;font-weight:500;">30 days <span style="font-size:11px;color:#555;text-decoration:underline;cursor:pointer;">edit</span></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px dashed #1f1f1f;">
+          <span style="font-size:12px;color:#737373;">can</span>
+          <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">rebalance · collect fees</div><div style="font-size:10px;color:#555;margin-top:2px;">locked to these selectors</div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;">
+          <span style="font-size:12px;color:#737373;">cannot</span>
+          <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">transfer · withdraw · anything else</div><div style="font-size:10px;color:#22c55e;margin-top:2px;">enforced by eip-8141</div></div>
+        </div>
+      </div>
+
+      <div style="background:#0a0a0a;border:1px solid #1f1f1f;border-radius:12px;padding:12px 14px;margin-top:8px;">
+        <div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">frame structure</div>
+        <div class="frame-row" style="padding-left:0;margin-bottom:6px;"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · scoped selectors</div></div>
+        <div class="frame-row" style="padding-left:0;"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">rebalance on uniswap v3 · atomic</div></div>
+      </div>
+    </div>
+
+    <div class="bottom" style="padding-top:12px;">
+      <button class="btn btn-primary" id="auth-btn" onclick="grantRebalance()">authorize · sign with passkey</button>
+      <button class="btn btn-secondary" onclick="closeAction(); go('profile')">cancel</button>
+    </div>
+  </div>
+
+  <!-- ============== REBALANCE: DASHBOARD (active session) ============== -->
+  <div id="screen-rebalance-dashboard" class="screen tab-screen">
+    <div class="balance-bar">
+      <div class="balance-label">balance</div>
+      <div class="balance-amount">$2,847.30</div>
+      <div class="identity-row">
+        <div class="avatar-large"><svg viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
+        <div class="identity-meta">
+          <span class="identity-name">alice.eth</span>
+          <span class="identity-addr">0x8f2e...4c7a</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- active session banner -->
+    <div style="margin:0 18px 8px;background:#0a0a0a;border:1px solid rgba(34,197,94,0.2);border-radius:14px;padding:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#3b82f6;"></div>
+          <span style="font-size:13px;color:#fff;font-weight:500;">lp rebalancer · active</span>
+        </div>
+        <button onclick="go('sessions')" style="font-size:11px;color:#ef4444;background:none;border:none;font-family:inherit;cursor:pointer;">revoke</button>
+      </div>
+      <div class="frame-row" style="padding-left:0;margin-bottom:4px;"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · scoped selectors</div></div>
+      <div class="frame-row" style="padding-left:0;"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">rebalance on uniswap v3</div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid #1a1a1a;">
+        <span style="font-size:10px;color:#555;">$0 / $500 · 30 days left</span>
+        <span style="font-size:10px;color:#555;">0 executed</span>
+      </div>
+    </div>
+
+    <!-- activity feed -->
+    <div class="section-label" style="padding: 0 18px 8px;">recent activity</div>
+    <div class="feed" style="padding:0 18px 12px;">
+      <div class="entry">
+        <div class="entry-header">
+          <div class="entry-info"><div class="entry-title">session granted · lp rebalancer</div><div class="entry-sub">just now · gas by grantr</div></div>
+        </div>
+        <div class="frames">
+          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p256</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">add session key with scope</div><div class="frame-status pass">✓</div></div>
+        </div>
+      </div>
+      <div class="entry">
+        <div class="entry-header">
+          <div class="entry-info"><div class="entry-title">sent 0.5 ETH to ...9f2b</div><div class="entry-sub">2 min ago</div></div>
+          <div class="entry-amount white">-$1,390</div>
+        </div>
+        <div class="frames">
+          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p256</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">send 0.5 ETH to ...9f2b</div><div class="frame-status pass">✓</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-bar-wrap"><div class="tab-bar">
+      <button class="tab" data-tab="profile" onclick="go('profile')"><svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><path d="M5 20 Q 5 14 12 14 Q 19 14 19 20" stroke="#a3a3a3" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg><svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 21 Q 4 13 12 13 Q 20 13 20 21 Z" fill="currentColor"/></svg><span>profile</span></button>
+      <button class="tab" data-tab="sessions" onclick="go('sessions')"><svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="12" r="4" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><rect x="12" y="10.5" width="9" height="3" rx="1" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><line x1="17" y1="13.5" x2="17" y2="16" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/><line x1="19.5" y1="13.5" x2="19.5" y2="15.5" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/></svg><svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="12" r="4" fill="currentColor"/><rect x="12" y="10.5" width="9" height="3" rx="1" fill="currentColor"/><rect x="17" y="13.5" width="2" height="3.5" rx="1" fill="currentColor"/><rect x="19.5" y="13.5" width="1.5" height="3" rx="0.75" fill="currentColor"/></svg><span>sessions</span></button>
+      <button class="tab-action-btn" onclick="openAction()"><div style="width:22px;height:22px;position:relative;"><div style="position:absolute;left:50%;top:2px;width:2.5px;height:18px;background:#000;transform:translateX(-50%);border-radius:2px;"></div><div style="position:absolute;top:50%;left:2px;height:2.5px;width:18px;background:#000;transform:translateY(-50%);border-radius:2px;"></div></div><span>action</span></button>
+      <button class="tab active" data-tab="activity" onclick="go('activity')"><svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><path d="M12 7 L12 12 L16 14" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M12 7 L12 12 L16 14" stroke="#0a0a0a" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span>activity</span></button>
+      <button class="tab" data-tab="addresses" onclick="go('addresses')"><svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2.5" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><path d="M3 9 L21 9" stroke="#a3a3a3" stroke-width="1.5"/><path d="M7 14 L17 14" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/><path d="M7 17 L13 17" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/></svg><svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2.5" fill="currentColor"/><path d="M3 9 L21 9" stroke="#0a0a0a" stroke-width="1.25"/><path d="M7 14 L17 14" stroke="#0a0a0a" stroke-width="1.25" stroke-linecap="round"/><path d="M7 17 L13 17" stroke="#0a0a0a" stroke-width="1.25" stroke-linecap="round"/></svg><span>addresses</span></button>
+    </div></div>
+  </div>
+
+  <!-- ============== BUILD SCREEN ============== -->
+  <div id="screen-build" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="closeAction(); go('profile')">←</span>
+      <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">build transaction</div>
+      <span class="spacer"></span>
+    </div>
+    <div style="flex: 1; padding: 16px 0; display: flex; flex-direction: column; gap: 0; overflow-y: auto;">
+
+      <div style="font-size: 11px; color: var(--text-4); line-height: 1.6; padding-bottom: 16px;">compose an atomic frame transaction. frames execute in order — if any sender frame fails, the whole batch reverts.</div>
+
+      <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; padding-bottom: 8px;">choose frame type</div>
+
+      <div class="build-row">
+        <span class="frame-badge verify">verify</span>
+        <div class="build-row-info">
+          <div class="build-row-name">passkey signature</div>
+          <div class="build-row-sub">p-256 · signs the transaction hash</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">+</span>
+      </div>
+
+      <div class="build-row">
+        <span class="frame-badge verify">verify</span>
+        <div class="build-row-info">
+          <div class="build-row-name">session key</div>
+          <div class="build-row-sub">scoped · must match an active session</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">+</span>
+      </div>
+
+      <div class="build-row">
+        <span class="frame-badge sender">sender</span>
+        <div class="build-row-info">
+          <div class="build-row-name">contract call</div>
+          <div class="build-row-sub">call any contract · atomic flag optional</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">+</span>
+      </div>
+
+      <div class="build-row">
+        <span class="frame-badge sender">sender</span>
+        <div class="build-row-info">
+          <div class="build-row-name">token transfer</div>
+          <div class="build-row-sub">erc-20 or native ETH</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">+</span>
+      </div>
+
+      <div class="build-row">
+        <span class="frame-badge default">default</span>
+        <div class="build-row-info">
+          <div class="build-row-name">policy update</div>
+          <div class="build-row-sub">rotate key · add guardian · update session</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">+</span>
+      </div>
+
+      <div style="margin-top: 20px; padding: 14px 16px; background: var(--card-dark); border-radius: 14px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="font-size: 10px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">your frame queue</div>
+        <div style="font-size: 12px; color: #555; font-style: italic;">empty — add frames above</div>
+      </div>
+
+    </div>
+    <div class="bottom" style="padding-top: 0;">
+      <button class="btn btn-primary" style="opacity: 0.4;" disabled>preview transaction</button>
+    </div>
+  </div>
+
+  <!-- ============== ACTION SHEET ============== -->
+  <div id="action-overlay" class="tray-overlay" onclick="closeAction()" style="z-index: 5;"></div>
+  <div id="action-sheet" class="action-sheet">
+    <div class="action-sheet-handle" onclick="closeAction()"></div>
+    <div class="action-sheet-label">frame actions</div>
+
+    <div class="action-item" onclick="closeAction(); go('rebalance')">
+      <div class="action-icon" style="background: #0a1f12;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 12 C3 7 7 3 12 3 C17 3 21 7 21 12" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/><path d="M21 12 C21 17 17 21 12 21 C7 21 3 17 3 12" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="3 2"/><path d="M18 9 L21 12 L18 15" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="action-item-info">
+        <div class="action-item-name">rebalance</div>
+        <div class="action-item-sub">grant lp rebalancer scoped access · verify + sender</div>
+      </div>
+      <span class="action-item-badge" style="color: #22c55e; background: #141414;">session</span>
+    </div>
+
+    <div class="action-item" onclick="closeAction(); go('build')">
+      <div class="action-icon" style="background: #141414;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="1.5" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><rect x="13" y="3" width="8" height="8" rx="1.5" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><rect x="3" y="13" width="8" height="8" rx="1.5" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><line x1="17" y1="13" x2="17" y2="21" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="17" x2="21" y2="17" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="action-item-info">
+        <div class="action-item-name">build</div>
+        <div class="action-item-sub">compose an atomic frame transaction</div>
+      </div>
+      <span class="action-item-badge" style="color: #a3a3a3; background: #141414;">atomic</span>
+    </div>
+
+    <div class="action-sheet-spacer"></div>
+  </div>
+
+  <!-- ============== TRAY ============== -->
+  <div id="tray-overlay" class="tray-overlay" onclick="closeTray()"></div>
+  <div id="tray" class="tray">
+    <div class="tray-handle" onclick="closeTray()"></div>
+    <div id="tray-content"></div>
+  </div>
+
+  <!-- ============== TAB BAR ============== -->
+  <div id="tab-bar" class="tab-bar-wrap" style="display: none;">
+    <div class="tab-bar">
+      <button class="tab" data-tab="profile" onclick="go('profile')">
+        <svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><path d="M5 20 Q 5 14 12 14 Q 19 14 19 20" stroke="#a3a3a3" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+        <svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 21 Q 4 13 12 13 Q 20 13 20 21 Z" fill="currentColor"/></svg>
+        <span>profile</span>
+      </button>
+      <button class="tab" data-tab="sessions" onclick="go('sessions')">
+        <svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="12" r="4" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><rect x="12" y="10.5" width="9" height="3" rx="1" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><line x1="17" y1="13.5" x2="17" y2="16" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/><line x1="19.5" y1="13.5" x2="19.5" y2="15.5" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="12" r="4" fill="currentColor"/><rect x="12" y="10.5" width="9" height="3" rx="1" fill="currentColor"/><rect x="17" y="13.5" width="2" height="3.5" rx="1" fill="currentColor"/><rect x="19.5" y="13.5" width="1.5" height="3" rx="0.75" fill="currentColor"/></svg>
+        <span>sessions</span>
+      </button>
+      <button class="tab-action-btn" onclick="openAction()">
+        <div style="width: 22px; height: 22px; position: relative;">
+          <div style="position: absolute; left: 50%; top: 2px; width: 2.5px; height: 18px; background: #000; transform: translateX(-50%); border-radius: 2px;"></div>
+          <div style="position: absolute; top: 50%; left: 2px; height: 2.5px; width: 18px; background: #000; transform: translateY(-50%); border-radius: 2px;"></div>
+        </div>
+        <span>action</span>
+      </button>
+      <button class="tab" data-tab="activity" onclick="go('activity')">
+        <svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><path d="M12 7 L12 12 L16 14" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M12 7 L12 12 L16 14" stroke="#0a0a0a" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <span>activity</span>
+      </button>
+      <button class="tab" data-tab="addresses" onclick="go('addresses')">
+        <svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2.5" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><path d="M3 9 L21 9" stroke="#a3a3a3" stroke-width="1.5"/><path d="M7 14 L17 14" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/><path d="M7 17 L13 17" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2.5" fill="currentColor"/><path d="M3 9 L21 9" stroke="#0a0a0a" stroke-width="1.25"/><path d="M7 14 L17 14" stroke="#0a0a0a" stroke-width="1.25" stroke-linecap="round"/><path d="M7 17 L13 17" stroke="#0a0a0a" stroke-width="1.25" stroke-linecap="round"/></svg>
+        <span>addresses</span>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const tabScreens = ['profile', 'sessions', 'activity', 'addresses', 'rebalance-dashboard'];
+const allScreens = [...tabScreens, 'welcome', 'email', 'verify', 'passkey', 'creating', 'rebalance', 'build'];
+
+// ============== JOURNEYS ==============
+// each journey sets up state and jumps to the starting screen.
+// built = fully walked journey · todo = placeholder until screens exist.
+
+function journeyAccountCreation() {
+  // full flow: welcome → email → verify → passkey → creating → profile
+  closeAction();
+  go('welcome');
+}
+
+function journeyRebalance() {
+  // starts from profile, user taps + to see action sheet
+  // flow: profile → (action sheet) → rebalance positions → authorize → dashboard
+  closeAction();
+  go('profile');
+  setTimeout(() => openAction(), 400);
+}
+
+function journeyBuild() {
+  // from profile, open action sheet with build highlighted
+  closeAction();
+  go('profile');
+  setTimeout(() => openAction(), 400);
+}
+
+function journeyTodo(name) {
+  alert('"' + name + '" journey is planned but not yet built.\n\nnext up: build the screens, then wire them here.');
+}
+
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('screen-' + id);
+  if (target) target.classList.add('active');
+
+  const tabBar = document.getElementById('tab-bar');
+  if (tabScreens.includes(id)) {
+    tabBar.style.display = 'block';
+    document.querySelectorAll('.tab[data-tab]').forEach(t => {
+      t.classList.toggle('active', t.dataset.tab === id);
+    });
+  } else {
+    tabBar.style.display = 'none';
+  }
+  closeTray();
+}
+
+function openAction() {
+  document.getElementById('action-sheet').classList.add('open');
+  document.getElementById('action-overlay').classList.add('open');
+}
+
+function closeAction() {
+  document.getElementById('action-sheet').classList.remove('open');
+  document.getElementById('action-overlay').classList.remove('open');
+}
+
+function grantRebalance() {
+  const btn = document.getElementById('auth-btn');
+  btn.textContent = 'signing...';
+  btn.style.opacity = '0.7';
+  setTimeout(() => {
+    btn.textContent = 'submitting frame tx...';
+    setTimeout(() => {
+      btn.textContent = 'authorize · sign with passkey';
+      btn.style.opacity = '1';
+      go('rebalance-dashboard');
+    }, 1200);
+  }, 900);
+}
+
+function startCreating() {
+  go('creating');
+  setTimeout(() => {
+    setStage(1, 'done');
+    setStage(2, 'active');
+  }, 2000);
+  setTimeout(() => {
+    setStage(2, 'done');
+    setStage(3, 'active');
+  }, 4000);
+  setTimeout(() => {
+    setStage(3, 'done');
+  }, 6000);
+  setTimeout(() => {
+    go('profile');
+  }, 7200);
+}
+
+function setStage(n, state) {
+  const el = document.getElementById('stage-' + n);
+  el.classList.remove('pending', 'active', 'done');
+  el.classList.add(state);
+  const icon = el.querySelector('.stage-icon');
+  if (state === 'active') {
+    icon.innerHTML = '<div class="spinner"></div>';
+  } else if (state === 'done') {
+    icon.innerHTML = '<div class="check">✓</div>';
+  } else {
+    icon.innerHTML = '';
+  }
+}
+
+function profileView(mode) {
+  const tiles = document.getElementById('profile-tiles');
+  const list = document.getElementById('profile-list');
+  const tBtn = document.getElementById('toggle-tiles');
+  const lBtn = document.getElementById('toggle-list');
+  if (mode === 'tiles') {
+    tiles.classList.remove('hidden');
+    list.classList.remove('active');
+    tBtn.classList.add('active');
+    lBtn.classList.remove('active');
+    // update svg fill
+    tBtn.querySelector('svg').innerHTML = tBtn.querySelector('svg').innerHTML.replace(/#555/g, '#a3a3a3');
+    lBtn.querySelector('svg').innerHTML = lBtn.querySelector('svg').innerHTML.replace(/#a3a3a3/g, '#555');
+  } else {
+    tiles.classList.add('hidden');
+    list.classList.add('active');
+    tBtn.classList.remove('active');
+    lBtn.classList.add('active');
+    tBtn.querySelector('svg').innerHTML = tBtn.querySelector('svg').innerHTML.replace(/#a3a3a3/g, '#555');
+    lBtn.querySelector('svg').innerHTML = lBtn.querySelector('svg').innerHTML.replace(/#555/g, '#a3a3a3');
+  }
+}
+
+const trayTemplates = {
+  security: `
+    <div class="tray-header"><div class="tray-title">security</div></div>
+    <div class="tray-list">
+      <div class="tray-row">
+        <div><div class="tray-row-name">email recovery</div><div class="tray-row-sub">alice@example.com</div></div>
+        <span class="tray-pill" style="color: #22c55e; background: #141414;">verified</span>
+      </div>
+      <div class="tray-section"><div class="tray-section-label">guardians · 2-of-3 quorum</div></div>
+      <div class="tray-row">
+        <div><div class="tray-row-name">bob.eth</div><div class="tray-row-sub">...7e3a</div></div>
+        <span class="tray-pill" style="color: #f59e0b; background: #141414;">1 of 3</span>
+      </div>
+      <div class="tray-row">
+        <div><div class="tray-row-name">carol.eth</div><div class="tray-row-sub">...f291</div></div>
+        <span class="tray-pill" style="color: #f59e0b; background: #141414;">2 of 3</span>
+      </div>
+      <div class="tray-row">
+        <div><div class="tray-row-name">dan.eth</div><div class="tray-row-sub">...1b4c</div></div>
+        <span class="tray-pill" style="color: #f59e0b; background: #141414;">3 of 3</span>
+      </div>
+      <div class="tray-section"><div class="tray-section-label">token approvals</div></div>
+      <div class="tray-row" style="border-bottom: none;"><div><div class="tray-row-name" style="color: #555;">none</div></div></div>
+    </div>
+    <div class="tray-action"><button class="tray-btn">add guardian</button></div>
+    <div class="tray-spacer"></div>
+  `,
+  signing: `
+    <div class="tray-header"><div class="tray-title">signing</div></div>
+    <div class="tray-list">
+      <div class="tray-section"><div class="tray-section-label">registered passkeys · 2</div></div>
+      <div class="tray-row">
+        <div><div class="tray-row-name">iphone 15</div><div class="tray-row-sub">p-256 · added 2 days ago</div></div>
+        <span class="tray-pill" style="color: #22c55e; background: #141414;">this device</span>
+      </div>
+      <div class="tray-row">
+        <div><div class="tray-row-name">macbook pro</div><div class="tray-row-sub">p-256 · added yesterday</div></div>
+        <span class="tray-pill" style="color: #a3a3a3; background: #141414;">laptop</span>
+      </div>
+      <div class="tray-section"><div class="tray-section-label">threshold policy</div></div>
+      <div class="tray-row" style="border-bottom: none;">
+        <div><div class="tray-row-name">single signer</div><div class="tray-row-sub" style="font-family: 'DM Sans', sans-serif;">any device can sign</div></div>
+      </div>
+    </div>
+    <div class="tray-action"><button class="tray-btn">add device</button></div>
+    <div class="tray-spacer"></div>
+  `,
+  account: `
+    <div class="tray-header"><div class="tray-title">account</div></div>
+    <div class="tray-list">
+      <div class="tray-row">
+        <div><div class="tray-row-name">address</div><div class="tray-row-sub">0x8f2e4d...4c7a</div></div>
+      </div>
+      <div class="tray-row">
+        <div><div class="tray-row-name">ens</div><div class="tray-row-sub" style="font-family: 'DM Sans', sans-serif;">alice.eth</div></div>
+      </div>
+      <div class="tray-row">
+        <div><div class="tray-row-name">network</div><div class="tray-row-sub" style="font-family: 'DM Sans', sans-serif;">etherex devnet</div></div>
+      </div>
+      <div class="tray-row">
+        <div><div class="tray-row-name">account code</div><div class="tray-row-sub" style="font-family: 'DM Sans', sans-serif;">grantr default · v1</div></div>
+      </div>
+      <div class="tray-row" style="border-bottom: none;">
+        <div><div class="tray-row-name">created</div><div class="tray-row-sub" style="font-family: 'DM Sans', sans-serif;">2 days ago · sponsored</div></div>
+      </div>
+    </div>
+    <div class="tray-action"><button class="tray-btn">export data</button></div>
+    <div class="tray-spacer"></div>
+  `
+};
+
+function openTray(id) {
+  const tray = document.getElementById('tray');
+  const overlay = document.getElementById('tray-overlay');
+  const content = document.getElementById('tray-content');
+  content.innerHTML = trayTemplates[id] || '';
+  overlay.classList.add('open');
+  tray.classList.add('open');
+}
+
+function closeTray() {
+  document.getElementById('tray').classList.remove('open');
+  document.getElementById('tray-overlay').classList.remove('open');
+}
+
+function togglePastSessions() {
+  const group = document.getElementById('past-sessions');
+  const chev = document.getElementById('past-sessions-chevron');
+  const isOpen = group.style.display !== 'none';
+  group.style.display = isOpen ? 'none' : 'flex';
+  chev.textContent = isOpen ? '›' : '⌄';
+}
+
+const addrData = {
+  own: {
+    sub: 'showing 1 own address',
+    rows: [
+      { avatar: 'a', color: '#22c55e', name: 'alice.eth', addr: '0x8f2e...4c7a', pill: 'this device', pillColor: '#22c55e' }
+    ]
+  },
+  guardians: {
+    sub: 'showing 3 guardians · 2-of-3 quorum',
+    rows: [
+      { avatar: 'b', color: '#f59e0b', name: 'bob.eth', addr: '0x8f2e...7e3a', pill: '1 of 3', pillColor: '#f59e0b' },
+      { avatar: 'c', color: '#f59e0b', name: 'carol.eth', addr: '0x1a4d...f291', pill: '2 of 3', pillColor: '#f59e0b' },
+      { avatar: 'd', color: '#f59e0b', name: 'dan.eth', addr: '0x9c5f...1b4c', pill: '3 of 3', pillColor: '#f59e0b' }
+    ]
+  },
+  agents: {
+    sub: 'showing 2 authorized agents',
+    rows: [
+      { avatar: 'l', color: '#3b82f6', name: 'lp rebalancer', addr: '0x4a2c...9d8f', pill: 'active', pillColor: '#3b82f6' },
+      { avatar: 'e', color: '#3b82f6', name: 'ens renewer', addr: '0x7e1b...a3c2', pill: 'active', pillColor: '#3b82f6' }
+    ]
+  },
+  sponsors: {
+    sub: 'showing 1 gas sponsor',
+    rows: [
+      { avatar: 'g', color: '#22c55e', name: 'grantr paymaster', addr: '0xaa00...0001', pill: 'default', pillColor: '#22c55e' }
+    ]
+  },
+  contracts: {
+    sub: 'showing 3 contracts interacted with',
+    rows: [
+      { avatar: 'u', color: '#555', name: 'uniswap v3', addr: '0xc36a...29d5', pill: '4 tx', pillColor: '#a3a3a3' },
+      { avatar: 'e', color: '#555', name: 'ens registrar', addr: '0x57f1...bf85', pill: '1 tx', pillColor: '#a3a3a3' },
+      { avatar: 'u', color: '#555', name: 'usdc token', addr: '0xa0b8...eb48', pill: '8 tx', pillColor: '#a3a3a3' }
+    ]
+  },
+  sent: {
+    sub: 'showing 2 recent recipients',
+    rows: [
+      { avatar: '?', color: '#555', name: '...9f2b', addr: '0x6d3e...9f2b', pill: '2 min ago', pillColor: '#a3a3a3' },
+      { avatar: '?', color: '#555', name: '...3e8c', addr: '0x8a1c...3e8c', pill: 'yesterday', pillColor: '#a3a3a3' }
+    ]
+  }
+};
+
+function filterAddresses(key) {
+  const data = addrData[key];
+  if (!data) return;
+  document.querySelectorAll('.addr-filters .pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.addrFilter === key);
+  });
+  document.getElementById('addr-sub').textContent = data.sub;
+  const list = document.getElementById('addr-list');
+  list.innerHTML = data.rows.map(r => `
+    <div class="addr-row">
+      <div class="avatar" style="background: ${r.color};">${r.avatar}</div>
+      <div class="addr-info"><div class="addr-name">${r.name}</div><div class="addr-addr">${r.addr}</div></div>
+      <span class="addr-pill" style="color: ${r.pillColor}; background: #141414;">${r.pill}</span>
+    </div>
+  `).join('');
+}
+
+// initialize with guardians when DOM is ready
+document.addEventListener('DOMContentLoaded', () => filterAddresses('guardians'));
+</script>
+
+</body>
+</html>
+
