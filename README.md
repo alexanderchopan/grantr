@@ -2,7 +2,7 @@
 
 ## 1. summary
 
-grantr is a frames-native account, with a wallet built to manage it. as a reference implementation for eip-8141, it covers account creation, recovery, delegation, and multi-device — not swaps, bridging, or the rest of a full financial product. no seed phrase, no lost accounts, no blanket approvals. your passkey signs, your address is permanent, and every permission you grant is enforced by the chain — not by an app asking nicely. open source, documented, and intended as a guide for developers and designers building on frames.
+grantr is a frames-native account, with an app built to manage it. as a reference implementation for eip-8141, it covers account creation, recovery, delegation, and multi-device — not swaps, bridging, or the rest of a full financial product. no seed phrase, no lost accounts, no blanket approvals. your passkey signs, your address is permanent, and every permission you grant is enforced by the chain — not by an app asking nicely. open source, documented, and intended as a guide for developers and designers building on frames.
 
 ## 2. references
 
