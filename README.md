@@ -203,10 +203,6 @@ two mermaid sequence diagrams: recovery via guardians (alice → app → service
 
 ## prototype
 
-### locked screens
-
-welcome · email entry · verification waiting · passkey prompt · creating account · activity feed · sessions tab · addresses tab · profile tab (tiles + list + tray states)
-
 ### demo journeys
 
 1. account creation
@@ -218,5 +214,5 @@ welcome · email entry · verification waiting · passkey prompt · creating acc
 7. grant delegation
 8. agent acts / blocked
 9. revoke delegation
-
-each available as still images (PNG) and animated GIF.
+10. rebalance portfolio (v2)
+11. build transaction (v2)
