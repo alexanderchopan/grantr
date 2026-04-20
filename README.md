@@ -214,5 +214,5 @@ two mermaid sequence diagrams: recovery via guardians (alice → app → service
 7. grant delegation
 8. agent acts / blocked
 9. revoke delegation
-10. rebalance portfolio (v2)
-11. build transaction (v2)
+10. rebalance portfolio  
+11. build transaction  
