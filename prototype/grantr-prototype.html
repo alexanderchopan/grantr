@@ -174,8 +174,8 @@ body {
 
 /* sessions feed */
 .summary { padding: 0 24px 10px; font-size: 13px; color: var(--text-2); font-weight: 500; flex-shrink: 0; }
-.feed { flex: 1; overflow-y: auto; padding: 8px 18px 12px; display: flex; flex-direction: column; gap: 10px; }
-.section-label { font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 1px; padding: 0 2px; margin-top: 4px; }
+.feed { flex: 1; overflow-y: auto; padding: 4px 14px 12px; display: flex; flex-direction: column; gap: 0; }
+.section-label { font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 1px; padding: 14px 4px 8px; }
 .section-label + .session-card { margin-top: -2px; }
 .past-sessions-link { background: transparent; border: none; font-family: inherit; color: var(--text-3); font-size: 12px; padding: 14px 6px 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; width: 100%; text-align: left; }
 .past-sessions-link:hover { color: var(--text-2); }
@@ -183,6 +183,7 @@ body {
 .session-card { background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; }
 .session-card.expired { opacity: 0.4; }
 .session-card.revoked { border-color: #2a1414; }
+.session-card.revoked-anim { opacity: 0.5; transition: opacity 0.7s, border-color 0.7s; border-color: #2a1414; }
 .session-card-header { display: flex; align-items: flex-start; gap: 10px; padding-bottom: 10px; }
 .session-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
 .session-dot.active { background: var(--blue); }
@@ -217,18 +218,31 @@ body {
 .filters::-webkit-scrollbar { display: none; }
 .pill { padding: 6px 12px; border-radius: 999px; border: none; background: #141414; color: var(--text-2); font-size: 11px; font-family: inherit; cursor: pointer; white-space: nowrap; font-weight: 500; }
 .pill.active { background: var(--text-1); color: var(--bg); }
-.entry { background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; }
-.entry.blocked { border-color: #2a1414; }
-.entry-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 10px; }
-.entry-info { display: flex; flex-direction: column; gap: 2px; }
+.entry { background: transparent; padding: 12px 4px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.15s; border-bottom: 0.5px solid #161616; }
+.entry:last-child { border-bottom: none; }
+.entry:hover { background: #0a0a0a; }
+.entry.blocked { border-color: #161616; }
+.entry-avatar { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; flex-shrink: 0; align-self: flex-start; margin-top: 2px; }
+.entry-avatar svg, .entry-avatar img { display: block; width: 100%; height: 100%; }
+.entry-avatar.dim { opacity: 0.55; }
+.entry-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .entry-title { font-size: 13px; color: var(--text-1); font-weight: 500; }
 .entry-title.red { color: var(--red); }
-.entry-sub { font-size: 10px; color: var(--text-4); }
-.entry-amount { font-size: 12px; font-weight: 500; }
+.entry-sub { font-size: 11px; color: var(--text-4); margin-top: 2px; }
+.entry-sub.red { color: var(--red); }
+.entry-right { text-align: right; flex-shrink: 0; }
+.entry-amount { font-size: 14px; font-weight: 500; line-height: 1.1; }
 .entry-amount.white { color: var(--text-1); }
 .entry-amount.green { color: var(--green); }
 .entry-amount.red { color: var(--red); }
-.frames { border-top: 1px solid var(--divider); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.entry-amount-sub { font-size: 10px; color: #555; margin-top: 2px; }
+.entry-chevron { color: #2a2a2a; font-size: 13px; margin-left: 4px; line-height: 1; transition: transform 0.15s, color 0.15s; flex-shrink: 0; align-self: center; }
+.entry:hover .entry-chevron { color: #555; }
+.entry.expanded .entry-chevron { transform: rotate(90deg); color: #555; }
+.entry-pill-blocked { display: inline-block; font-size: 9px; color: var(--red); background: #2a1414; padding: 2px 7px; border-radius: 999px; margin-right: 6px; text-transform: lowercase; font-weight: 500; letter-spacing: 0.3px; vertical-align: middle; position: relative; top: -1px; }
+.entry.expanded { flex-wrap: wrap; }
+.entry:not(.expanded) .frames { display: none; }
+.frames { border-top: 1px solid var(--divider); padding-top: 10px; margin-top: 10px; display: flex; flex-direction: column; gap: 6px; width: 100%; }
 
 /* addresses */
 .addr-filters { padding: 0 24px 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; flex-shrink: 0; }
@@ -347,7 +361,7 @@ body {
   <button class="dev-btn j-built" onclick="journeyEmailRecovery()">2 · email recovery</button>
   <button class="dev-btn j-built" onclick="journeyAddGuardians()">3 · add guardians</button>
   <button class="dev-btn j-built" onclick="journeyRecoverGuardians()">4 · recover via guardians</button>
-  <button class="dev-btn j-todo" onclick="journeyTodo('add second device')">5 · add second device</button>
+  <button class="dev-btn j-built" onclick="journeyAddDevice()">5 · add second device</button>
   <button class="dev-btn j-todo" onclick="journeyTodo('co-sign large tx')">6 · co-sign large tx</button>
   <button class="dev-btn j-todo" onclick="journeyTodo('grant delegation')">7 · grant delegation</button>
   <button class="dev-btn j-todo" onclick="journeyTodo('agent acts / blocked')">8 · agent acts / blocked</button>
@@ -831,6 +845,228 @@ body {
     <div class="bottom"></div>
   </div>
 
+  <!-- ============== ADD DEVICE: INTRO ============== -->
+  <div id="screen-device-intro" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="closeTray(); go('profile')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+        <div class="stepper-seg"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">add a<br>second device.</div>
+      <div class="sub">register your laptop or another phone as a second signer. above a threshold you pick, both devices have to sign.</div>
+      <div style="background: var(--card); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; margin-top: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">each device has its own passkey</div></div>
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">small txs: one device signs</div></div>
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">above threshold: both devices required</div></div>
+      </div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="go('device-handoff')">continue</button>
+    </div>
+  </div>
+
+  <!-- ============== ADD DEVICE: HANDOFF ============== -->
+  <div id="screen-device-handoff" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('device-intro')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">open grantr on<br>your laptop.</div>
+      <div class="sub">on your other device, open grantr and sign in. you'll be prompted to register this device as a second signer.</div>
+      <div style="background: var(--card); border-radius: 14px; padding: 18px 16px; margin-top: 16px; display: flex; flex-direction: column; align-items: center; gap: 14px;">
+        <div style="width: 120px; height: 120px; background: #fff; border-radius: 10px; padding: 10px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
+            <rect x="0" y="0" width="25" height="25" fill="#000"/><rect x="5" y="5" width="15" height="15" fill="#fff"/><rect x="9" y="9" width="7" height="7" fill="#000"/>
+            <rect x="75" y="0" width="25" height="25" fill="#000"/><rect x="80" y="5" width="15" height="15" fill="#fff"/><rect x="84" y="9" width="7" height="7" fill="#000"/>
+            <rect x="0" y="75" width="25" height="25" fill="#000"/><rect x="5" y="80" width="15" height="15" fill="#fff"/><rect x="9" y="84" width="7" height="7" fill="#000"/>
+            <rect x="35" y="10" width="6" height="6" fill="#000"/><rect x="45" y="10" width="6" height="6" fill="#000"/><rect x="55" y="10" width="12" height="6" fill="#000"/>
+            <rect x="30" y="20" width="6" height="6" fill="#000"/><rect x="45" y="20" width="6" height="6" fill="#000"/><rect x="60" y="20" width="6" height="6" fill="#000"/>
+            <rect x="10" y="35" width="6" height="6" fill="#000"/><rect x="20" y="35" width="12" height="6" fill="#000"/><rect x="40" y="35" width="6" height="6" fill="#000"/><rect x="55" y="35" width="6" height="6" fill="#000"/><rect x="70" y="35" width="12" height="6" fill="#000"/>
+            <rect x="10" y="45" width="12" height="6" fill="#000"/><rect x="35" y="45" width="6" height="6" fill="#000"/><rect x="50" y="45" width="12" height="6" fill="#000"/><rect x="70" y="45" width="6" height="6" fill="#000"/><rect x="85" y="45" width="6" height="6" fill="#000"/>
+            <rect x="20" y="55" width="6" height="6" fill="#000"/><rect x="35" y="55" width="12" height="6" fill="#000"/><rect x="55" y="55" width="6" height="6" fill="#000"/><rect x="70" y="55" width="6" height="6" fill="#000"/><rect x="85" y="55" width="6" height="6" fill="#000"/>
+            <rect x="40" y="65" width="6" height="6" fill="#000"/><rect x="55" y="65" width="12" height="6" fill="#000"/><rect x="75" y="65" width="6" height="6" fill="#000"/>
+            <rect x="35" y="75" width="6" height="6" fill="#000"/><rect x="50" y="75" width="6" height="6" fill="#000"/><rect x="70" y="75" width="6" height="6" fill="#000"/><rect x="85" y="75" width="6" height="6" fill="#000"/>
+            <rect x="45" y="85" width="12" height="6" fill="#000"/><rect x="65" y="85" width="6" height="6" fill="#000"/><rect x="80" y="85" width="12" height="6" fill="#000"/>
+          </svg>
+        </div>
+        <div style="font-size: 11px; color: var(--text-4); text-align: center; line-height: 1.5;">scan this code with your laptop camera<br>or visit grantr.app/link</div>
+      </div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-secondary" onclick="go('device-laptop-ready')">simulate laptop signed in</button>
+    </div>
+  </div>
+
+  <!-- ============== ADD DEVICE: LAPTOP READY ============== -->
+  <div id="screen-device-laptop-ready" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('device-handoff')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">confirm your<br>new device.</div>
+      <div class="sub">your laptop created a new passkey. review it and add it to your account.</div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px;">
+        <div style="background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: #141414; display: flex; align-items: center; justify-content: center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="14" height="18" rx="2" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><line x1="11" y1="18" x2="13" y2="18" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 12px; color: var(--text-1); font-weight: 500;">iphone 15</div>
+            <div style="font-size: 10px; color: var(--text-4); margin-top: 2px;">passkey · 2 days ago</div>
+          </div>
+          <div style="font-size: 9px; color: #22c55e; background: #141414; padding: 3px 8px; border-radius: 999px;">this device</div>
+        </div>
+        <div style="background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 1px solid #3b82f6;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: #141414; display: flex; align-items: center; justify-content: center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="12" rx="1.5" stroke="#3b82f6" stroke-width="1.5" fill="none"/><line x1="2" y1="19" x2="22" y2="19" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 12px; color: var(--text-1); font-weight: 500;">macbook air</div>
+            <div style="font-size: 10px; color: var(--text-4); margin-top: 2px;">new passkey · just now</div>
+          </div>
+          <div style="font-size: 9px; color: #3b82f6; background: #141414; padding: 3px 8px; border-radius: 999px;">adding</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 12px; background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 11px; color: var(--text-3); line-height: 1.5;">each device stores its own p-256 key in its secure enclave. the private keys never leave the device.</div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="go('device-threshold')">continue</button>
+    </div>
+  </div>
+
+  <!-- ============== ADD DEVICE: SET THRESHOLD ============== -->
+  <div id="screen-device-threshold" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('device-laptop-ready')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">set the<br>threshold.</div>
+      <div class="sub">above this amount, both devices will have to sign. below, either device alone works.</div>
+
+      <div style="margin-top: 16px;">
+        <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">both devices required above</div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+          <button class="auth-pill" data-dev-threshold="500" onclick="setDeviceThreshold(500)">$500</button>
+          <button class="auth-pill active" data-dev-threshold="1000" onclick="setDeviceThreshold(1000)">$1,000</button>
+          <button class="auth-pill" data-dev-threshold="5000" onclick="setDeviceThreshold(5000)">$5,000</button>
+          <button class="auth-pill" data-dev-threshold="10000" onclick="setDeviceThreshold(10000)">$10k</button>
+        </div>
+      </div>
+
+      <div style="background: var(--card); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: var(--text-4);">below threshold</span>
+          <span style="color: var(--text-2);">1 of 2 devices</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: var(--text-4);">at or above</span>
+          <span style="color: var(--text-2);" id="device-threshold-summary">2 of 2 · above $1,000</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: var(--text-4);">revocable from</span>
+          <span style="color: var(--text-2);">either device</span>
+        </div>
+      </div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="openTxPreview('add-device')">add device</button>
+    </div>
+  </div>
+
+  <!-- ============== ADD DEVICE: SUBMITTING ============== -->
+  <div id="screen-device-submitting" class="screen onboarding">
+    <div class="top">
+      <div></div>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+    <div class="main">
+      <div>
+        <div class="headline small">registering<br>your laptop.</div>
+        <div class="gas-pill">
+          <div class="gas-pill-dot"></div>
+          gas paid by grantr
+        </div>
+      </div>
+      <div class="stages">
+        <div id="dstage-1" class="stage active">
+          <div class="stage-icon"><div class="spinner"></div></div>
+          <div class="stage-label">signing with phone passkey</div>
+        </div>
+        <div id="dstage-2" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">registering laptop public key</div>
+        </div>
+        <div id="dstage-3" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">installing threshold policy</div>
+        </div>
+      </div>
+      <details class="frame-detail">
+        <summary>frame detail</summary>
+        <div class="frame-detail-body">
+          <div class="frame-detail-row">
+            <span class="frame-badge verify">verify</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">phone passkey signature</div>
+              <div class="frame-detail-sub">p-256 · authorizes the device addition</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge approve">approve</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">gas sponsored</div>
+              <div class="frame-detail-sub">grantr paymaster</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge default">default</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">add laptop key · set threshold</div>
+              <div class="frame-detail-sub">verify frame now accepts either passkey below threshold, requires both above</div>
+            </div>
+          </div>
+          <div class="frame-detail-footnote">both devices show your account immediately. either can sign below threshold. both required above.</div>
+        </div>
+      </details>
+    </div>
+    <div class="bottom"></div>
+  </div>
+
   <!-- ============== RECOVER VIA GUARDIANS: PATH CHOICE ============== -->
   <div id="screen-recover-path" class="screen onboarding">
     <div class="top">
@@ -1016,7 +1252,7 @@ body {
       </div>
       <div class="balance-amount">$2,847.30</div>
       <div class="identity-row">
-        <div class="avatar-large"><svg viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
+        <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
         <div class="identity-meta">
           <span class="identity-name">alice.eth</span>
           <span class="identity-addr">...4c7a</span>
@@ -1078,7 +1314,7 @@ body {
       <div class="balance-label">balance</div>
       <div class="balance-amount">$2,847.30</div>
       <div class="identity-row">
-        <div class="avatar-large"><svg viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
+        <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
         <div class="identity-meta">
           <span class="identity-name">alice.eth</span>
           <span class="identity-addr">...4c7a</span>
@@ -1126,7 +1362,7 @@ body {
         </div>
         <div class="card-footer">
           <div class="card-footer-text">3 executed · 1 blocked</div>
-          <button class="revoke-link">revoke</button>
+          <button class="revoke-link" onclick="requestRevoke(this)">revoke</button>
         </div>
       </div>
       <div class="session-card">
@@ -1144,7 +1380,7 @@ body {
         </div>
         <div class="card-footer">
           <div class="card-footer-text">0 executed</div>
-          <button class="revoke-link">revoke</button>
+          <button class="revoke-link" onclick="requestRevoke(this)">revoke</button>
         </div>
       </div>
       <button class="past-sessions-link" onclick="togglePastSessions()">
@@ -1189,7 +1425,7 @@ body {
       <div class="balance-label">balance</div>
       <div class="balance-amount">$2,847.30</div>
       <div class="identity-row">
-        <div class="avatar-large"><svg viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
+        <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
         <div class="identity-meta">
           <span class="identity-name">alice.eth</span>
           <span class="identity-addr">...4c7a</span>
@@ -1197,88 +1433,102 @@ body {
       </div>
     </div>
     <div class="filters">
-      <button class="pill active">all</button>
-      <button class="pill">verify</button>
-      <button class="pill">approve</button>
-      <button class="pill">sender</button>
-      <button class="pill">default</button>
+      <button class="pill active" data-filter="all" onclick="filterActivity('all')">all</button>
+      <button class="pill" data-filter="verify" onclick="filterActivity('verify')">verify</button>
+      <button class="pill" data-filter="approve" onclick="filterActivity('approve')">approve</button>
+      <button class="pill" data-filter="sender" onclick="filterActivity('sender')">sender</button>
+      <button class="pill" data-filter="default" onclick="filterActivity('default')">default</button>
     </div>
     <div class="feed">
-      <div class="section-label">today</div>
-      <div class="entry">
-        <div class="entry-header">
-          <div class="entry-info">
-            <div class="entry-title">sent 0.5 ETH to ...9f2b</div>
-            <div class="entry-sub">2 min ago · 2 frames</div>
-          </div>
-          <div class="entry-amount white">-$1,390</div>
+      <div class="section-label" style="padding-top: 6px;">today</div>
+
+      <div class="entry expanded" onclick="toggleEntry(this)" data-frames="verify,sender" data-blocked="false">
+        <div class="entry-avatar" id="actx-eth"></div>
+        <div class="entry-body">
+          <div class="entry-title">sent ETH</div>
+          <div class="entry-sub">to ...9f2b · 2 min ago</div>
         </div>
+        <div class="entry-right">
+          <div class="entry-amount white">−0.5</div>
+          <div class="entry-amount-sub">ETH · $1,390</div>
+        </div>
+        <div class="entry-chevron">›</div>
         <div class="frames">
-          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p256</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">send 0.5 ETH to ...9f2b</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p-256</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">transfer 0.5 ETH to ...9f2b</div><div class="frame-status pass">✓</div></div>
         </div>
       </div>
-      <div class="entry blocked">
-        <div class="entry-header">
-          <div class="entry-info">
-            <div class="entry-title red">lp rebalancer blocked</div>
-            <div class="entry-sub">42 min ago · via session · 2 frames</div>
-          </div>
-          <div class="entry-amount red">blocked</div>
+
+      <div class="entry blocked" onclick="toggleEntry(this)" data-frames="verify,sender" data-blocked="true">
+        <div class="entry-avatar dim" id="actx-rebal-blocked"></div>
+        <div class="entry-body">
+          <div class="entry-title"><span class="entry-pill-blocked">blocked</span>lp rebalancer</div>
+          <div class="entry-sub">tried transfer · 42 min ago</div>
         </div>
+        <div class="entry-chevron">›</div>
         <div class="frames">
           <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">session key · selector not allowed</div><div class="frame-status fail">✗</div></div>
           <div class="frame-row"><div class="frame-mode muted">sender</div><div class="frame-desc muted">transfer USDC</div><div class="frame-status" style="color:#555">—</div></div>
         </div>
       </div>
-      <div class="entry">
-        <div class="entry-header">
-          <div class="entry-info">
-            <div class="entry-title">lp rebalancer · rebalance</div>
-            <div class="entry-sub">1 hr ago · via session · 2 frames</div>
-          </div>
+
+      <div class="entry" onclick="toggleEntry(this)" data-frames="verify,sender" data-blocked="false">
+        <div class="entry-avatar" id="actx-uniswap"></div>
+        <div class="entry-body">
+          <div class="entry-title">rebalanced on uniswap</div>
+          <div class="entry-sub">via lp rebalancer · 1 hr ago</div>
         </div>
+        <div class="entry-chevron">›</div>
         <div class="frames">
           <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">session key · rebalance()</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">rebalance on uniswap v3</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">uniswap v3 position manager</div><div class="frame-status pass">✓</div></div>
         </div>
       </div>
-      <div class="entry">
-        <div class="entry-header">
-          <div class="entry-info">
-            <div class="entry-title">session granted · lp rebalancer</div>
-            <div class="entry-sub">3 hrs ago · 2 frames</div>
-          </div>
+
+      <div class="entry" onclick="toggleEntry(this)" data-frames="verify,approve,default" data-blocked="false">
+        <div class="entry-avatar" id="actx-rebal-granted"></div>
+        <div class="entry-body">
+          <div class="entry-title">granted access</div>
+          <div class="entry-sub">lp rebalancer · 3 hrs ago · gas by grantr</div>
         </div>
+        <div class="entry-chevron">›</div>
         <div class="frames">
-          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p256</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">add session key with scope</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p-256</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode" style="color:#f59e0b;">approve</div><div class="frame-desc">gas sponsored by grantr</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode" style="color:#3b82f6;">default</div><div class="frame-desc">add session key · scoped selectors</div><div class="frame-status pass">✓</div></div>
         </div>
       </div>
-      <div class="section-label" style="margin-top: 12px;">earlier this week</div>
-      <div class="entry">
-        <div class="entry-header">
-          <div class="entry-info">
-            <div class="entry-title">received 250 USDC from ...3e8c</div>
-            <div class="entry-sub">yesterday · 2 frames</div>
-          </div>
-          <div class="entry-amount green">+$250</div>
+
+      <div class="section-label">earlier this week</div>
+
+      <div class="entry" onclick="toggleEntry(this)" data-frames="verify,sender" data-blocked="false">
+        <div class="entry-avatar" id="actx-received"></div>
+        <div class="entry-body">
+          <div class="entry-title">received USDC</div>
+          <div class="entry-sub">from ...3e8c · yesterday</div>
         </div>
+        <div class="entry-right">
+          <div class="entry-amount green">+250</div>
+          <div class="entry-amount-sub">USDC</div>
+        </div>
+        <div class="entry-chevron">›</div>
         <div class="frames">
-          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p256 (sender)</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">transfer 250 USDC from ...3e8c</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">sender's passkey · p-256</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">transfer 250 USDC</div><div class="frame-status pass">✓</div></div>
         </div>
       </div>
-      <div class="entry">
-        <div class="entry-header">
-          <div class="entry-info">
-            <div class="entry-title">account created</div>
-            <div class="entry-sub">2 days ago · gas by grantr · 2 frames</div>
-          </div>
+
+      <div class="entry" onclick="toggleEntry(this)" data-frames="verify,approve,default" data-blocked="false">
+        <div class="entry-avatar" id="actx-alice"></div>
+        <div class="entry-body">
+          <div class="entry-title">account created</div>
+          <div class="entry-sub">2 days ago · gas by grantr</div>
         </div>
+        <div class="entry-chevron">›</div>
         <div class="frames">
-          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p256</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode">default</div><div class="frame-desc">deploy account · set email recovery</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p-256</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode" style="color:#f59e0b;">approve</div><div class="frame-desc">gas sponsored by grantr</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode" style="color:#3b82f6;">default</div><div class="frame-desc">deploy account · set email recovery</div><div class="frame-status pass">✓</div></div>
         </div>
       </div>
     </div>
@@ -1290,7 +1540,7 @@ body {
       <div class="balance-label">balance</div>
       <div class="balance-amount">$2,847.30</div>
       <div class="identity-row">
-        <div class="avatar-large"><svg viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
+        <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
         <div class="identity-meta">
           <span class="identity-name">alice.eth</span>
           <span class="identity-addr">...4c7a</span>
@@ -1475,7 +1725,7 @@ body {
       <div class="balance-label">balance</div>
       <div class="balance-amount">$2,847.30</div>
       <div class="identity-row">
-        <div class="avatar-large"><svg viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
+        <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
         <div class="identity-meta">
           <span class="identity-name">alice.eth</span>
           <span class="identity-addr">...4c7a</span>
@@ -1503,19 +1753,21 @@ body {
     <!-- activity feed -->
     <div class="section-label" style="padding: 0 18px 8px;">recent activity</div>
     <div class="feed" style="padding:0 18px 12px;">
-      <div class="entry">
+      <div class="entry" onclick="toggleEntry(this)">
         <div class="entry-header">
           <div class="entry-info"><div class="entry-title">session granted · lp rebalancer</div><div class="entry-sub">just now · gas by grantr</div></div>
+          <div class="entry-chevron">›</div>
         </div>
         <div class="frames">
           <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p256</div><div class="frame-status pass">✓</div></div>
           <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">add session key with scope</div><div class="frame-status pass">✓</div></div>
         </div>
       </div>
-      <div class="entry">
+      <div class="entry" onclick="toggleEntry(this)">
         <div class="entry-header">
           <div class="entry-info"><div class="entry-title">sent 0.5 ETH to ...9f2b</div><div class="entry-sub">2 min ago</div></div>
           <div class="entry-amount white">-$1,390</div>
+          <div class="entry-chevron">›</div>
         </div>
         <div class="frames">
           <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p256</div><div class="frame-status pass">✓</div></div>
@@ -1894,6 +2146,72 @@ const allScreens = [...tabScreens, 'welcome', 'email', 'verify', 'passkey', 'cre
 // each journey sets up state and jumps to the starting screen.
 // built = fully walked journey · todo = placeholder until screens exist.
 
+function toggleEntry(el) {
+  if (el.classList.contains('expanded')) {
+    el.classList.remove('expanded');
+  } else {
+    el.classList.add('expanded');
+  }
+}
+
+function filterActivity(filter) {
+  // update pill active state
+  document.querySelectorAll('.filters .pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.filter === filter);
+  });
+  const entries = document.querySelectorAll('#screen-activity .entry');
+  entries.forEach(e => {
+    const frames = (e.dataset.frames || '').split(',');
+    const blocked = e.dataset.blocked === 'true';
+    let show = false;
+    if (filter === 'all') show = true;
+    else if (filter === 'verify') show = blocked; // verify filter = "what got rejected"
+    else if (filter === 'approve') show = frames.includes('approve');
+    else if (filter === 'sender') show = frames.includes('sender');
+    else if (filter === 'default') show = frames.includes('default');
+    e.style.display = show ? '' : 'none';
+  });
+  // hide section labels with no visible entries after them
+  const feed = document.querySelector('#screen-activity .feed');
+  if (!feed) return;
+  const children = Array.from(feed.children);
+  children.forEach((child, i) => {
+    if (!child.classList.contains('section-label')) return;
+    // walk forward until next section-label or end, check if any entry is visible
+    let hasVisible = false;
+    for (let j = i + 1; j < children.length; j++) {
+      const next = children[j];
+      if (next.classList.contains('section-label')) break;
+      if (next.classList.contains('entry') && next.style.display !== 'none') {
+        hasVisible = true;
+        break;
+      }
+    }
+    child.style.display = hasVisible ? '' : 'none';
+  });
+  // if no entries visible at all, show an empty state
+  const anyVisible = Array.from(entries).some(e => e.style.display !== 'none');
+  let emptyEl = document.getElementById('activity-empty');
+  if (!anyVisible) {
+    if (!emptyEl) {
+      emptyEl = document.createElement('div');
+      emptyEl.id = 'activity-empty';
+      emptyEl.style.cssText = 'padding: 40px 16px; text-align: center; font-size: 12px; color: var(--text-4); line-height: 1.6;';
+      feed.appendChild(emptyEl);
+    }
+    const msgs = {
+      verify:  'nothing rejected. every transaction passed its verify frame.',
+      approve: 'no sponsored transactions yet.',
+      sender:  'no send or call actions yet.',
+      default: 'no policy changes yet.'
+    };
+    emptyEl.textContent = msgs[filter] || 'no activity.';
+    emptyEl.style.display = '';
+  } else if (emptyEl) {
+    emptyEl.style.display = 'none';
+  }
+}
+
 function toggleDevtools() {
   const panel = document.getElementById('devtools');
   const icon = document.getElementById('devtools-toggle-icon');
@@ -1937,6 +2255,12 @@ function journeyRecoverGuardians() {
   // lost device flow with guardians as recovery path
   closeAction();
   go('welcome');
+}
+
+function journeyAddDevice() {
+  closeAction();
+  closeTray();
+  go('device-intro');
 }
 
 function journeyRebalance() {
@@ -2212,14 +2536,15 @@ const trayTemplates = {
         <div><div class="tray-row-name">single signer</div><div class="tray-row-sub" style="font-family: 'DM Sans', sans-serif;">any device can sign</div></div>
       </div>
     </div>
-    <div class="tray-action"><button class="tray-btn">add device</button></div>
+    <div class="tray-action"><button class="tray-btn" onclick="closeTray(); journeyAddDevice();">add device</button></div>
     <div class="tray-spacer"></div>
   `,
   account: `
     <div class="tray-header"><div class="tray-title">account</div></div>
     <div class="tray-list">
-      <div class="tray-row">
-        <div><div class="tray-row-name">address</div><div class="tray-row-sub" style="word-break: break-all;">0x8f2e4d9b7a3f1c8e6d5a2b4c9f7e0d3a1b5c4c7a</div></div>
+      <div class="tray-row" id="account-addr-row" onclick="copyAddressFromTray(this)" style="cursor: pointer;">
+        <div style="flex:1;min-width:0;"><div class="tray-row-name">address</div><div class="tray-row-sub" style="word-break: break-all;">0x8f2e4d9b7a3f1c8e6d5a2b4c9f7e0d3a1b5c4c7a</div></div>
+        <span style="font-size:10px;color:var(--text-4);flex-shrink:0;margin-left:8px;" id="account-addr-copy">copy</span>
       </div>
       <div class="tray-row">
         <div><div class="tray-row-name">ens</div><div class="tray-row-sub" style="font-family: 'DM Sans', sans-serif;">alice.eth</div></div>
@@ -2234,7 +2559,7 @@ const trayTemplates = {
         <div><div class="tray-row-name">created</div><div class="tray-row-sub" style="font-family: 'DM Sans', sans-serif;">2 days ago · sponsored</div></div>
       </div>
     </div>
-    <div class="tray-action"><button class="tray-btn">export data</button></div>
+    <div class="tray-action"><button class="tray-btn" onclick="exportAccountData(this)">export data</button></div>
     <div class="tray-spacer"></div>
   `
 };
@@ -2277,6 +2602,26 @@ function toggleAuthKeepRunning() {
   authPolicy.keepRunning = !authPolicy.keepRunning;
   const el = document.getElementById('auth-keep-toggle');
   if (el) el.classList.toggle('on', authPolicy.keepRunning);
+}
+
+// ============== ADD DEVICE ==============
+const devicePolicy = { threshold: 1000 };
+
+function setDeviceThreshold(val) {
+  devicePolicy.threshold = val;
+  document.querySelectorAll('[data-dev-threshold]').forEach(b => {
+    b.classList.toggle('active', Number(b.dataset.devThreshold) === val);
+  });
+  const summary = document.getElementById('device-threshold-summary');
+  if (summary) summary.textContent = `2 of 2 · above $${val.toLocaleString()}`;
+}
+
+function startAddingDevice() {
+  go('device-submitting');
+  setTimeout(() => { setStage(1, 'done', 'd'); setStage(2, 'active', 'd'); }, 2000);
+  setTimeout(() => { setStage(2, 'done', 'd'); setStage(3, 'active', 'd'); }, 4000);
+  setTimeout(() => { setStage(3, 'done', 'd'); }, 6000);
+  setTimeout(() => { go('profile'); }, 7200);
 }
 
 // ============== SPONSOR ==============
@@ -2354,6 +2699,11 @@ function selectVerifyPolicy(type) {
   if (type === 'guardian') {
     // guardian quorum IS the add-guardians journey — route there directly
     journeyAddGuardians();
+    return;
+  }
+  if (type === 'threshold') {
+    // threshold by value IS the add-device journey
+    journeyAddDevice();
     return;
   }
   // others open a configure sheet
@@ -2568,8 +2918,111 @@ const txPreviewData = {
       txPreviewData['add-guardians'].details[0][1] = names;
       txPreviewData['add-guardians'].frames[2].sub = `2-of-3 · ${names}`;
     }
+  },
+  'add-device': {
+    title: 'register second device',
+    desc: 'add your laptop as a second signer. below the threshold, either device can sign alone. above, both devices must sign.',
+    frames: [
+      { type: 'verify', name: 'phone passkey signature', sub: 'p-256 · this device' },
+      { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster pays' },
+      { type: 'default', name: 'add laptop key · set threshold', sub: '—' }
+    ],
+    details: [
+      ['new device', 'macbook air'],
+      ['threshold', '—'],
+      ['below threshold', 'either device'],
+      ['at or above', 'both devices'],
+      ['network', 'etherex devnet'],
+      ['gas', '0 ETH · sponsored']
+    ],
+    onConfirm: () => { closeTxPreview(); startAddingDevice(); },
+    onOpen: () => {
+      const t = `$${devicePolicy.threshold.toLocaleString()}`;
+      txPreviewData['add-device'].details[1][1] = t;
+      txPreviewData['add-device'].frames[2].sub = `requires both passkeys above ${t}`;
+    }
+  },
+  revoke: {
+    title: 'revoke session',
+    desc: 'remove the agent\'s session key. any future frame tx from this agent will fail at verify.',
+    frames: [
+      { type: 'verify', name: 'passkey signature', sub: 'p-256 · this device' },
+      { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster pays' },
+      { type: 'default', name: 'remove session key', sub: '—' }
+    ],
+    details: [
+      ['agent', '—'],
+      ['executions so far', '—'],
+      ['after revoke', 'agent can do nothing'],
+      ['network', 'etherex devnet'],
+      ['gas', '0 ETH · sponsored']
+    ],
+    onConfirm: () => {
+      closeTxPreview();
+      if (pendingRevoke) {
+        pendingRevoke.classList.add('revoked-anim');
+        setTimeout(() => {
+          pendingRevoke.classList.add('revoked');
+          pendingRevoke.classList.remove('revoked-anim');
+          const dot = pendingRevoke.querySelector('.session-dot');
+          if (dot) { dot.classList.remove('active'); dot.classList.add('revoked'); }
+          const name = pendingRevoke.querySelector('.session-name');
+          if (name) name.style.color = '#ef4444';
+          const btn = pendingRevoke.querySelector('.revoke-link');
+          if (btn) { btn.textContent = 'revoked'; btn.style.color = '#555'; btn.style.pointerEvents = 'none'; }
+          pendingRevoke = null;
+        }, 700);
+      }
+    },
+    onOpen: () => {
+      if (!pendingRevoke) return;
+      const name = pendingRevoke.querySelector('.session-name')?.textContent || '—';
+      const footer = pendingRevoke.querySelector('.card-footer-text')?.textContent || '—';
+      txPreviewData.revoke.details[0][1] = name;
+      txPreviewData.revoke.details[1][1] = footer;
+      txPreviewData.revoke.frames[2].sub = `${name} session key`;
+    }
   }
 };
+
+let pendingRevoke = null;
+function requestRevoke(btn) {
+  pendingRevoke = btn.closest('.session-card');
+  openTxPreview('revoke');
+}
+
+function exportAccountData(btn) {
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'preparing...';
+  btn.style.opacity = '0.7';
+  setTimeout(() => {
+    btn.textContent = 'sent to alice@example.com';
+    btn.style.color = '#22c55e';
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.style.opacity = '1';
+      btn.style.color = '';
+      btn.disabled = false;
+    }, 2500);
+  }, 1000);
+}
+
+function copyAddressFromTray(row) {
+  const addr = '0x8f2e4d9b7a3f1c8e6d5a2b4c9f7e0d3a1b5c4c7a';
+  const label = document.getElementById('account-addr-copy');
+  try {
+    navigator.clipboard && navigator.clipboard.writeText(addr);
+  } catch (e) {}
+  if (label) {
+    label.textContent = 'copied';
+    label.style.color = '#22c55e';
+    setTimeout(() => {
+      label.textContent = 'copy';
+      label.style.color = '';
+    }, 1500);
+  }
+}
 
 let currentTxPreview = null;
 
@@ -2665,16 +3118,44 @@ function letterAvatar(letter, bg) {
   return `<div class="addr-avatar letter" style="background: ${bg};">${letter}</div>`;
 }
 
-// identicon avatar for contracts, agents, sent recipients
+// identicon avatar — use ONLY for unknown addresses (contracts/senders with no name)
 function identAvatar(seed, tone) {
   return `<div class="addr-avatar">${identicon(seed, tone)}</div>`;
+}
+
+// ens-style gradient portrait — deterministic two-color blob seeded from the ens
+// real ens folks have real pfps; we fake one that looks like an abstract gradient portrait
+function pfpAvatar(seed) {
+  // 8 soft color pairs — from a consumer palette. pick deterministically.
+  const palettes = [
+    ['#fca5a5', '#c084fc'], // coral → lavender
+    ['#fcd34d', '#fb923c'], // sun → amber
+    ['#86efac', '#67e8f9'], // mint → sky
+    ['#c4b5fd', '#f9a8d4'], // lilac → rose
+    ['#fdba74', '#f472b6'], // peach → pink
+    ['#6ee7b7', '#a5b4fc'], // seafoam → periwinkle
+    ['#fde68a', '#fca5a5'], // butter → coral
+    ['#93c5fd', '#c4b5fd']  // sky → lilac
+  ];
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = ((h << 5) - h + seed.charCodeAt(i)) | 0;
+  const p = palettes[Math.abs(h) % palettes.length];
+  // rotate the gradient by a seeded amount for variety
+  const angle = (Math.abs(h >> 3) % 8) * 45;
+  const gid = 'pfp-' + Math.abs(h).toString(36);
+  return `<div class="addr-avatar"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;"><defs><linearGradient id="${gid}" gradientTransform="rotate(${angle} 16 16)"><stop offset="0%" stop-color="${p[0]}"/><stop offset="100%" stop-color="${p[1]}"/></linearGradient></defs><rect width="32" height="32" fill="url(#${gid})"/></svg></div>`;
+}
+
+// logo avatar for known protocols. pass an image url.
+function logoAvatar(url) {
+  return `<div class="addr-avatar" style="background:#fff;"><img src="${url}" style="width:72%;height:72%;object-fit:contain;display:block;margin:14%;" alt=""/></div>`;
 }
 
 const addrData = {
   own: {
     sub: 'showing 1 own address',
     rows: [
-      { avatar: identAvatar('alice.eth', 'green'), name: 'alice.eth', addr: '...4c7a', pill: 'this device', pillColor: '#22c55e' }
+      { avatar: `<div class="addr-avatar"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>`, name: 'alice.eth', addr: '...4c7a', pill: 'this device', pillColor: '#22c55e' }
     ]
   },
   guardians: {
@@ -2745,13 +3226,27 @@ function renderAddresses() {
     subEl.textContent = data.sub;
   }
   const list = document.getElementById('addr-list');
-  list.innerHTML = filtered.map(r => `
-    <div class="addr-row">
+  list.innerHTML = filtered.map((r, i) => `
+    <div class="addr-row" onclick="copyAddrRow(this, '${r.addr}')" style="cursor: pointer;">
       ${r.avatar}
       <div class="addr-info"><div class="addr-name">${r.name}</div><div class="addr-addr">${r.addr}</div></div>
       <span class="addr-pill" style="color: ${r.pillColor}; background: #141414;">${r.pill}</span>
     </div>
   `).join('');
+}
+
+function copyAddrRow(row, addr) {
+  try { navigator.clipboard && navigator.clipboard.writeText(addr); } catch (e) {}
+  const pill = row.querySelector('.addr-pill');
+  if (!pill) return;
+  const origText = pill.textContent;
+  const origColor = pill.style.color;
+  pill.textContent = 'copied';
+  pill.style.color = '#22c55e';
+  setTimeout(() => {
+    pill.textContent = origText;
+    pill.style.color = origColor;
+  }, 1200);
 }
 
 // initialize with own when DOM is ready
@@ -2770,6 +3265,27 @@ document.addEventListener('DOMContentLoaded', () => {
     if (recov) recov.innerHTML = identicon(seed, tone);
   }
   renderGuardianPool();
+  // populate activity-feed avatars — slots are existing .entry-avatar divs, we set their inner content
+  const pfpInner = (seed) => {
+    const palettes = [['#fca5a5','#c084fc'],['#fcd34d','#fb923c'],['#86efac','#67e8f9'],['#c4b5fd','#f9a8d4'],['#fdba74','#f472b6'],['#6ee7b7','#a5b4fc'],['#fde68a','#fca5a5'],['#93c5fd','#c4b5fd']];
+    let h = 0; for (let i = 0; i < seed.length; i++) h = ((h << 5) - h + seed.charCodeAt(i)) | 0;
+    const p = palettes[Math.abs(h) % palettes.length];
+    const angle = (Math.abs(h >> 3) % 8) * 45;
+    const gid = 'pfp-' + Math.abs(h).toString(36);
+    return `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;"><defs><linearGradient id="${gid}" gradientTransform="rotate(${angle} 16 16)"><stop offset="0%" stop-color="${p[0]}"/><stop offset="100%" stop-color="${p[1]}"/></linearGradient></defs><rect width="32" height="32" fill="url(#${gid})"/></svg>`;
+  };
+  const logoInner = (url) => `<img src="${url}" style="width:72%;height:72%;object-fit:contain;display:block;margin:14%;" alt=""/>`;
+  const setSlot = (id, inner, whiteBg) => {
+    const el = document.getElementById(id);
+    if (el) { el.innerHTML = inner; if (whiteBg) el.style.background = '#fff'; }
+  };
+  const aliceInner = `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg>`;
+  setSlot('actx-eth', logoInner('https://assets.coingecko.com/coins/images/279/large/ethereum.png'), true);
+  setSlot('actx-rebal-blocked', pfpInner('lp-rebalancer'));
+  setSlot('actx-uniswap', logoInner('https://assets.coingecko.com/coins/images/12504/large/uni.jpg'), true);
+  setSlot('actx-rebal-granted', pfpInner('lp-rebalancer'));
+  setSlot('actx-received', logoInner('https://assets.coingecko.com/coins/images/6319/large/usdc.png'), true);
+  setSlot('actx-alice', aliceInner);
 });
 
 // ============== GUARDIAN SELECTION ==============
