@@ -171,11 +171,12 @@ five tabs with persistent balance bar. see prototype for complete screen set.
 
 ## 10. feedback
 
-~30 toasts organized by journey. green = success, red = failure/blocked, amber = warning, neutral = informational. see spec for full inventory.
+~30 toasts organized by journey. green = success, red = failure/blocked, amber = warning, neutral = informational. 
+
 
 ## 11. user flow diagrams
 
-two mermaid sequence diagrams: recovery via guardians (alice → app → service → guardians → chain) and delegation (grant → act → block → revoke). see spec for full diagrams.
+superseded by prototype. 
 
 ## 12. constraints
 
