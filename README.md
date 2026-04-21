@@ -1,4 +1,8 @@
-[![Status: work in progress](https://img.shields.io/badge/status-work%20in%20progress-orange)]()
+grantr | frames-native smart account · eip-8141 reference implementation
+
+# [grantr](https://alexanderchopan.github.io/grantr/)
+
+![Status: work in progress](https://img.shields.io/badge/status-work%20in%20progress-orange)
 
 # grantr
 
@@ -8,9 +12,9 @@ grantr is a frames-native account, with an app built to manage it. as a referenc
 
 ## 2. references
 
-- [eip8141.io](https://eip8141.io) is the protocol itself — opcodes, frame modes, and the rationale behind the design. [demo.eip-8141.ethrex.xyz](https://demo.eip-8141.ethrex.xyz) is the existing frame transaction demo, with generic examples like gasless approve+swap and LP rebalance with USDC gas payment. in both, the frames are the main character. grantr is a wallet built on frames where the user is the main character — onboarding, recovery, delegation, and multi-device policies, all surfaced through consumer ux.
-- **what grantr exercises from the spec:** `VERIFY` frames with custom signature schemes (passkeys via P-256), `APPROVE` for execution and payment (sponsor pays user's gas), session keys as scoped `VERIFY` frames, key rotation via `DEFAULT` frame post-ops, and atomic batching for recovery and multi-device flows.
-- **what grantr doesn't cover:** post-quantum signatures, the mempool model, cross-chain frames, non-wallet use cases.
+* [eip8141.io](https://eip8141.io) is the protocol itself — opcodes, frame modes, and the rationale behind the design. [demo.eip-8141.ethrex.xyz](https://demo.eip-8141.ethrex.xyz) is the existing frame transaction demo, with generic examples like gasless approve+swap and LP rebalance with USDC gas payment. in both, the frames are the main character. grantr is a wallet built on frames where the user is the main character — onboarding, recovery, delegation, and multi-device policies, all surfaced through consumer ux.
+* **what grantr exercises from the spec:** `VERIFY` frames with custom signature schemes (passkeys via P-256), `APPROVE` for execution and payment (sponsor pays user's gas), session keys as scoped `VERIFY` frames, key rotation via `DEFAULT` frame post-ops, and atomic batching for recovery and multi-device flows.
+* **what grantr doesn't cover:** post-quantum signatures, the mempool model, cross-chain frames, non-wallet use cases.
 
 ## 3. the problem
 
@@ -21,7 +25,7 @@ most crypto accounts today are EOAs — your address IS your private key, and th
 **five things grantr lets users do that today's wallets can't:**
 
 | user wants | how it works today | what happens | problem |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | hold crypto without protecting a private key yourself | every wallet gives you a private key (12/24 words) that IS your account | you lose track of it or someone finds it and drains your account | the private key is both the credential and the only backup |
 | get back in when you lose your phone | if you backed up the seed phrase, you regenerate the key. if not, gone. | phone breaks, no backup, account gone | recovery depends on the user having safely stored a backup |
 | keep the same account after recovery | recovery gives you a new address. history, nfts, ens stay on the old one. | you recover but lose everything tied to the old address | one key, one address. rotating the key means abandoning everything |
@@ -33,7 +37,7 @@ most crypto accounts today are EOAs — your address IS your private key, and th
 grantr addresses the five problems through frame policies on a single account. each policy is demonstrated in its own journey:
 
 | journey | what it demonstrates | frame policy |
-|---|---|---|
+| --- | --- | --- |
 | **email recovery** (default) | creating an account with a passkey, recovering via verified email | passkey `VERIFY` + grantr attestation for rotation |
 | **with guardians** | adding human guardians, recovering through them without email | passkey `VERIFY` + guardian-quorum policy for rotation |
 | **with multi-device** | adding a second device, threshold for high-value txs | `VERIFY` with threshold over multiple passkeys, conditional on value/selector/destination |
@@ -50,13 +54,13 @@ a user can move between these — or combine them — without changing wallets. 
 one passkey signs; a verified email authorizes recovery if the device is lost.
 
 | step | user | app |
-|---|---|---|
+| --- | --- | --- |
 | 1 | opens the app | welcome screen: "create account" / "recover account" |
 | 2 | taps create account | prompts for email |
 | 3 | enters email | sends verification link |
 | 4 | back in app, prompted for passkey | "use your device to secure your account" |
 | 5 | confirms with face id / touch id | device generates P-256 keypair in secure enclave |
-| 6 | sees "creating your account..." | submits account-creation frame tx (pending → submitted → confirmed) |
+| 6 | sees "creating your account…" | submits account-creation frame tx (pending → submitted → confirmed) |
 | 7 | lands on home | address, zero balance, email recovery badge |
 | 8 | loses phone, opens grantr on new device | taps "recover account" |
 | 9 | prompted for email | grantr sends verification link |
@@ -73,7 +77,7 @@ alice adds guardians so recovery doesn't depend on grantr. guardians can only co
 ### adding guardians
 
 | step | user | app |
-|---|---|---|
+| --- | --- | --- |
 | 1 | taps "add guardians" | explains what guardians do |
 | 2 | picks 3 guardians, 2-of-3 quorum | — |
 | 3 | invites each by ens (primary) or email (fallback) | generates invite with one-time code |
@@ -86,7 +90,7 @@ alice adds guardians so recovery doesn't depend on grantr. guardians can only co
 ### recovering via guardians
 
 | step | user | app |
-|---|---|---|
+| --- | --- | --- |
 | 1 | loses phone, opens grantr on new device | taps "recover account" |
 | 2 | enters address or ens | grantr detects guardian policy |
 | 3 | shown recovery options | "2-of-3 guardian quorum must approve" |
@@ -103,7 +107,7 @@ alice adds her laptop as a second signer. the laptop creates a NEW passkey disti
 ### adding a second device
 
 | step | user | app |
-|---|---|---|
+| --- | --- | --- |
 | 1 | taps "add device" on phone | prompts to open grantr on laptop |
 | 2 | signs in on laptop with synced passkey | detected as new device: "register as second signer?" |
 | 3 | creates new passkey on laptop | new P-256 keypair, distinct from phone's |
@@ -117,7 +121,7 @@ alice adds her laptop as a second signer. the laptop creates a NEW passkey disti
 ### signing a large transaction
 
 | step | user | app |
-|---|---|---|
+| --- | --- | --- |
 | 1 | initiates tx above threshold on phone | tx preview: requires both passkeys |
 | 2 | signs with phone | laptop receives co-sign notification |
 | 3 | phone shows "waiting for laptop" | — |
@@ -132,7 +136,7 @@ alice grants a scoped session key to an agent. the chain enforces the scope.
 ### granting a session
 
 | step | user | app |
-|---|---|---|
+| --- | --- | --- |
 | 1 | accepts agent request (walletconnect-style) | shown: agent name, contracts, selectors, limits, duration |
 | 2 | reviews and adjusts limits | can tighten caps, shorten duration, narrow selectors |
 | 3 | taps authorize | tx preview: grant session key · verify (passkey) · execute (add session key) |
@@ -142,7 +146,7 @@ alice grants a scoped session key to an agent. the chain enforces the scope.
 ### the agent acts (and is bounded)
 
 | step | actor | chain |
-|---|---|---|
+| --- | --- | --- |
 | 1 | agent submits allowed action | verify (session key) ✓ → execute ✓ |
 | 2 | alice sees success in activity | — |
 | 3 | agent submits action outside scope | verify (session key) ✗ — rejected |
@@ -151,7 +155,7 @@ alice grants a scoped session key to an agent. the chain enforces the scope.
 ### revoking a session
 
 | step | user | app |
-|---|---|---|
+| --- | --- | --- |
 | 1 | taps agent in sessions list | full session detail: scope, history, time remaining |
 | 2 | taps revoke | tx preview: revoke session key |
 | 3 | signs with passkey | submits revoke frame tx |
@@ -162,7 +166,7 @@ alice grants a scoped session key to an agent. the chain enforces the scope.
 five tabs with persistent balance bar. see prototype for complete screen set.
 
 | tab | question | purpose |
-|---|---|---|
+| --- | --- | --- |
 | profile | who | sparkline activity chart + 2×2 tiles (security, signing, sessions, account). tile/list toggle. tap tile → bottom tray with detail. |
 | sessions | what | frame receipt cards per session. blue dots for active, gray expired, red revoked. frame policy rows inline. divider between header and frames. |
 | ⬩ (action) | — | send, receive, scan |
@@ -171,12 +175,11 @@ five tabs with persistent balance bar. see prototype for complete screen set.
 
 ## 10. feedback
 
-~30 toasts organized by journey. green = success, red = failure/blocked, amber = warning, neutral = informational. 
-
+~30 toasts organized by journey. green = success, red = failure/blocked, amber = warning, neutral = informational.
 
 ## 11. user flow diagrams
 
-superseded by prototype. 
+superseded by prototype.
 
 ## 12. constraints
 
@@ -217,5 +220,42 @@ superseded by prototype.
 7. grant delegation
 8. agent acts / blocked
 9. revoke delegation
-10. rebalance portfolio  
-11. build transaction  
+10. rebalance portfolio
+11. build transaction
+
+### using the prototype
+
+the prototype is a single html file with a dev tools panel on the left and a mobile app on the right. nothing to install — open it in a browser.
+
+- **tour** — a 6-step narrated walkthrough that threads through the whole product. start here if you've never seen grantr before.
+- **journeys** — every one of the 11 journeys above wired as a single click. the scripted path, not a free-explore.
+- **actions** — deep-links to send / rebalance / build / sponsor / verify screens. for demos where you want to skip the opening and land mid-flow.
+- **tabs** — profile / sessions / activity / addresses. direct navigation.
+
+on the phone:
+
+- tap ⊕ in the tab bar for the action sheet
+- tap any active session card's **see it work** to run a live simulation — the agent attempts one allowed action (passes) and one out-of-scope action (blocked at the verify frame)
+- tap any activity entry to expand its frame chain
+- every tile, row, and pill is wired — nothing is decorative
+
+### what's visible at every layer
+
+frames are the thesis. the prototype makes them visible wherever a transaction touches the ui:
+
+- **session cards** list their frame policy inline (verify: session key · rebalance() · collectFees() / sender: uniswap v3)
+- **activity entries** expand to show the frame chain of every tx — including blocked ones, with the failing frame marked
+- **tx previews** show the full frame sequence before signing, not a single "approve" button
+- **agent simulations** animate frames turning green (pass) or red (blocked) so you can watch the chain enforce the scope in real time
+
+the goal is that a developer can scroll any screen in the app and see the eip-8141 primitives it's built on.
+
+### status
+
+- **feature-complete prototype** covering all four spec journeys (email recovery, guardians, multi-device, delegation) plus the 11 demo journeys listed above
+- **not production software** — no real backend, no real etherex deployment, passkeys are simulated, accounts are mock state
+- **future work**: connect to a real etherex devnet, backend for passkey registration + guardian invites, agent marketplace with real scoped agents, browser extension version
+
+### contributing
+
+if you're building another eip-8141 reference implementation, an sdk, or a design system that borrows from this, take what's useful. prs and issues welcome.
