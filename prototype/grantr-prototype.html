@@ -1660,39 +1660,60 @@ body {
       <span class="spacer"></span>
     </div>
     <div style="flex: 1; padding: 8px 0 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto;">
-      <div style="font-size: 11px; color: var(--text-4); line-height: 1.6;">pay gas for someone else's transaction. they approve the action, you cover the gas via your <span style="color: var(--text-2);">approve</span> frame.</div>
+      <div style="font-size: 11px; color: var(--text-4); line-height: 1.6;">pay gas for someone else's transaction. they still sign the action — you just cover the fees.</div>
 
-      <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">pay for</div>
-      <div style="background: var(--card); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div style="font-size: 11px; color: var(--text-4);">recipient</div>
-          <div style="font-size: 12px; color: var(--text-2); font-family: 'DM Mono', monospace;">bob.eth · ...7e3a</div>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div style="font-size: 11px; color: var(--text-4);">action</div>
-          <div style="font-size: 12px; color: var(--text-2);">their next tx</div>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div style="font-size: 11px; color: var(--text-4);">max gas</div>
-          <div style="font-size: 12px; color: var(--text-2);">0.005 ETH</div>
+      <div>
+        <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">recipient</div>
+        <div id="sponsor-recipient-display" style="background: var(--card); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer;" onclick="openSponsorPicker()">
+          <div class="addr-avatar" id="sponsor-recipient-avatar"></div>
+          <div style="flex: 1;">
+            <div style="font-size: 13px; color: var(--text-1); font-weight: 500;" id="sponsor-recipient-name">—</div>
+            <div style="font-size: 11px; color: var(--text-4);" id="sponsor-recipient-sub">tap to change</div>
+          </div>
+          <span style="color: var(--text-4); font-size: 14px;">›</span>
         </div>
       </div>
 
-      <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">frame structure</div>
-      <div class="receipt-card">
-        <div class="receipt-row">
-          <span class="frame-badge verify">verify</span>
-          <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">your passkey</div><div style="font-size:10px;color:#555;margin-top:2px;">p-256 signature</div></div>
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">max gas</div>
+          <div style="font-size: 11px; color: var(--text-4);">cap per tx</div>
         </div>
-        <div class="receipt-row">
-          <span class="frame-badge approve">approve</span>
-          <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">you pay bob's gas</div><div style="font-size:10px;color:#22c55e;margin-top:2px;">up to 0.005 ETH</div></div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+          <button class="auth-pill" data-sponsor-gas="0.001" onclick="setSponsorGas('0.001')">0.001</button>
+          <button class="auth-pill active" data-sponsor-gas="0.005" onclick="setSponsorGas('0.005')">0.005</button>
+          <button class="auth-pill" data-sponsor-gas="0.01" onclick="setSponsorGas('0.01')">0.01</button>
+          <button class="auth-pill" data-sponsor-gas="0.05" onclick="setSponsorGas('0.05')">0.05</button>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">frame structure</div>
+        <div class="receipt-card">
+          <div class="receipt-row">
+            <span class="frame-badge verify">verify</span>
+            <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">your passkey</div><div style="font-size:10px;color:#555;margin-top:2px;">p-256 signature</div></div>
+          </div>
+          <div class="receipt-row">
+            <span class="frame-badge approve">approve</span>
+            <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;" id="sponsor-frame-pay">you pay gas</div><div style="font-size:10px;color:#22c55e;margin-top:2px;" id="sponsor-frame-cap">up to 0.005 ETH</div></div>
+          </div>
         </div>
       </div>
     </div>
     <div class="bottom" style="padding-top: 0;">
       <button class="btn btn-primary" onclick="openTxPreview('sponsor')">sponsor transaction</button>
     </div>
+  </div>
+
+  <!-- ============== SPONSOR: RECIPIENT PICKER (overlay) ============== -->
+  <div id="sponsor-picker-overlay" class="tray-overlay" onclick="closeSponsorPicker()" style="z-index: 10;"></div>
+  <div id="sponsor-picker" class="action-sheet" style="z-index: 11; max-height: 70%; overflow-y: auto;">
+    <div class="action-sheet-handle" onclick="closeSponsorPicker()"></div>
+    <div style="padding: 4px 24px 12px; font-size: 15px; color: var(--text-1); font-weight: 500;">pick a recipient</div>
+    <div style="padding: 0 24px 8px;"><input type="text" id="sponsor-picker-search" placeholder="search by name or ens" oninput="renderSponsorPicker()" style="width: 100%; background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; padding: 9px 14px; color: var(--text-1); font-size: 13px; font-family: inherit; outline: none; box-sizing: border-box;"></div>
+    <div id="sponsor-picker-list" style="padding: 4px 18px 12px;"></div>
+    <div class="action-sheet-spacer"></div>
   </div>
 
   <!-- ============== VERIFY POLICY ============== -->
@@ -1707,7 +1728,7 @@ body {
 
       <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">policy type</div>
 
-      <div class="build-row">
+      <div class="build-row" onclick="selectVerifyPolicy('guardian')">
         <span class="frame-badge verify">verify</span>
         <div class="build-row-info">
           <div class="build-row-name">guardian quorum</div>
@@ -1716,7 +1737,7 @@ body {
         <span style="color: var(--text-4); font-size: 14px;">›</span>
       </div>
 
-      <div class="build-row">
+      <div class="build-row" onclick="selectVerifyPolicy('threshold')">
         <span class="frame-badge verify">verify</span>
         <div class="build-row-info">
           <div class="build-row-name">threshold by value</div>
@@ -1725,7 +1746,7 @@ body {
         <span style="color: var(--text-4); font-size: 14px;">›</span>
       </div>
 
-      <div class="build-row">
+      <div class="build-row" onclick="selectVerifyPolicy('timelock')">
         <span class="frame-badge verify">verify</span>
         <div class="build-row-info">
           <div class="build-row-name">time-locked</div>
@@ -1734,7 +1755,7 @@ body {
         <span style="color: var(--text-4); font-size: 14px;">›</span>
       </div>
 
-      <div class="build-row">
+      <div class="build-row" onclick="selectVerifyPolicy('custom')">
         <span class="frame-badge verify">verify</span>
         <div class="build-row-info">
           <div class="build-row-name">custom signer</div>
@@ -1743,9 +1764,15 @@ body {
         <span style="color: var(--text-4); font-size: 14px;">›</span>
       </div>
     </div>
-    <div class="bottom" style="padding-top: 0;">
-      <button class="btn btn-primary" style="opacity: 0.4;" disabled>select a policy type</button>
-    </div>
+    <div class="bottom" style="padding-top: 0;"></div>
+  </div>
+
+  <!-- ============== VERIFY POLICY: CONFIGURE (overlay) ============== -->
+  <div id="verify-config-overlay" class="tray-overlay" onclick="closeVerifyConfig()" style="z-index: 10;"></div>
+  <div id="verify-config" class="action-sheet" style="z-index: 11; max-height: 80%; overflow-y: auto;">
+    <div class="action-sheet-handle" onclick="closeVerifyConfig()"></div>
+    <div id="verify-config-body"></div>
+    <div class="action-sheet-spacer"></div>
   </div>
 
   <!-- ============== ACTION SHEET ============== -->
@@ -1968,6 +1995,9 @@ function go(id) {
     if (q) { q.textContent = '0 of 2 required'; q.style.color = ''; }
     const btn = document.getElementById('notify-guardians-btn');
     if (btn) { btn.disabled = false; btn.textContent = 'notify guardians'; btn.style.opacity = '1'; }
+  }
+  if (id === 'sponsor') {
+    renderSponsorRecipient();
   }
 }
 
@@ -2249,6 +2279,172 @@ function toggleAuthKeepRunning() {
   if (el) el.classList.toggle('on', authPolicy.keepRunning);
 }
 
+// ============== SPONSOR ==============
+const sponsorPool = [
+  { id: 'bob',   seed: 'bob.eth',   tone: 'amber',  name: 'bob.eth',   addr: '...7e3a', sub: 'frequent contact' },
+  { id: 'carol', seed: 'carol.eth', tone: 'pink',   name: 'carol.eth', addr: '...f291', sub: 'frequent contact' },
+  { id: 'dan',   seed: 'dan.eth',   tone: 'teal',   name: 'dan.eth',   addr: '...1b4c', sub: 'frequent contact' },
+  { id: 'eve',   seed: 'eve.eth',   tone: 'purple', name: 'eve.eth',   addr: '...c5a2', sub: 'sent funds 2x' },
+  { id: 'frank', seed: 'frank.eth', tone: 'blue',   name: 'frank.eth', addr: '...8e1d', sub: 'received funds 1x' }
+];
+const sponsorState = { recipient: 'bob', maxGas: '0.005' };
+
+function renderSponsorRecipient() {
+  const r = sponsorPool.find(x => x.id === sponsorState.recipient);
+  if (!r) return;
+  const avatar = document.getElementById('sponsor-recipient-avatar');
+  if (avatar) avatar.innerHTML = identicon(r.seed, r.tone);
+  const name = document.getElementById('sponsor-recipient-name');
+  if (name) name.textContent = r.name;
+  const sub = document.getElementById('sponsor-recipient-sub');
+  if (sub) sub.textContent = r.addr + ' · ' + r.sub;
+  // frame structure readout
+  const pay = document.getElementById('sponsor-frame-pay');
+  if (pay) pay.textContent = `you pay ${r.name.replace('.eth', '')}'s gas`;
+  const cap = document.getElementById('sponsor-frame-cap');
+  if (cap) cap.textContent = `up to ${sponsorState.maxGas} ETH`;
+}
+
+function setSponsorGas(val) {
+  sponsorState.maxGas = val;
+  document.querySelectorAll('[data-sponsor-gas]').forEach(b => {
+    b.classList.toggle('active', b.dataset.sponsorGas === val);
+  });
+  renderSponsorRecipient();
+}
+
+function openSponsorPicker() {
+  document.getElementById('sponsor-picker').classList.add('open');
+  document.getElementById('sponsor-picker-overlay').classList.add('open');
+  const input = document.getElementById('sponsor-picker-search');
+  if (input) input.value = '';
+  renderSponsorPicker();
+}
+
+function closeSponsorPicker() {
+  document.getElementById('sponsor-picker').classList.remove('open');
+  document.getElementById('sponsor-picker-overlay').classList.remove('open');
+}
+
+function renderSponsorPicker() {
+  const list = document.getElementById('sponsor-picker-list');
+  if (!list) return;
+  const q = (document.getElementById('sponsor-picker-search')?.value || '').toLowerCase().trim();
+  const filtered = q ? sponsorPool.filter(r => r.name.toLowerCase().includes(q) || r.addr.toLowerCase().includes(q)) : sponsorPool;
+  list.innerHTML = filtered.map(r => {
+    const selected = r.id === sponsorState.recipient;
+    return `<div onclick="pickSponsorRecipient('${r.id}')" style="padding: 10px 6px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider); cursor: pointer;">
+      <div class="addr-avatar">${identicon(r.seed, r.tone)}</div>
+      <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">${r.name}</div><div style="font-size:11px;color:var(--text-4);">${r.addr} · ${r.sub}</div></div>
+      ${selected ? '<div style="width:18px;height:18px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;">✓</div>' : ''}
+    </div>`;
+  }).join('');
+  const lastRow = list.querySelector(':scope > div:last-child');
+  if (lastRow) lastRow.style.borderBottom = 'none';
+}
+
+function pickSponsorRecipient(id) {
+  sponsorState.recipient = id;
+  renderSponsorRecipient();
+  closeSponsorPicker();
+}
+
+// ============== VERIFY POLICY CONFIGURE ==============
+function selectVerifyPolicy(type) {
+  if (type === 'guardian') {
+    // guardian quorum IS the add-guardians journey — route there directly
+    journeyAddGuardians();
+    return;
+  }
+  // others open a configure sheet
+  const body = document.getElementById('verify-config-body');
+  if (!body) return;
+  const configs = {
+    threshold: {
+      title: 'threshold by value',
+      desc: 'require a second passkey (from a second device) for transactions above a threshold. below the threshold, your primary passkey signs alone.',
+      inputs: `
+        <div style="margin-bottom: 14px;">
+          <div style="font-size: 11px; color: var(--text-4); margin-bottom: 6px;">second device</div>
+          <div style="background: var(--card-dark); border: 1px dashed #2a2a2a; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 10px;">
+            <div style="width: 22px; height: 22px; border-radius: 50%; border: 1px solid #444; display: flex; align-items: center; justify-content: center; color: var(--text-4); font-size: 12px;">+</div>
+            <div style="flex:1; font-size: 12px; color: var(--text-3);">no second device registered yet</div>
+          </div>
+          <div style="font-size: 10px; color: var(--text-4); margin-top: 6px;">add a second device first to enable this policy</div>
+        </div>
+        <div>
+          <div style="font-size: 11px; color: var(--text-4); margin-bottom: 8px;">threshold</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+            <button class="auth-pill">$500</button>
+            <button class="auth-pill active">$1,000</button>
+            <button class="auth-pill">$5,000</button>
+            <button class="auth-pill">$10k</button>
+          </div>
+        </div>
+      `,
+      cta: 'add second device first',
+      disabled: true
+    },
+    timelock: {
+      title: 'time-locked',
+      desc: 'delay specific actions by a fixed duration. the transaction is submitted immediately but only executes after the lock expires.',
+      inputs: `
+        <div style="margin-bottom: 14px;">
+          <div style="font-size: 11px; color: var(--text-4); margin-bottom: 8px;">delay duration</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+            <button class="auth-pill">1h</button>
+            <button class="auth-pill active">24h</button>
+            <button class="auth-pill">48h</button>
+            <button class="auth-pill">7d</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size: 11px; color: var(--text-4); margin-bottom: 6px;">applies to</div>
+          <div style="background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(--text-2); font-family: 'DM Mono', monospace;">
+            transfer() · approve() · setApprovalForAll()
+          </div>
+          <div style="font-size: 10px; color: var(--text-4); margin-top: 6px;">defaults to high-risk selectors · editable after install</div>
+        </div>
+      `,
+      cta: 'install time lock',
+      disabled: false
+    },
+    custom: {
+      title: 'custom signer',
+      desc: 'any contract that implements the verify interface can authorize your transactions. use this for hardware signers, multisigs, or custom auth logic.',
+      inputs: `
+        <div style="margin-bottom: 14px;">
+          <div style="font-size: 11px; color: var(--text-4); margin-bottom: 6px;">contract address</div>
+          <input type="text" placeholder="0x..." style="width: 100%; background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; color: var(--text-1); font-size: 12px; font-family: 'DM Mono', monospace; outline: none; box-sizing: border-box;">
+          <div style="font-size: 10px; color: var(--text-4); margin-top: 6px;">must implement isValidSignature(bytes32, bytes) returns (bytes4)</div>
+        </div>
+        <div style="background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 11px; color: var(--text-3); line-height: 1.5;">
+          <span style="color: #f59e0b;">⚠</span> grantr can't audit custom signers. only use contracts you trust.
+        </div>
+      `,
+      cta: 'install custom signer',
+      disabled: true
+    }
+  };
+  const cfg = configs[type];
+  body.innerHTML = `
+    <div style="padding: 4px 24px 6px; font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px;">configure</div>
+    <div style="padding: 0 24px 8px; font-size: 16px; color: var(--text-1); font-weight: 500;">${cfg.title}</div>
+    <div style="padding: 0 24px 16px; font-size: 11px; color: var(--text-4); line-height: 1.5;">${cfg.desc}</div>
+    <div style="padding: 0 24px 16px;">${cfg.inputs}</div>
+    <div style="padding: 0 24px 20px;">
+      <button class="btn btn-primary" style="${cfg.disabled ? 'opacity: 0.4;' : ''}" ${cfg.disabled ? 'disabled' : 'onclick="closeVerifyConfig(); go(\'profile\')"'}>${cfg.cta}</button>
+    </div>
+  `;
+  document.getElementById('verify-config').classList.add('open');
+  document.getElementById('verify-config-overlay').classList.add('open');
+}
+
+function closeVerifyConfig() {
+  document.getElementById('verify-config').classList.remove('open');
+  document.getElementById('verify-config-overlay').classList.remove('open');
+}
+
 function addFrame(type, name, sub) {
   buildQueue.push({ type, name, sub });
   renderBuildQueue();
@@ -2315,18 +2511,28 @@ const txPreviewData = {
     }
   },
   sponsor: {
-    title: 'sponsor bob\'s transaction',
-    desc: 'you pay gas for bob.eth. he still has to sign whatever action he takes — you just cover the fees.',
+    title: 'sponsor transaction',
+    desc: 'you pay gas for a recipient. they sign the action, you cover the fees.',
     frames: [
       { type: 'verify', name: 'your passkey', sub: 'p-256 · authorizes the sponsor approval' },
-      { type: 'approve', name: 'pay bob\'s gas', sub: 'up to 0.005 ETH' }
+      { type: 'approve', name: 'pay recipient gas', sub: '—' }
     ],
     details: [
-      ['recipient', 'bob.eth · ...7e3a'],
-      ['max gas', '0.005 ETH'],
+      ['recipient', '—'],
+      ['max gas', '—'],
       ['network', 'etherex devnet']
     ],
-    onConfirm: () => { closeTxPreview(); go('profile'); }
+    onConfirm: () => { closeTxPreview(); go('profile'); },
+    onOpen: () => {
+      const r = sponsorPool.find(x => x.id === sponsorState.recipient);
+      const d = txPreviewData.sponsor.details;
+      if (r) {
+        d[0][1] = `${r.name} · ${r.addr}`;
+        txPreviewData.sponsor.frames[1].name = `pay ${r.name.replace('.eth', '')}'s gas`;
+      }
+      d[1][1] = `${sponsorState.maxGas} ETH`;
+      txPreviewData.sponsor.frames[1].sub = `up to ${sponsorState.maxGas} ETH`;
+    }
   },
   build: {
     title: 'custom transaction',
