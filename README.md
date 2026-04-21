@@ -4,12 +4,13 @@ grantr | frames-native smart account · eip-8141 reference implementation
 
 ![Status: work in progress](https://img.shields.io/badge/status-work%20in%20progress-orange)
 
+# grantr
 
 ## 1. summary
 
 grantr is a frames-native account, with an app built to manage it. as a reference implementation for eip-8141, it covers account creation, recovery, delegation, and multi-device — not swaps, bridging, or the rest of a full financial product. no seed phrase, no lost accounts, no blanket approvals. your passkey signs, your address is permanent, and every permission you grant is enforced by the chain — not by an app asking nicely. open source, documented, and intended as a guide for developers and designers building on frames.
 
-**try the prototype:** (https://alexanderchopan.github.io/grantr/prototype/grantr-prototype.html)
+**try the prototype:** [alexanderchopan.github.io/grantr/prototype/grantr-prototype.html](https://alexanderchopan.github.io/grantr/prototype/grantr-prototype.html)
 
 ## 2. references
 
@@ -73,14 +74,16 @@ the prototype is a single html file with a dev tools panel on the left and a mob
 - **tour** — a 6-step narrated walkthrough that threads through the whole product. start here if you've never seen grantr before.
 - **journeys** — every one of the 11 journeys above wired as a single click.
 - **actions** — deep-links to send / rebalance / build / sponsor / verify screens.
-- **tabs** — profile / sessions / activity / addresses.
+- **tabs** — home / sessions / activity.
+- **pages** — account, addresses.
 
-**on the phone:**
+**app structure:**
 
-- tap ⊕ in the tab bar for the action sheet
-- tap any active session card's **see it work** to run a live simulation — the agent attempts one allowed action (passes) and one out-of-scope action (blocked at the verify frame)
-- tap any activity entry to expand its frame chain
-- every tile, row, and pill is wired — nothing is decorative
+- **home** tells two short stories: `what's running` (agent executions this week + the latest session events) and `what happened` (balance trend + the latest transactions). each section is a stat tile + chart tile + a feed of the three most recent rows, with `see all ›` routing to the full tab.
+- **sessions** is the full list of delegations — active, blocked, revoked, expired. every card shows its frame policy inline.
+- **activity** is the full transaction history. every entry expands to show its frame chain, including blocked attempts with the failing frame marked.
+- **action** is the ⊕ button in the tab bar. it opens a sheet with send / rebalance / build / sponsor.
+- **account** lives a tap away behind your pfp on home. it groups the `identity` settings (security, signing, account details), your `contacts` (addresses), and `learn` (the see-it-in-action replay, a link to the eip-8141 spec).
 
 **frames are the thesis. the prototype makes them visible wherever a transaction touches the ui:**
 
@@ -88,6 +91,8 @@ the prototype is a single html file with a dev tools panel on the left and a mob
 - **activity entries** expand to show the frame chain of every tx — including blocked ones, with the failing frame marked
 - **tx previews** show the full frame sequence before signing, not a single "approve" button
 - **agent simulations** animate frames turning green (pass) or red (blocked) so you can watch the chain enforce the scope in real time
+
+**two reading levels for everything consequential.** authorize screens, tx previews, and policy changes lead with a plain-english consequence ("let lp rebalancer manage your lp", "add your laptop as a second signer") and hide the frame detail behind a `show frames [eip-8141]` toggle. newcomers read the headline, spec readers expand the frames.
 
 ## 6. constraints
 
