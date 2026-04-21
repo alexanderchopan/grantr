@@ -104,7 +104,7 @@ the prototype is a single html file with a dev tools panel on the left and a mob
 
 - **feature-complete prototype** covering all four spec journeys plus the 11 demo journeys
 - **not production software** — no real backend, no real etherex deployment, passkeys are simulated, accounts are mock state
-- **future work**: connect to a real etherex devnet, backend for passkey registration + guardian invites, agent marketplace with real scoped agents, browser extension version
+- **where this is going** — grantr is currently a reference implementation. the intent is to ship it as an app.
 
 ## 8. contributing
 
