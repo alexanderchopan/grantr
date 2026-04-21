@@ -334,34 +334,43 @@ body {
 
 /* tab bar */
 .tab-bar-wrap { padding: 10px 16px 24px; flex-shrink: 0; z-index: 10; position: relative; }
-.tab-bar { background: var(--card); border-radius: 22px; padding: 10px 6px; display: grid; grid-template-columns: repeat(4, 1fr); transition: background 0.2s; }
-.tab { background: transparent; border: none; padding: 8px 4px; font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; color: #555; transition: opacity 0.15s; }
+.tab-bar { background: var(--card); border-radius: 22px; padding: 10px 6px; display: grid; grid-template-columns: repeat(4, 1fr); transition: background 0.25s ease; }
+.tab { background: transparent; border: none; padding: 8px 4px; font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; color: #555; transition: opacity 0.18s ease, transform 0.18s ease; }
 .tab span { font-size: 10px; color: var(--text-2); }
 .tab.active { color: var(--green); }
 .tab.active span { color: var(--green); font-weight: 500; }
 .tab .icon-outlined { display: none; }
 .tab .icon-filled { display: block; }
 
-/* action-mode tabs are hidden by default */
-.tab-action-mode { display: none; }
+/* action-mode tabs hidden by default, with initial transform for entrance */
+.tab-action-mode { display: none; opacity: 0; transform: translateY(4px); }
+.tab-action-mode svg { transition: transform 0.18s ease; }
+.tab-action-mode:active svg { transform: scale(0.92); }
 
-/* when action-mode is on: swap the visible set */
+/* when action-mode is on: swap the visible set with crossfade */
 .tab-bar.action-mode .tab-normal { display: none; }
-.tab-bar.action-mode .tab-action-mode { display: flex; }
-.tab-bar.action-mode { background: #141414; }
+.tab-bar.action-mode .tab-action-mode { display: flex; animation: tabMorphIn 0.22s ease forwards; }
+.tab-bar.action-mode .tab-action-mode:nth-of-type(4) { animation-delay: 0.03s; }
+.tab-bar.action-mode .tab-action-mode:nth-of-type(5) { animation-delay: 0.06s; }
+.tab-bar.action-mode .tab-action-mode:nth-of-type(6) { animation-delay: 0.09s; }
 
-/* action button */
-.tab-action-btn { background: var(--green); border: none; border-radius: 14px; padding: 10px 4px; font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: background 0.2s, transform 0.2s; }
-.tab-action-btn span { font-size: 10px; color: #000; font-weight: 600; }
-.tab-action-icon { width: 22px; height: 22px; position: relative; transition: transform 0.2s; }
-.tab-action-line { position: absolute; background: #000; border-radius: 2px; transition: transform 0.25s; }
+@keyframes tabMorphIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* action button (plus → X) */
+.tab-action-btn { background: var(--green); border: none; border-radius: 14px; padding: 10px 4px; font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: background 0.25s ease; }
+.tab-action-btn span { font-size: 10px; color: #000; font-weight: 600; transition: color 0.2s; }
+.tab-action-icon { width: 22px; height: 22px; position: relative; transition: transform 0.28s cubic-bezier(.4,0,.2,1); }
+.tab-action-line { position: absolute; background: #000; border-radius: 2px; transition: background 0.2s ease; }
 .tab-action-line-v { left: 50%; top: 2px; width: 2.5px; height: 18px; transform: translateX(-50%); }
 .tab-action-line-h { top: 50%; left: 2px; height: 2.5px; width: 18px; transform: translateY(-50%); }
 
-/* when action-mode: plus becomes X (rotate 45deg via both lines) */
-.tab-bar.action-mode .tab-action-btn { background: #2a2a2a; }
-.tab-bar.action-mode .tab-action-btn span { color: var(--text-2); }
-.tab-bar.action-mode .tab-action-line { background: #fff; }
+/* when action-mode: plus becomes X, button turns dark with white X  */
+.tab-bar.action-mode .tab-action-btn { background: #1f1f1f; }
+.tab-bar.action-mode .tab-action-btn span { color: var(--text-3); }
+.tab-bar.action-mode .tab-action-line { background: var(--text-1); }
 .tab-bar.action-mode .tab-action-icon { transform: rotate(45deg); }
 
 /* creating headline smaller */
@@ -482,7 +491,6 @@ body {
   <button class="dev-btn" onclick="closeAction(); go('rebalance')">rebalance</button>
   <button class="dev-btn" onclick="closeAction(); go('build')">build</button>
   <button class="dev-btn" onclick="closeAction(); go('sponsor')">sponsor</button>
-  <button class="dev-btn" onclick="closeAction(); go('verify-policy')">verify</button>
 
   <div class="devtools-label">tabs</div>
   <button class="dev-btn" onclick="go('home')">home</button>
@@ -492,6 +500,12 @@ body {
   <div class="devtools-label">pages</div>
   <button class="dev-btn" onclick="go('account')">account</button>
   <button class="dev-btn" onclick="go('addresses')">addresses</button>
+  <button class="dev-btn" onclick="go('verify-policy')">policies</button>
+
+  <div class="devtools-label">trays</div>
+  <button class="dev-btn" onclick="go('account'); setTimeout(() => openTray('security'), 100);">recovery</button>
+  <button class="dev-btn" onclick="go('account'); setTimeout(() => openTray('signing'), 100);">keys</button>
+  <button class="dev-btn" onclick="go('account'); setTimeout(() => openTray('account'), 100);">account details</button>
 </div>
 
 <div class="phone">
