@@ -100,6 +100,13 @@ body {
 .frame-detail-name { font-size: 12px; color: var(--text-2); font-weight: 500; }
 .frame-detail-sub { font-size: 10px; color: var(--text-4); margin-top: 1px; }
 .frame-detail-footnote { font-size: 10px; color: var(--text-4); padding-top: 4px; border-top: 1px solid var(--divider); margin-top: 4px; line-height: 1.5; }
+.guardian-row { padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider); }
+.guardian-row:last-child { border-bottom: none; }
+.guardian-status { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #000; transition: background 0.3s; }
+.guardian-status.pending { background: #333; }
+.guardian-status.approved { background: #22c55e; }
+.guardian-status.approved::after { content: "✓"; }
+.guardian-status.not-needed { background: transparent; border: 1px solid #444; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .stage-label { flex: 1; font-size: 13px; color: var(--text-1); }
 .stage.pending .stage-label { color: var(--text-3); }
@@ -325,8 +332,8 @@ body {
   <div class="devtools-label">journeys</div>
   <button class="dev-btn j-built" onclick="journeyAccountCreation()">1 · account creation</button>
   <button class="dev-btn j-built" onclick="journeyEmailRecovery()">2 · email recovery</button>
-  <button class="dev-btn j-todo" onclick="journeyTodo('add guardians')">3 · add guardians</button>
-  <button class="dev-btn j-todo" onclick="journeyTodo('recover via guardians')">4 · recover via guardians</button>
+  <button class="dev-btn j-built" onclick="journeyAddGuardians()">3 · add guardians</button>
+  <button class="dev-btn j-built" onclick="journeyRecoverGuardians()">4 · recover via guardians</button>
   <button class="dev-btn j-todo" onclick="journeyTodo('add second device')">5 · add second device</button>
   <button class="dev-btn j-todo" onclick="journeyTodo('co-sign large tx')">6 · co-sign large tx</button>
   <button class="dev-btn j-todo" onclick="journeyTodo('grant delegation')">7 · grant delegation</button>
@@ -355,7 +362,7 @@ body {
     <div class="bottom">
       <button class="btn btn-primary" onclick="go('email')">create account</button>
       <button class="btn btn-secondary" onclick="go('profile')">sign in</button>
-      <div style="text-align: center; font-size: 11px; color: var(--text-4); padding-top: 4px; cursor: pointer;" onclick="go('recover-email')">lost access? <span style="color: var(--text-2);">recover account →</span></div>
+      <div style="text-align: center; font-size: 11px; color: var(--text-4); padding-top: 4px; cursor: pointer;" onclick="go('recover-path')">lost access? <span style="color: var(--text-2);">recover account →</span></div>
     </div>
   </div>
 
@@ -628,6 +635,342 @@ body {
             </div>
           </div>
           <div class="frame-detail-footnote">all three frames execute atomically. if any fails, no changes apply.</div>
+        </div>
+      </details>
+    </div>
+    <div class="bottom"></div>
+  </div>
+
+  <!-- ============== ADD GUARDIANS: INTRO ============== -->
+  <div id="screen-guardians-intro" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="closeTray(); go('profile')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">add<br>guardians.</div>
+      <div class="sub">guardians can help you recover if you lose your device. they can only co-sign a key rotation — they can't sign transactions or see your activity.</div>
+      <div style="background: var(--card); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; margin-top: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">you pick 3 trusted people</div></div>
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">2 of 3 must approve recovery</div></div>
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">they can't access your funds</div></div>
+      </div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="go('guardians-pick')">continue</button>
+    </div>
+  </div>
+
+  <!-- ============== ADD GUARDIANS: PICKER ============== -->
+  <div id="screen-guardians-pick" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('guardians-intro')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">pick three<br>guardians.</div>
+      <div class="sub">invite by ens or email. they'll create a passkey that can only co-sign your key rotation.</div>
+      <div style="background: var(--card); border-radius: 14px; padding: 8px 0; margin-top: 12px;">
+        <div style="padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider);">
+          <div class="avatar" style="background:#f59e0b;">b</div>
+          <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">bob.eth</div><div style="font-size:11px;color:var(--text-4);">invited · ens</div></div>
+          <div style="width:16px;height:16px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-size:10px;font-weight:700;">✓</div>
+        </div>
+        <div style="padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider);">
+          <div class="avatar" style="background:#f59e0b;">c</div>
+          <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">carol.eth</div><div style="font-size:11px;color:var(--text-4);">invited · ens</div></div>
+          <div style="width:16px;height:16px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-size:10px;font-weight:700;">✓</div>
+        </div>
+        <div style="padding: 10px 16px; display: flex; align-items: center; gap: 12px;">
+          <div class="avatar" style="background:#f59e0b;">d</div>
+          <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">dan.eth</div><div style="font-size:11px;color:var(--text-4);">invited · ens</div></div>
+          <div style="width:16px;height:16px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-size:10px;font-weight:700;">✓</div>
+        </div>
+      </div>
+      <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+        <span style="color: var(--text-4);">quorum</span>
+        <span style="color: var(--text-2);">2 of 3 required</span>
+      </div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="go('guardians-confirm')">all 3 accepted · continue</button>
+    </div>
+  </div>
+
+  <!-- ============== ADD GUARDIANS: CONFIRM ============== -->
+  <div id="screen-guardians-confirm" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('guardians-pick')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">review<br>and sign.</div>
+      <div class="sub">this adds a guardian policy to your account. you can change or remove it anytime.</div>
+      <div style="background: var(--card); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: var(--text-4);">guardians</span>
+          <span style="color: var(--text-2);">bob · carol · dan</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: var(--text-4);">quorum</span>
+          <span style="color: var(--text-2);">2 of 3</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: var(--text-4);">authority</span>
+          <span style="color: var(--text-2);">key rotation only</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: var(--text-4);">gas</span>
+          <span style="color: #22c55e;">sponsored by grantr</span>
+        </div>
+      </div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="openTxPreview('add-guardians')">add guardians</button>
+    </div>
+  </div>
+
+  <!-- ============== ADD GUARDIANS: SUBMITTING ============== -->
+  <div id="screen-guardians-submitting" class="screen onboarding">
+    <div class="top">
+      <div></div>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+    <div class="main">
+      <div>
+        <div class="headline small">adding<br>guardians.</div>
+        <div class="gas-pill">
+          <div class="gas-pill-dot"></div>
+          gas paid by grantr
+        </div>
+      </div>
+      <div class="stages">
+        <div id="gstage-1" class="stage active">
+          <div class="stage-icon"><div class="spinner"></div></div>
+          <div class="stage-label">signing with passkey</div>
+        </div>
+        <div id="gstage-2" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">submitting policy update</div>
+        </div>
+        <div id="gstage-3" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">updating your account</div>
+        </div>
+      </div>
+      <details class="frame-detail">
+        <summary>frame detail</summary>
+        <div class="frame-detail-body">
+          <div class="frame-detail-row">
+            <span class="frame-badge verify">verify</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">passkey signature</div>
+              <div class="frame-detail-sub">p-256 · this device</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge approve">approve</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">gas sponsored</div>
+              <div class="frame-detail-sub">grantr paymaster</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge default">default</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">install guardian policy</div>
+              <div class="frame-detail-sub">2-of-3 · bob · carol · dan</div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </div>
+    <div class="bottom"></div>
+  </div>
+
+  <!-- ============== RECOVER VIA GUARDIANS: PATH CHOICE ============== -->
+  <div id="screen-recover-path" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('welcome')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">choose a<br>recovery path.</div>
+      <div class="sub">your account has both email and guardian recovery set up. pick how you want to verify your new device.</div>
+      <div class="build-row" style="margin-top: 16px;" onclick="go('recover-email')">
+        <span class="frame-badge verify">verify</span>
+        <div class="build-row-info">
+          <div class="build-row-name">email attestation</div>
+          <div class="build-row-sub">get a link sent to alice@example.com · fastest</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">›</span>
+      </div>
+      <div class="build-row" onclick="go('recover-guardians-waiting')">
+        <span class="frame-badge verify">verify</span>
+        <div class="build-row-info">
+          <div class="build-row-name">guardian quorum</div>
+          <div class="build-row-sub">2 of 3 guardians must approve · bob · carol · dan</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">›</span>
+      </div>
+    </div>
+    <div class="bottom"></div>
+  </div>
+
+  <!-- ============== RECOVER VIA GUARDIANS: WAITING ============== -->
+  <div id="screen-recover-guardians-waiting" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('recover-path')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">waiting on<br>guardians.</div>
+      <div class="sub">they've been notified. once 2 of 3 approve, you can create a new passkey on this device.</div>
+      <div style="background: var(--card); border-radius: 14px; padding: 8px 0; margin-top: 16px;">
+        <div class="guardian-row" id="guardian-bob">
+          <div class="avatar" style="background:#f59e0b;">b</div>
+          <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">bob.eth</div><div style="font-size:11px;color:var(--text-4);" id="guardian-bob-status">notified · waiting</div></div>
+          <div class="guardian-status pending" id="guardian-bob-dot"></div>
+        </div>
+        <div class="guardian-row" id="guardian-carol">
+          <div class="avatar" style="background:#f59e0b;">c</div>
+          <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">carol.eth</div><div style="font-size:11px;color:var(--text-4);" id="guardian-carol-status">notified · waiting</div></div>
+          <div class="guardian-status pending" id="guardian-carol-dot"></div>
+        </div>
+        <div class="guardian-row" id="guardian-dan">
+          <div class="avatar" style="background:#f59e0b;">d</div>
+          <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">dan.eth</div><div style="font-size:11px;color:var(--text-4);" id="guardian-dan-status">notified · waiting</div></div>
+          <div class="guardian-status pending" id="guardian-dan-dot"></div>
+        </div>
+      </div>
+      <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+        <span style="color: var(--text-4);">quorum</span>
+        <span style="color: var(--text-2);" id="quorum-progress">0 of 2 required</span>
+      </div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-secondary" onclick="simulateGuardianApprovals()">simulate approvals</button>
+    </div>
+  </div>
+
+  <!-- ============== RECOVER VIA GUARDIANS: NEW PASSKEY ============== -->
+  <div id="screen-recover-guardians-passkey" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('recover-guardians-waiting')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">quorum<br>reached.</div>
+      <div class="sub">bob and carol approved. create a new passkey on this device — your address, balance, and history stay the same.</div>
+      <div style="background: var(--card); border-radius: 14px; padding: 12px 16px; margin-top: 16px; display: flex; flex-direction: column; gap: 6px;">
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: var(--text-4);">approved by</span>
+          <span style="color: #22c55e;">bob.eth · carol.eth</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: var(--text-4);">not required</span>
+          <span style="color: var(--text-3);">dan.eth</span>
+        </div>
+      </div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="startRecoveringGuardians()">create passkey</button>
+    </div>
+  </div>
+
+  <!-- ============== RECOVER VIA GUARDIANS: SUBMITTING ============== -->
+  <div id="screen-recovering-guardians" class="screen onboarding">
+    <div class="top">
+      <div></div>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+    <div class="main">
+      <div>
+        <div class="headline small">restoring<br>your account.</div>
+        <div class="gas-pill">
+          <div class="gas-pill-dot"></div>
+          gas paid by grantr
+        </div>
+      </div>
+      <div class="stages">
+        <div id="rgstage-1" class="stage active">
+          <div class="stage-icon"><div class="spinner"></div></div>
+          <div class="stage-label">creating new passkey</div>
+        </div>
+        <div id="rgstage-2" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">verifying guardian quorum</div>
+        </div>
+        <div id="rgstage-3" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">rotating key on-chain</div>
+        </div>
+      </div>
+      <details class="frame-detail">
+        <summary>frame detail</summary>
+        <div class="frame-detail-body">
+          <div class="frame-detail-row">
+            <span class="frame-badge verify">verify</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">guardian quorum</div>
+              <div class="frame-detail-sub">bob · carol signatures · 2-of-3</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge approve">approve</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">gas sponsored</div>
+              <div class="frame-detail-sub">grantr paymaster</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge default">default</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">rotate passkey</div>
+              <div class="frame-detail-sub">swap old key for new · post-op</div>
+            </div>
+          </div>
+          <div class="frame-detail-footnote">all frames execute atomically. guardians never hold funds or signing authority — they can only co-sign key rotation.</div>
         </div>
       </details>
     </div>
@@ -1464,6 +1807,18 @@ function journeyEmailRecovery() {
   go('welcome');
 }
 
+function journeyAddGuardians() {
+  // setup: profile → security tile → add guardian → intro → pick → confirm → submitting → profile
+  closeAction();
+  go('guardians-intro');
+}
+
+function journeyRecoverGuardians() {
+  // lost device flow with guardians as recovery path
+  closeAction();
+  go('welcome');
+}
+
 function journeyRebalance() {
   // starts from profile, user taps + to see action sheet
   // flow: profile → (action sheet) → rebalance positions → authorize → dashboard
@@ -1560,6 +1915,64 @@ function startRecovering() {
   }, 7200);
 }
 
+function startAddingGuardians() {
+  go('guardians-submitting');
+  setTimeout(() => {
+    setStage(1, 'done', 'g');
+    setStage(2, 'active', 'g');
+  }, 2000);
+  setTimeout(() => {
+    setStage(2, 'done', 'g');
+    setStage(3, 'active', 'g');
+  }, 4000);
+  setTimeout(() => {
+    setStage(3, 'done', 'g');
+  }, 6000);
+  setTimeout(() => {
+    go('profile');
+  }, 7200);
+}
+
+function simulateGuardianApprovals() {
+  // bob approves after 1s, carol after 2.5s, then advance
+  setTimeout(() => {
+    document.getElementById('guardian-bob-dot').classList.remove('pending');
+    document.getElementById('guardian-bob-dot').classList.add('approved');
+    document.getElementById('guardian-bob-status').textContent = 'approved · just now';
+    document.getElementById('guardian-bob-status').style.color = '#22c55e';
+    document.getElementById('quorum-progress').textContent = '1 of 2 required';
+  }, 1000);
+  setTimeout(() => {
+    document.getElementById('guardian-carol-dot').classList.remove('pending');
+    document.getElementById('guardian-carol-dot').classList.add('approved');
+    document.getElementById('guardian-carol-status').textContent = 'approved · just now';
+    document.getElementById('guardian-carol-status').style.color = '#22c55e';
+    document.getElementById('quorum-progress').textContent = '2 of 2 required · quorum met';
+    document.getElementById('quorum-progress').style.color = '#22c55e';
+  }, 2500);
+  setTimeout(() => {
+    go('recover-guardians-passkey');
+  }, 4000);
+}
+
+function startRecoveringGuardians() {
+  go('recovering-guardians');
+  setTimeout(() => {
+    setStage(1, 'done', 'rg');
+    setStage(2, 'active', 'rg');
+  }, 2000);
+  setTimeout(() => {
+    setStage(2, 'done', 'rg');
+    setStage(3, 'active', 'rg');
+  }, 4000);
+  setTimeout(() => {
+    setStage(3, 'done', 'rg');
+  }, 6000);
+  setTimeout(() => {
+    go('profile');
+  }, 7200);
+}
+
 function setStage(n, state, prefix) {
   const id = (prefix || '') + 'stage-' + n;
   const el = document.getElementById(id);
@@ -1622,7 +2035,7 @@ const trayTemplates = {
       <div class="tray-section"><div class="tray-section-label">token approvals</div></div>
       <div class="tray-row" style="border-bottom: none;"><div><div class="tray-row-name" style="color: #555;">none</div></div></div>
     </div>
-    <div class="tray-action"><button class="tray-btn">add guardian</button></div>
+    <div class="tray-action"><button class="tray-btn" onclick="closeTray(); go('guardians-intro')">add guardian</button></div>
     <div class="tray-spacer"></div>
   `,
   signing: `
@@ -1766,6 +2179,23 @@ const txPreviewData = {
       ['gas', '0 ETH · sponsored']
     ],
     onConfirm: () => { closeTxPreview(); resetBuildQueue(); go('profile'); }
+  },
+  'add-guardians': {
+    title: 'add guardian policy',
+    desc: 'install a 2-of-3 guardian policy. bob, carol, and dan will be able to co-sign key rotation — nothing else.',
+    frames: [
+      { type: 'verify', name: 'passkey signature', sub: 'p-256 · this device' },
+      { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster pays' },
+      { type: 'default', name: 'install guardian policy', sub: '2-of-3 · bob · carol · dan' }
+    ],
+    details: [
+      ['guardians', 'bob · carol · dan'],
+      ['quorum', '2 of 3'],
+      ['authority', 'key rotation only'],
+      ['network', 'etherex devnet'],
+      ['gas', '0 ETH · sponsored']
+    ],
+    onConfirm: () => { closeTxPreview(); startAddingGuardians(); }
   }
 };
 
