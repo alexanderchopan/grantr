@@ -281,6 +281,12 @@ body {
 .tray-row:last-child { border-bottom: none; }
 .tray-row-name { font-size: 13px; color: var(--text-2); font-weight: 500; }
 .tray-row-sub { font-size: 10px; color: var(--text-4); font-family: 'DM Mono', monospace; }
+.tour-row { background: var(--card-dark); border: 0.5px solid #1a1a1a; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.15s; }
+.tour-row:hover { background: #161616; }
+.tour-row-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tour-row-name { font-size: 13px; color: var(--text-1); font-weight: 500; }
+.tour-row-sub { font-size: 10px; color: var(--text-4); margin-top: 2px; line-height: 1.4; }
+.tour-row-meta { font-size: 10px; color: var(--text-4); flex-shrink: 0; }
 .tray-pill { font-size: 9px; padding: 4px 9px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
 .tray-section { padding: 8px 0 4px; }
 .tray-section-label { font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; }
@@ -1584,6 +1590,16 @@ body {
         <div class="tile-label">account</div>
         <div><div class="tile-stat" style="font-size: 16px; font-family: 'DM Mono', monospace;">...4c7a</div><div class="tile-sub">etherex devnet</div></div>
       </div>
+      <div class="tile tour-tile" onclick="openTray('tour')" style="grid-column: 1 / -1; min-height: auto; padding: 14px 16px; flex-direction: row; align-items: center; gap: 12px; justify-content: flex-start;">
+        <div style="width: 32px; height: 32px; border-radius: 8px; background: #0a1428; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 5 L19 12 L8 19 Z" fill="#3b82f6"/></svg>
+        </div>
+        <div style="flex: 1;">
+          <div style="font-size: 13px; color: var(--text-1); font-weight: 500;">guided tour</div>
+          <div style="font-size: 10px; color: var(--text-4); margin-top: 2px;">4 tours · see how grantr works</div>
+        </div>
+        <span style="color: #444; font-size: 14px;">›</span>
+      </div>
     </div>
     <div id="profile-list" class="list-view">
       <div class="list-row" onclick="openTray('security')">
@@ -1601,6 +1617,10 @@ body {
       <div class="list-row" onclick="openTray('account')">
         <div class="list-row-left"><div class="list-row-name">account</div><div class="list-row-sub" style="font-family: 'DM Mono', monospace;">...4c7a · etherex devnet</div></div>
         <div class="list-row-right"><span class="chevron">›</span></div>
+      </div>
+      <div class="list-row" onclick="openTray('tour')">
+        <div class="list-row-left"><div class="list-row-name">guided tour</div><div class="list-row-sub">4 tours · see how grantr works</div></div>
+        <div class="list-row-right"><div class="list-dot" style="background: #3b82f6;"></div><span class="chevron">›</span></div>
       </div>
     </div>
   </div>
@@ -2975,6 +2995,58 @@ const trayTemplates = {
       </div>
     </div>
     <div class="tray-action"><button class="tray-btn" onclick="exportAccountData(this)">export data</button></div>
+    <div class="tray-spacer"></div>
+  `,
+  tour: `
+    <div class="tray-header"><div class="tray-title">guided tour</div></div>
+    <div style="padding: 0 24px 14px; font-size: 11px; color: var(--text-4); line-height: 1.5;">pick a tour. each one plays a complete flow so you can see how grantr works end to end.</div>
+    <div style="padding: 0 18px 8px; display: flex; flex-direction: column; gap: 8px;">
+
+      <div class="tour-row" onclick="closeTray(); journeyAccountCreation();">
+        <div class="tour-row-icon" style="background: #1a1a1a;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M5 20 Q 5 14 12 14 Q 19 14 19 20" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+        </div>
+        <div style="flex: 1; min-width: 0;">
+          <div class="tour-row-name">the basics</div>
+          <div class="tour-row-sub">make an account with a passkey</div>
+        </div>
+        <div class="tour-row-meta">1 min</div>
+      </div>
+
+      <div class="tour-row" onclick="closeTray(); journeyEmailRecovery();">
+        <div class="tour-row-icon" style="background: #0a1428;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="#3b82f6" stroke-width="1.5" fill="none"/><path d="M3 7 L12 13 L21 7" stroke="#3b82f6" stroke-width="1.5" fill="none"/></svg>
+        </div>
+        <div style="flex: 1; min-width: 0;">
+          <div class="tour-row-name">recovery</div>
+          <div class="tour-row-sub">lose your device, recover via email</div>
+        </div>
+        <div class="tour-row-meta">1 min</div>
+      </div>
+
+      <div class="tour-row" onclick="closeTray(); journeyGrantDelegation();">
+        <div class="tour-row-icon" style="background: #0a1f12;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 12 C3 7 7 3 12 3 C17 3 21 7 21 12" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/><path d="M21 12 C21 17 17 21 12 21 C7 21 3 17 3 12" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="3 2"/><path d="M18 9 L21 12 L18 15" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="flex: 1; min-width: 0;">
+          <div class="tour-row-name">delegation</div>
+          <div class="tour-row-sub">let an agent act on your behalf</div>
+        </div>
+        <div class="tour-row-meta">2 min</div>
+      </div>
+
+      <div class="tour-row" onclick="closeTray(); journeyCoSign();">
+        <div class="tour-row-icon" style="background: #1f1708;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="14" height="18" rx="2" stroke="#f59e0b" stroke-width="1.5" fill="none"/><rect x="3" y="5" width="18" height="12" rx="1.5" stroke="#f59e0b" stroke-width="1.5" fill="none" transform="translate(4 3)"/></svg>
+        </div>
+        <div style="flex: 1; min-width: 0;">
+          <div class="tour-row-name">co-signing</div>
+          <div class="tour-row-sub">send a tx that needs both devices</div>
+        </div>
+        <div class="tour-row-meta">2 min</div>
+      </div>
+
+    </div>
     <div class="tray-spacer"></div>
   `
 };
