@@ -178,11 +178,11 @@ body {
 .summary { padding: 0 24px 10px; font-size: 13px; color: var(--text-2); font-weight: 500; flex-shrink: 0; }
 .feed { flex: 1; overflow-y: auto; padding: 4px 14px 12px; display: flex; flex-direction: column; gap: 0; }
 .section-label { font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 1px; padding: 14px 4px 8px; }
-.section-label + .session-card { margin-top: -2px; }
 .past-sessions-link { background: transparent; border: none; font-family: inherit; color: var(--text-3); font-size: 12px; padding: 14px 6px 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; width: 100%; text-align: left; }
 .past-sessions-link:hover { color: var(--text-2); }
 .past-sessions-group { display: flex; flex-direction: column; gap: 10px; }
-.session-card { background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; }
+.session-card { background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; border: 0.5px solid #1a1a1a; }
+.session-card + .session-card { margin-top: 10px; }
 .session-card.expired { opacity: 0.4; }
 .session-card.revoked { border-color: #2a1414; }
 .session-card.revoked-anim { opacity: 0.5; transition: opacity 0.7s, border-color 0.7s; border-color: #2a1414; }
@@ -304,7 +304,7 @@ body {
 .screen.onboarding .headline.small { font-size: 40px; }
 
 /* action sheet */
-.action-sheet { position: absolute; bottom: 0; left: 0; right: 0; background: var(--card); border-top-left-radius: 20px; border-top-right-radius: 20px; border-top: 1px solid var(--border); display: none; flex-direction: column; z-index: 6; }
+.action-sheet { position: absolute; bottom: 0; left: 0; right: 0; background: var(--card); border-top-left-radius: 20px; border-top-right-radius: 20px; border-top: 1px solid var(--border); display: none; flex-direction: column; z-index: 12; max-height: 85%; overflow-y: auto; }
 .action-sheet.open { display: flex; }
 .action-sheet-handle { width: 36px; height: 4px; background: #333; border-radius: 2px; align-self: center; margin: 12px 0 4px; flex-shrink: 0; cursor: pointer; }
 .action-sheet-label { font-size: 10px; color: var(--text-3); padding: 8px 24px 4px; }
@@ -373,6 +373,13 @@ body {
   <button class="dev-btn j-built" onclick="journeyRevokeDelegation()">9 · revoke delegation</button>
   <button class="dev-btn j-built" onclick="journeyRebalance()">10 · rebalance portfolio</button>
   <button class="dev-btn j-built" onclick="journeyBuild()">11 · build transaction</button>
+
+  <div class="devtools-label">actions</div>
+  <button class="dev-btn" onclick="closeAction(); go('send')">send</button>
+  <button class="dev-btn" onclick="closeAction(); go('rebalance')">rebalance</button>
+  <button class="dev-btn" onclick="closeAction(); go('build')">build</button>
+  <button class="dev-btn" onclick="closeAction(); go('sponsor')">sponsor</button>
+  <button class="dev-btn" onclick="closeAction(); go('verify-policy')">verify</button>
 
   <div class="devtools-label">tabs</div>
   <button class="dev-btn" onclick="go('profile')">profile</button>
@@ -1133,8 +1140,8 @@ body {
   </div>
 
   <!-- ============== SEND: RECIPIENT PICKER ============== -->
-  <div id="send-picker-overlay" class="tray-overlay" onclick="closeSendRecipientPicker()" style="z-index: 10;"></div>
-  <div id="send-picker" class="action-sheet" style="z-index: 11; max-height: 70%; overflow-y: auto;">
+  <div id="send-picker-overlay" class="tray-overlay" onclick="closeSendRecipientPicker()" style="z-index: 13;"></div>
+  <div id="send-picker" class="action-sheet" style="z-index: 14; max-height: 70%; overflow-y: auto;">
     <div class="action-sheet-handle" onclick="closeSendRecipientPicker()"></div>
     <div style="padding: 4px 24px 12px; font-size: 15px; color: var(--text-1); font-weight: 500;">send to</div>
     <div style="padding: 0 24px 8px;"><input type="text" id="send-picker-search" placeholder="search by name or ens" oninput="renderSendRecipientPicker()" style="width: 100%; background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; padding: 9px 14px; color: var(--text-1); font-size: 13px; font-family: inherit; outline: none; box-sizing: border-box;"></div>
@@ -2254,8 +2261,8 @@ body {
   </div>
 
   <!-- ============== SPONSOR: RECIPIENT PICKER (overlay) ============== -->
-  <div id="sponsor-picker-overlay" class="tray-overlay" onclick="closeSponsorPicker()" style="z-index: 10;"></div>
-  <div id="sponsor-picker" class="action-sheet" style="z-index: 11; max-height: 70%; overflow-y: auto;">
+  <div id="sponsor-picker-overlay" class="tray-overlay" onclick="closeSponsorPicker()" style="z-index: 13;"></div>
+  <div id="sponsor-picker" class="action-sheet" style="z-index: 14; max-height: 70%; overflow-y: auto;">
     <div class="action-sheet-handle" onclick="closeSponsorPicker()"></div>
     <div style="padding: 4px 24px 12px; font-size: 15px; color: var(--text-1); font-weight: 500;">pick a recipient</div>
     <div style="padding: 0 24px 8px;"><input type="text" id="sponsor-picker-search" placeholder="search by name or ens" oninput="renderSponsorPicker()" style="width: 100%; background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; padding: 9px 14px; color: var(--text-1); font-size: 13px; font-family: inherit; outline: none; box-sizing: border-box;"></div>
@@ -2315,16 +2322,16 @@ body {
   </div>
 
   <!-- ============== VERIFY POLICY: CONFIGURE (overlay) ============== -->
-  <div id="verify-config-overlay" class="tray-overlay" onclick="closeVerifyConfig()" style="z-index: 10;"></div>
-  <div id="verify-config" class="action-sheet" style="z-index: 11; max-height: 80%; overflow-y: auto;">
+  <div id="verify-config-overlay" class="tray-overlay" onclick="closeVerifyConfig()" style="z-index: 13;"></div>
+  <div id="verify-config" class="action-sheet" style="z-index: 14; max-height: 80%; overflow-y: auto;">
     <div class="action-sheet-handle" onclick="closeVerifyConfig()"></div>
     <div id="verify-config-body"></div>
     <div class="action-sheet-spacer"></div>
   </div>
 
   <!-- ============== AGENT SIMULATION (#8) ============== -->
-  <div id="agent-sim-overlay" class="tray-overlay" onclick="closeAgentSimulation()" style="z-index: 12;"></div>
-  <div id="agent-sim" class="action-sheet" style="z-index: 13; max-height: 88%; overflow-y: auto;">
+  <div id="agent-sim-overlay" class="tray-overlay" onclick="closeAgentSimulation()" style="z-index: 15;"></div>
+  <div id="agent-sim" class="action-sheet" style="z-index: 16; max-height: 88%; overflow-y: auto;">
     <div class="action-sheet-handle" onclick="closeAgentSimulation()"></div>
     <div style="padding: 4px 24px 6px; font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px;">live simulation</div>
     <div style="padding: 0 24px 4px; font-size: 16px; color: var(--text-1); font-weight: 500;" id="agent-sim-title">—</div>
@@ -2372,7 +2379,7 @@ body {
   </div>
 
   <!-- ============== ACTION SHEET ============== -->
-  <div id="action-overlay" class="tray-overlay" onclick="closeAction()" style="z-index: 5;"></div>
+  <div id="action-overlay" class="tray-overlay" onclick="closeAction()" style="z-index: 11;"></div>
   <div id="action-sheet" class="action-sheet">
     <div class="action-sheet-handle" onclick="closeAction()"></div>
 
@@ -2435,8 +2442,8 @@ body {
   </div>
 
   <!-- ============== TX PREVIEW MODAL ============== -->
-  <div id="tx-preview-overlay" class="tray-overlay" onclick="closeTxPreview()" style="z-index: 10;"></div>
-  <div id="tx-preview" class="action-sheet" style="z-index: 11; max-height: 85%; overflow-y: auto;">
+  <div id="tx-preview-overlay" class="tray-overlay" onclick="closeTxPreview()" style="z-index: 13;"></div>
+  <div id="tx-preview" class="action-sheet" style="z-index: 14; max-height: 85%; overflow-y: auto;">
     <div class="action-sheet-handle" onclick="closeTxPreview()"></div>
     <div style="padding: 4px 24px 6px; font-size: 10px; color: var(--text-3);">transaction preview</div>
     <div style="padding: 0 24px 8px; font-size: 16px; color: var(--text-1); font-weight: 500;" id="tx-preview-title">—</div>
