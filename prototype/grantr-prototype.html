@@ -121,7 +121,7 @@ body {
 
 /* tab screens (profile, sessions, activity, addresses) use balance bar + tab bar */
 .screen.tab-screen {}
-.balance-bar { padding: 4px 24px 14px; flex-shrink: 0; }
+.balance-bar { padding: 4px 20px 14px; flex-shrink: 0; }
 .balance-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .balance-label { font-size: 11px; color: var(--text-4); text-transform: lowercase; letter-spacing: 1.5px; }
 .balance-amount { font-size: 48px; font-weight: 700; letter-spacing: -0.04em; line-height: 0.9; color: var(--green); }
@@ -163,7 +163,7 @@ body {
 
 /* stat tile + chart tile paired row */
 .home-pair { margin: 0 16px 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: stretch; }
-.home-stat-tile { background: var(--card); border: 0.5px solid #1a1a1a; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; justify-content: space-between; }
+.home-stat-tile { background: var(--card); border: 0.5px solid #1a1a1a; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: center; }
 .home-stat-label { font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; }
 .home-stat-big { font-size: 22px; color: var(--text-1); font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
 .home-stat-sub { font-size: 10px; color: var(--green); margin-top: 3px; }
@@ -175,7 +175,7 @@ body {
 .home-spark-box { height: 40px; }
 
 /* section divider between what's running and what happened */
-.home-section-divider { height: 1px; background: #1a1a1a; margin: 16px 20px 4px; }
+.home-section-divider { height: 1px; background: #1a1a1a; margin: 16px 20px 8px; }
 
 .home-rows { padding: 0 16px; display: flex; flex-direction: column; gap: 4px; }
 .home-row { background: var(--card); border: 0.5px solid #1a1a1a; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; transition: background 0.15s; }
@@ -187,7 +187,7 @@ body {
 .home-row-chev { color: #444; font-size: 11px; }
 
 .home-feed { padding: 2px 20px 4px; }
-.home-feed-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; cursor: pointer; border-top: 0.5px solid #111; }
+.home-feed-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; cursor: pointer; border-top: 0.5px solid #1a1a1a; }
 .home-feed-row:first-child { border-top: none; }
 .home-feed-avatar { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; overflow: hidden; }
 .home-feed-body { flex: 1; min-width: 0; }
@@ -496,10 +496,9 @@ body {
   <button class="dev-btn j-built" onclick="journeyBuild()">11 · build transaction</button>
 
   <div class="devtools-label">actions</div>
-  <button class="dev-btn" onclick="closeAction(); go('send')">send</button>
   <button class="dev-btn" onclick="closeAction(); go('rebalance')">rebalance</button>
   <button class="dev-btn" onclick="closeAction(); go('build')">build</button>
-  <button class="dev-btn" onclick="closeAction(); go('sponsor')">sponsor</button>
+  <button class="dev-btn" onclick="closeAction(); go('send')">send</button>
 
   <div class="devtools-label">tabs</div>
   <button class="dev-btn" onclick="go('home')">home</button>
@@ -509,6 +508,7 @@ body {
   <div class="devtools-label">pages</div>
   <button class="dev-btn" onclick="go('account')">account</button>
   <button class="dev-btn" onclick="go('addresses')">addresses</button>
+  <button class="dev-btn" onclick="go('sponsor')">sponsor gas</button>
   <button class="dev-btn" onclick="go('verify-policy')">policies</button>
 
   <div class="devtools-label">trays</div>
@@ -1739,7 +1739,7 @@ body {
           <span class="identity-name">alice.eth</span>
           <span class="identity-addr">...4c7a</span>
         </div>
-        <span class="home-row-chev" style="margin-left:auto;">›</span>
+        <span class="home-row-chev" style="margin-left:auto; font-size:14px; color:#666;">›</span>
       </button>
     </div>
 
@@ -1747,7 +1747,6 @@ body {
     <div class="home-section-label"><span>what's running</span><span class="see-all" onclick="go('sessions')">see all ›</span></div>
     <div class="home-pair">
       <div class="home-stat-tile">
-        <div class="home-stat-label">executions</div>
         <div>
           <div class="home-stat-big">9</div>
           <div class="home-stat-sub">+3 vs last week</div>
@@ -1797,9 +1796,6 @@ body {
           <div class="home-feed-name">ens renewer</div>
           <div class="home-feed-sub">idle · 345 days left</div>
         </div>
-        <div class="home-feed-right">
-          <span class="home-feed-pill live">live</span>
-        </div>
       </div>
     </div>
     <div class="home-feed-empty" id="home-sessions-empty" style="display:none;">
@@ -1813,22 +1809,18 @@ body {
     <div class="home-section-label"><span>what happened</span><span class="see-all" onclick="go('activity')">see all ›</span></div>
     <div class="home-pair">
       <div class="home-stat-tile">
-        <div class="home-stat-label">balance</div>
         <div>
           <div class="home-stat-big">+2.4%</div>
           <div class="home-stat-sub">$67 this week</div>
         </div>
       </div>
       <div class="home-chart-tile">
-        <div class="home-spark-box">
+        <div class="home-spark-box" style="flex:1;">
           <svg width="100%" height="100%" viewBox="0 0 100 40" preserveAspectRatio="none" style="display:block;">
             <polyline points="0,32 10,30 20,34 30,24 40,26 50,18 60,22 70,14 80,18 90,8 100,6" fill="none" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
             <polyline points="0,32 10,30 20,34 30,24 40,26 50,18 60,22 70,14 80,18 90,8 100,6 100,40 0,40" fill="url(#gHomeSpark)" stroke="none"/>
             <defs><linearGradient id="gHomeSpark" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22c55e" stop-opacity="0.22"/><stop offset="100%" stop-color="#22c55e" stop-opacity="0"/></linearGradient></defs>
           </svg>
-        </div>
-        <div class="home-chart-days">
-          <span>mon</span><span>sun</span>
         </div>
       </div>
     </div>
@@ -2779,10 +2771,6 @@ body {
       </button>
 
       <!-- ACTION-MODE TABS (shown when action is open) -->
-      <button class="tab tab-action-mode" onclick="closeActionMorph(); go('send')">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 20 L20 4" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/><path d="M8 4 L20 4 L20 16" stroke="#fff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span>send</span>
-      </button>
       <button class="tab tab-action-mode" onclick="closeActionMorph(); go('rebalance')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12 C3 7 7 3 12 3 C17 3 21 7 21 12" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round"/><path d="M21 12 C21 17 17 21 12 21 C7 21 3 17 3 12" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="3 2"/><path d="M18 9 L21 12 L18 15" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span>rebalance</span>
@@ -2790,6 +2778,10 @@ body {
       <button class="tab tab-action-mode" onclick="closeActionMorph(); go('build')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="1.5" stroke="#fff" stroke-width="1.75" fill="none"/><rect x="13" y="3" width="8" height="8" rx="1.5" stroke="#fff" stroke-width="1.75" fill="none"/><rect x="3" y="13" width="8" height="8" rx="1.5" stroke="#fff" stroke-width="1.75" fill="none"/><line x1="17" y1="13" x2="17" y2="21" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/><line x1="13" y1="17" x2="21" y2="17" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/></svg>
         <span>build</span>
+      </button>
+      <button class="tab tab-action-mode" onclick="closeActionMorph(); go('send')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 20 L20 4" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/><path d="M8 4 L20 4 L20 16" stroke="#fff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>send</span>
       </button>
     </div>
 
