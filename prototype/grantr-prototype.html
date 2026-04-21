@@ -152,27 +152,49 @@ body {
 .activity-days { display: flex; gap: 6px; margin-top: 6px; font-size: 9px; color: #444; text-transform: uppercase; letter-spacing: 0.5px; }
 .activity-days span { flex: 1; text-align: center; }
 
-/* profile: sparkline + tiles */
+/* home screen: sparkline */
 .sparkline-hero { padding: 8px 24px 4px; flex-shrink: 0; }
 .sparkline-meta { display: flex; justify-content: space-between; margin-top: 4px; font-size: 10px; color: var(--text-4); }
-.tiles { padding: 8px 18px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; flex: 1; align-content: start; }
-.tile { background: var(--card); color: var(--text-1); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; min-height: 105px; cursor: pointer; }
-.tile-label { font-size: 10px; color: var(--text-4); text-transform: lowercase; letter-spacing: 0.5px; }
-.tile-stat { font-size: 22px; color: var(--text-1); font-weight: 600; line-height: 1; }
-.tile-sub { font-size: 9px; color: var(--text-4); margin-top: 4px; }
-.tile-dots { display: flex; gap: 6px; align-items: center; margin-bottom: 4px; }
-.tile-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
 
-.list-view { padding: 8px 24px 0; flex: 1; display: none; flex-direction: column; }
-.list-view.active { display: flex; }
-.tiles.hidden { display: none; }
-.list-row { padding: 12px 0; border-bottom: 1px solid #0f0f0f; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-.list-row-left { display: flex; flex-direction: column; gap: 2px; }
-.list-row-name { font-size: 13px; color: var(--text-1); font-weight: 500; }
-.list-row-sub { font-size: 10px; color: var(--text-4); }
-.list-row-right { display: flex; align-items: center; gap: 6px; }
-.list-dot { width: 6px; height: 6px; border-radius: 50%; }
-.chevron { font-size: 11px; color: var(--text-4); }
+/* home screen: section labels + tight rows + feed rows */
+.home-section-label { font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 1px; padding: 12px 20px 6px; display: flex; justify-content: space-between; align-items: baseline; }
+.home-section-label span.see-all { color: var(--text-3); font-size: 10px; text-transform: none; letter-spacing: 0.3px; cursor: pointer; }
+.home-section-label span.see-all:hover { color: var(--text-1); }
+
+.home-rows { padding: 0 16px; display: flex; flex-direction: column; gap: 4px; }
+.home-row { background: var(--card); border: 0.5px solid #1a1a1a; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: background 0.15s; }
+.home-row:hover { background: #141414; }
+.home-row-left { display: flex; align-items: center; gap: 10px; }
+.home-row-icon { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.home-row-name { font-size: 12px; color: var(--text-1); font-weight: 500; }
+.home-row-right { font-size: 11px; color: var(--text-2); font-weight: 500; display: flex; align-items: center; gap: 6px; }
+.home-row-chev { color: #444; font-size: 11px; }
+
+.home-feed { padding: 2px 20px 4px; }
+.home-feed-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; cursor: pointer; border-top: 0.5px solid #111; }
+.home-feed-row:first-child { border-top: none; }
+.home-feed-avatar { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; overflow: hidden; }
+.home-feed-body { flex: 1; min-width: 0; }
+.home-feed-name { font-size: 12px; color: var(--text-1); font-weight: 500; line-height: 1.2; }
+.home-feed-sub { font-size: 10px; color: var(--text-4); margin-top: 2px; line-height: 1.3; }
+.home-feed-right { text-align: right; flex-shrink: 0; }
+.home-feed-amount { font-size: 12px; color: var(--text-1); font-weight: 500; }
+.home-feed-amount.red { color: var(--red); }
+.home-feed-time { font-size: 9px; color: #555; margin-top: 2px; }
+.home-feed-pill { font-size: 9px; padding: 2px 7px; border-radius: 999px; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.3px; }
+.home-feed-pill.blocked { background: #2a1414; color: var(--red); }
+.home-feed-pill.live { background: #0a1f12; color: var(--green); }
+.home-feed-empty { padding: 14px 20px; flex-direction: column; gap: 6px; align-items: flex-start; }
+.home-feed-empty-body { font-size: 12px; color: var(--text-3); }
+.home-feed-empty-cta { background: none; border: none; color: var(--green); font-size: 12px; font-family: inherit; cursor: pointer; padding: 0; font-weight: 500; }
+.home-feed-empty-cta:hover { color: #4ade80; }
+
+.home-wide-tile { background: var(--card); border: 0.5px solid #1a1a1a; border-radius: 12px; padding: 12px 14px; margin: 0 16px 4px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.15s; }
+.home-wide-tile:hover { background: #141414; }
+.home-wide-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.home-wide-body { flex: 1; }
+.home-wide-name { font-size: 12px; color: var(--text-1); font-weight: 500; }
+.home-wide-sub { font-size: 10px; color: var(--text-4); margin-top: 2px; }
 
 /* sessions feed */
 .summary { padding: 0 24px 10px; font-size: 13px; color: var(--text-2); font-weight: 500; flex-shrink: 0; }
@@ -296,7 +318,7 @@ body {
 
 /* tab bar */
 .tab-bar-wrap { padding: 10px 16px 24px; flex-shrink: 0; z-index: 10; position: relative; }
-.tab-bar { background: var(--card); border-radius: 22px; padding: 10px 6px; display: grid; grid-template-columns: repeat(5, 1fr); }
+.tab-bar { background: var(--card); border-radius: 22px; padding: 10px 6px; display: grid; grid-template-columns: repeat(4, 1fr); }
 .tab { background: transparent; border: none; padding: 8px 4px; font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; color: #555; }
 .tab span { font-size: 10px; color: var(--text-2); }
 .tab.active { color: var(--green); }
@@ -438,9 +460,12 @@ body {
   <button class="dev-btn" onclick="closeAction(); go('verify-policy')">verify</button>
 
   <div class="devtools-label">tabs</div>
-  <button class="dev-btn" onclick="go('profile')">profile</button>
+  <button class="dev-btn" onclick="go('home')">home</button>
   <button class="dev-btn" onclick="go('sessions')">sessions</button>
   <button class="dev-btn" onclick="go('activity')">activity</button>
+
+  <div class="devtools-label">pages</div>
+  <button class="dev-btn" onclick="go('account')">account</button>
   <button class="dev-btn" onclick="go('addresses')">addresses</button>
 </div>
 
@@ -456,7 +481,7 @@ body {
     </div>
     <div class="bottom">
       <button class="btn btn-primary" onclick="go('email')">create account</button>
-      <button class="btn btn-secondary" onclick="go('profile')">sign in</button>
+      <button class="btn btn-secondary" onclick="go('home')">sign in</button>
       <div style="text-align: center; font-size: 11px; color: var(--text-4); padding-top: 4px; cursor: pointer;" onclick="go('recover-path')">lost access? <span style="color: var(--text-2);">recover account →</span></div>
     </div>
   </div>
@@ -739,7 +764,7 @@ body {
   <!-- ============== ADD GUARDIANS: INTRO ============== -->
   <div id="screen-guardians-intro" class="screen onboarding">
     <div class="top">
-      <span class="back" onclick="closeTray(); go('profile')">←</span>
+      <span class="back" onclick="closeTray(); go('home')">←</span>
       <div class="stepper">
         <div class="stepper-seg active"></div>
         <div class="stepper-seg"></div>
@@ -916,7 +941,7 @@ body {
   <!-- ============== ADD DEVICE: INTRO ============== -->
   <div id="screen-device-intro" class="screen onboarding">
     <div class="top">
-      <span class="back" onclick="closeTray(); go('profile')">←</span>
+      <span class="back" onclick="closeTray(); go('home')">←</span>
       <div class="stepper">
         <div class="stepper-seg active"></div>
         <div class="stepper-seg"></div>
@@ -1173,7 +1198,7 @@ body {
   <!-- ============== SEND ============== -->
   <div id="screen-send" class="screen onboarding">
     <div class="top">
-      <span class="back" onclick="go('profile')">←</span>
+      <span class="back" onclick="go('home')">←</span>
       <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">send</div>
       <span class="spacer"></span>
     </div>
@@ -1324,7 +1349,7 @@ body {
   <!-- ============== GRANT DELEGATION: AGENT PICKER ============== -->
   <div id="screen-delegate-pick" class="screen onboarding">
     <div class="top">
-      <span class="back" onclick="closeAction(); go('profile')">←</span>
+      <span class="back" onclick="closeAction(); go('home')">←</span>
       <div class="stepper">
         <div class="stepper-seg active"></div>
         <div class="stepper-seg"></div>
@@ -1653,106 +1678,26 @@ body {
     <div class="bottom"></div>
   </div>
 
-  <!-- ============== PROFILE TAB ============== -->
-  <div id="screen-profile" class="screen tab-screen">
+  <!-- ============== HOME (formerly PROFILE) TAB ============== -->
+  <div id="screen-home" class="screen tab-screen">
     <div class="balance-bar">
       <div class="balance-label-row">
         <div class="balance-label">balance</div>
-        <div class="view-toggle">
-          <div id="toggle-tiles" class="toggle-btn active" onclick="profileView('tiles')">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="0" y="0" width="5" height="5" rx="1" fill="#a3a3a3"/><rect x="7" y="0" width="5" height="5" rx="1" fill="#a3a3a3"/><rect x="0" y="7" width="5" height="5" rx="1" fill="#a3a3a3"/><rect x="7" y="7" width="5" height="5" rx="1" fill="#a3a3a3"/></svg>
-          </div>
-          <div id="toggle-list" class="toggle-btn" onclick="profileView('list')">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="0" y="1" width="12" height="2" rx="1" fill="#555"/><rect x="0" y="5" width="12" height="2" rx="1" fill="#555"/><rect x="0" y="9" width="12" height="2" rx="1" fill="#555"/></svg>
-          </div>
-        </div>
       </div>
       <div class="balance-amount">$2,847.30</div>
-      <div class="identity-row">
+      <button type="button" class="identity-row" onclick="go('account')" style="cursor:pointer; width:100%; background:none; border:none; text-align:left; padding:0; font-family:inherit;">
         <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
         <div class="identity-meta">
           <span class="identity-name">alice.eth</span>
           <span class="identity-addr">...4c7a</span>
         </div>
-      </div>
+        <span class="home-row-chev" style="margin-left:auto;">›</span>
+      </button>
     </div>
-    <div class="sparkline-hero">
-      <svg width="100%" height="48" viewBox="0 0 300 48" preserveAspectRatio="none" style="display: block;">
-        <polyline points="0,36 30,32 60,38 90,28 120,30 150,22 180,26 210,18 240,22 270,14 300,10" fill="none" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-        <polyline points="0,36 30,32 60,38 90,28 120,30 150,22 180,26 210,18 240,22 270,14 300,10 300,48 0,48" fill="url(#gProfile)" stroke="none"/>
-        <defs><linearGradient id="gProfile" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22c55e" stop-opacity="0.18"/><stop offset="100%" stop-color="#22c55e" stop-opacity="0"/></linearGradient></defs>
-      </svg>
-      <div class="sparkline-meta"><span>+2.4% · 7 days</span><span>last: 2 min ago</span></div>
-    </div>
-    <div id="profile-tiles" class="tiles">
-      <div class="tile" onclick="openTray('security')">
-        <div class="tile-label">security</div>
-        <div>
-          <div class="tile-stat">3 guardians</div>
-          <div class="tile-sub">2-of-3 · email backup</div>
-        </div>
-      </div>
-      <div class="tile" onclick="openTray('signing')">
-        <div class="tile-label">signing</div>
-        <div><div class="tile-stat">2 keys</div><div class="tile-sub">phone + laptop</div></div>
-      </div>
-      <div class="tile" onclick="go('sessions')">
-        <div class="tile-label">sessions</div>
-        <div><div class="tile-stat">2 active</div><div class="tile-sub">$12 spent</div></div>
-      </div>
-      <div class="tile" onclick="openTray('account')">
-        <div class="tile-label">account</div>
-        <div><div class="tile-stat" style="font-size: 16px; font-family: 'DM Mono', monospace;">...4c7a</div><div class="tile-sub">etherex devnet</div></div>
-      </div>
-      <div class="tile tour-tile" onclick="openTray('tour')" style="grid-column: 1 / -1; min-height: auto; padding: 14px 16px; flex-direction: row; align-items: center; gap: 12px; justify-content: flex-start;">
-        <div style="width: 32px; height: 32px; border-radius: 8px; background: #0a1428; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 5 L19 12 L8 19 Z" fill="#3b82f6"/></svg>
-        </div>
-        <div style="flex: 1;">
-          <div style="font-size: 13px; color: var(--text-1); font-weight: 500;">see it in action</div>
-          <div style="font-size: 10px; color: var(--text-4); margin-top: 2px;">replay a flow end to end</div>
-        </div>
-        <span style="color: #444; font-size: 14px;">›</span>
-      </div>
-    </div>
-    <div id="profile-list" class="list-view">
-      <div class="list-row" onclick="openTray('security')">
-        <div class="list-row-left"><div class="list-row-name">security</div><div class="list-row-sub">email ✓ · 3 guardians · 2-of-3 · 0 approvals</div></div>
-        <div class="list-row-right"><div class="list-dot" style="background: #22c55e;"></div><span class="chevron">›</span></div>
-      </div>
-      <div class="list-row" onclick="openTray('signing')">
-        <div class="list-row-left"><div class="list-row-name">signing</div><div class="list-row-sub">2 passkeys · phone + laptop</div></div>
-        <div class="list-row-right"><div class="list-dot" style="background: #22c55e;"></div><span class="chevron">›</span></div>
-      </div>
-      <div class="list-row" onclick="go('sessions')">
-        <div class="list-row-left"><div class="list-row-name">sessions</div><div class="list-row-sub">2 active · $12 spent · 1 blocked</div></div>
-        <div class="list-row-right"><div class="list-dot" style="background: #3b82f6;"></div><span class="chevron">›</span></div>
-      </div>
-      <div class="list-row" onclick="openTray('account')">
-        <div class="list-row-left"><div class="list-row-name">account</div><div class="list-row-sub" style="font-family: 'DM Mono', monospace;">...4c7a · etherex devnet</div></div>
-        <div class="list-row-right"><span class="chevron">›</span></div>
-      </div>
-      <div class="list-row" onclick="openTray('tour')">
-        <div class="list-row-left"><div class="list-row-name">see it in action</div><div class="list-row-sub">replay a flow end to end</div></div>
-        <div class="list-row-right"><div class="list-dot" style="background: #3b82f6;"></div><span class="chevron">›</span></div>
-      </div>
-    </div>
-  </div>
 
-  <!-- ============== SESSIONS TAB ============== -->
-  <div id="screen-sessions" class="screen tab-screen">
-    <div class="balance-bar">
-      <div class="balance-label">balance</div>
-      <div class="balance-amount">$2,847.30</div>
-      <div class="identity-row">
-        <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
-        <div class="identity-meta">
-          <span class="identity-name">alice.eth</span>
-          <span class="identity-addr">...4c7a</span>
-        </div>
-      </div>
-    </div>
-    <div class="activity-hero">
+    <!-- WHAT'S RUNNING SECTION (bar chart + sessions feed) -->
+    <div class="home-section-label"><span>what's running</span><span class="see-all" onclick="go('sessions')">see all ›</span></div>
+    <div class="activity-hero" style="padding: 4px 20px 14px;">
       <div class="activity-hero-top">
         <div>
           <div class="activity-hero-label">agent executions</div>
@@ -1774,6 +1719,192 @@ body {
       </div>
       <div class="activity-days">
         <span>m</span><span>t</span><span>w</span><span>t</span><span>f</span><span>s</span><span>s</span>
+      </div>
+    </div>
+    <div class="home-feed" id="home-sessions-feed">
+      <div class="home-feed-row" onclick="go('sessions')">
+        <div class="home-feed-avatar" id="home-feed-s1"></div>
+        <div class="home-feed-body">
+          <div class="home-feed-name">lp rebalancer</div>
+          <div class="home-feed-sub">rebalanced $412 position</div>
+        </div>
+        <div class="home-feed-right">
+          <span class="home-feed-pill live">live</span>
+          <div class="home-feed-time">2m ago</div>
+        </div>
+      </div>
+      <div class="home-feed-row" onclick="go('sessions')">
+        <div class="home-feed-avatar" id="home-feed-s2"></div>
+        <div class="home-feed-body">
+          <div class="home-feed-name">lp rebalancer</div>
+          <div class="home-feed-sub">attempted transfer · out of scope</div>
+        </div>
+        <div class="home-feed-right">
+          <span class="home-feed-pill blocked">blocked</span>
+          <div class="home-feed-time">5m ago</div>
+        </div>
+      </div>
+      <div class="home-feed-row" onclick="go('sessions')">
+        <div class="home-feed-avatar" id="home-feed-s3"></div>
+        <div class="home-feed-body">
+          <div class="home-feed-name">ens renewer</div>
+          <div class="home-feed-sub">idle · 345 days left</div>
+        </div>
+        <div class="home-feed-right">
+          <span class="home-feed-pill live">live</span>
+        </div>
+      </div>
+    </div>
+    <div class="home-feed-empty" id="home-sessions-empty" style="display:none;">
+      <div class="home-feed-empty-body">nothing's running.</div>
+      <button class="home-feed-empty-cta" onclick="closeAction(); toggleAction();">grant a delegation ›</button>
+    </div>
+
+    <!-- WHAT HAPPENED SECTION (sparkline + activity feed) -->
+    <div class="home-section-label" style="padding-top:18px;"><span>what happened</span><span class="see-all" onclick="go('activity')">see all ›</span></div>
+    <div class="sparkline-hero" style="padding: 2px 20px 8px;">
+      <svg width="100%" height="48" viewBox="0 0 300 48" preserveAspectRatio="none" style="display: block;">
+        <polyline points="0,36 30,32 60,38 90,28 120,30 150,22 180,26 210,18 240,22 270,14 300,10" fill="none" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline points="0,36 30,32 60,38 90,28 120,30 150,22 180,26 210,18 240,22 270,14 300,10 300,48 0,48" fill="url(#gProfile)" stroke="none"/>
+        <defs><linearGradient id="gProfile" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22c55e" stop-opacity="0.18"/><stop offset="100%" stop-color="#22c55e" stop-opacity="0"/></linearGradient></defs>
+      </svg>
+      <div class="sparkline-meta"><span>+2.4% · 7 days</span><span>last: 2 min ago</span></div>
+    </div>
+    <div class="home-feed">
+      <div class="home-feed-row" onclick="go('activity')">
+        <div class="home-feed-avatar" id="home-feed-a1"></div>
+        <div class="home-feed-body">
+          <div class="home-feed-name">sent to bob.eth</div>
+          <div class="home-feed-sub">$100 usdc</div>
+        </div>
+        <div class="home-feed-right">
+          <div class="home-feed-amount red">−$100</div>
+          <div class="home-feed-time">just now</div>
+        </div>
+      </div>
+      <div class="home-feed-row" onclick="go('activity')">
+        <div class="home-feed-avatar" id="home-feed-a2"></div>
+        <div class="home-feed-body">
+          <div class="home-feed-name">rebalanced position</div>
+          <div class="home-feed-sub">by lp rebalancer</div>
+        </div>
+        <div class="home-feed-right">
+          <div class="home-feed-time">2m ago</div>
+        </div>
+      </div>
+      <div class="home-feed-row" onclick="go('activity')">
+        <div class="home-feed-avatar" id="home-feed-a3"></div>
+        <div class="home-feed-body">
+          <div class="home-feed-name">granted access</div>
+          <div class="home-feed-sub">to lp rebalancer</div>
+        </div>
+        <div class="home-feed-right">
+          <div class="home-feed-time">1h ago</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============== ACCOUNT (sub-page from home, triggered by tapping pfp) ============== -->
+  <div id="screen-account" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('home')">←</span>
+      <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">account</div>
+      <span class="spacer"></span>
+    </div>
+    <div style="flex: 1; padding: 8px 0 16px; display: flex; flex-direction: column; overflow-y: auto;">
+
+      <div style="display: flex; align-items: center; gap: 14px; padding: 8px 20px 20px;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; overflow: hidden; flex-shrink: 0;">
+          <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div style="font-size: 18px; color: var(--text-1); font-weight: 600;">alice.eth</div>
+          <div style="font-size: 11px; color: var(--text-4); font-family: 'DM Mono', monospace; margin-top: 2px;">...4c7a · etherex devnet</div>
+        </div>
+      </div>
+
+      <div class="home-section-label"><span>identity</span></div>
+      <div class="home-rows">
+        <div class="home-row" onclick="openTray('security')">
+          <div class="home-row-left">
+            <div class="home-row-icon" style="background:#0a1428;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 3 L20 7 V12 C20 17 16 20 12 21 C8 20 4 17 4 12 V7 Z" stroke="#3b82f6" stroke-width="1.5" fill="none"/></svg>
+            </div>
+            <span class="home-row-name">security</span>
+          </div>
+          <div class="home-row-right">3 guardians · email <span class="home-row-chev">›</span></div>
+        </div>
+        <div class="home-row" onclick="openTray('signing')">
+          <div class="home-row-left">
+            <div class="home-row-icon" style="background:#0a1f12;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="15" r="4" stroke="#22c55e" stroke-width="1.5" fill="none"/><path d="M11 12 L20 3 M16 7 L19 10" stroke="#22c55e" stroke-width="1.5"/></svg>
+            </div>
+            <span class="home-row-name">signing</span>
+          </div>
+          <div class="home-row-right">2 keys · phone + laptop <span class="home-row-chev">›</span></div>
+        </div>
+        <div class="home-row" onclick="openTray('account')">
+          <div class="home-row-left">
+            <div class="home-row-icon" style="background:#1a1a1a;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#fff" stroke-width="1.5" fill="none"/></svg>
+            </div>
+            <span class="home-row-name">account details</span>
+          </div>
+          <div class="home-row-right" style="font-family:'DM Mono',monospace;">...4c7a <span class="home-row-chev">›</span></div>
+        </div>
+      </div>
+
+      <div class="home-section-label" style="padding-top: 18px;"><span>contacts</span></div>
+      <div class="home-rows">
+        <div class="home-row" onclick="go('addresses')">
+          <div class="home-row-left">
+            <div class="home-row-icon" style="background:#1a1a1a;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2.5" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M3 9 L21 9" stroke="#fff" stroke-width="1.5"/><path d="M7 14 L17 14" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/><path d="M7 17 L13 17" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <span class="home-row-name">addresses</span>
+          </div>
+          <div class="home-row-right">12 contacts · 3 guardians · 2 agents <span class="home-row-chev">›</span></div>
+        </div>
+      </div>
+
+      <div class="home-section-label" style="padding-top: 18px;"><span>learn</span></div>
+      <div class="home-rows">
+        <div class="home-row" onclick="openTray('tour')">
+          <div class="home-row-left">
+            <div class="home-row-icon" style="background:#0a1428;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M8 5 L19 12 L8 19 Z" fill="#3b82f6"/></svg>
+            </div>
+            <span class="home-row-name">see it in action</span>
+          </div>
+          <div class="home-row-right">replay a flow end to end <span class="home-row-chev">›</span></div>
+        </div>
+        <a class="home-row" href="https://eip8141.io" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+          <div class="home-row-left">
+            <div class="home-row-icon" style="background:#1a1a1a;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M8 8 L16 8 M8 12 L16 12 M8 16 L13 16" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <span class="home-row-name">read the spec</span>
+          </div>
+          <div class="home-row-right">eip-8141.io <span class="home-row-chev" style="font-family:inherit;">↗</span></div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============== SESSIONS TAB ============== -->
+  <div id="screen-sessions" class="screen tab-screen">
+    <div class="balance-bar">
+      <div class="balance-label">balance</div>
+      <div class="balance-amount">$2,847.30</div>
+      <div class="identity-row">
+        <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
+        <div class="identity-meta">
+          <span class="identity-name">alice.eth</span>
+          <span class="identity-addr">...4c7a</span>
+        </div>
       </div>
     </div>
     <div class="feed">
@@ -1971,7 +2102,7 @@ body {
     </div>
   </div>
 
-  <!-- ============== ADDRESSES TAB ============== -->
+  <!-- ============== ADDRESSES (sub-page from profile) ============== -->
   <div id="screen-addresses" class="screen tab-screen">
     <div class="balance-bar">
       <div class="balance-label">balance</div>
@@ -2002,7 +2133,7 @@ body {
   <!-- ============== REBALANCE: PICK POSITION ============== -->
   <div id="screen-rebalance" class="screen onboarding">
     <div class="top">
-      <span class="back" onclick="closeAction(); go('profile')">←</span>
+      <span class="back" onclick="closeAction(); go('home')">←</span>
       <div style="display:flex;gap:6px;flex:1;margin:0 16px;">
         <div class="stepper-seg done"></div>
         <div class="stepper-seg active"></div>
@@ -2161,7 +2292,7 @@ body {
 
     <div class="bottom" style="padding-top:12px;">
       <button class="btn btn-primary" id="auth-btn" onclick="openTxPreview('rebalance')">authorize</button>
-      <button class="btn btn-secondary" onclick="closeAction(); go('profile')">cancel</button>
+      <button class="btn btn-secondary" onclick="closeAction(); go('home')">cancel</button>
     </div>
   </div>
 
@@ -2235,7 +2366,7 @@ body {
   <!-- ============== BUILD SCREEN ============== -->
   <div id="screen-build" class="screen onboarding">
     <div class="top">
-      <span class="back" onclick="resetBuildQueue(); closeAction(); go('profile')">←</span>
+      <span class="back" onclick="resetBuildQueue(); closeAction(); go('home')">←</span>
       <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">build transaction</div>
       <span class="spacer"></span>
     </div>
@@ -2354,7 +2485,7 @@ body {
   <!-- ============== SPONSOR ============== -->
   <div id="screen-sponsor" class="screen onboarding">
     <div class="top">
-      <span class="back" onclick="closeAction(); go('profile')">←</span>
+      <span class="back" onclick="closeAction(); go('home')">←</span>
       <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">sponsor</div>
       <span class="spacer"></span>
     </div>
@@ -2418,7 +2549,7 @@ body {
   <!-- ============== VERIFY POLICY ============== -->
   <div id="screen-verify-policy" class="screen onboarding">
     <div class="top">
-      <span class="back" onclick="closeAction(); go('profile')">←</span>
+      <span class="back" onclick="closeAction(); go('home')">←</span>
       <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">add verify policy</div>
       <span class="spacer"></span>
     </div>
@@ -2617,15 +2748,20 @@ body {
   <!-- ============== TAB BAR ============== -->
   <div id="tab-bar" class="tab-bar-wrap" style="display: none;">
     <div class="tab-bar">
-      <button class="tab" data-tab="profile" onclick="go('profile')">
-        <svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><path d="M5 20 Q 5 14 12 14 Q 19 14 19 20" stroke="#a3a3a3" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
-        <svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 21 Q 4 13 12 13 Q 20 13 20 21 Z" fill="currentColor"/></svg>
-        <span>profile</span>
+      <button class="tab" data-tab="home" onclick="go('home')">
+        <svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 11 L12 3 L21 11 V20 C21 20.5 20.5 21 20 21 H15 V14 H9 V21 H4 C3.5 21 3 20.5 3 20 Z" stroke="#a3a3a3" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>
+        <svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 11 L12 3 L21 11 V20 C21 20.5 20.5 21 20 21 H15 V14 H9 V21 H4 C3.5 21 3 20.5 3 20 Z" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></svg>
+        <span>home</span>
       </button>
       <button class="tab" data-tab="sessions" onclick="go('sessions')">
         <svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="12" r="4" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><rect x="12" y="10.5" width="9" height="3" rx="1" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><line x1="17" y1="13.5" x2="17" y2="16" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/><line x1="19.5" y1="13.5" x2="19.5" y2="15.5" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/></svg>
         <svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="12" r="4" fill="currentColor"/><rect x="12" y="10.5" width="9" height="3" rx="1" fill="currentColor"/><rect x="17" y="13.5" width="2" height="3.5" rx="1" fill="currentColor"/><rect x="19.5" y="13.5" width="1.5" height="3" rx="0.75" fill="currentColor"/></svg>
         <span>sessions</span>
+      </button>
+      <button class="tab" data-tab="activity" onclick="go('activity')">
+        <svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><path d="M12 7 L12 12 L16 14" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M12 7 L12 12 L16 14" stroke="#0a0a0a" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <span>activity</span>
       </button>
       <button class="tab-action-btn" onclick="toggleAction()">
         <div style="width: 22px; height: 22px; position: relative;">
@@ -2633,16 +2769,6 @@ body {
           <div style="position: absolute; top: 50%; left: 2px; height: 2.5px; width: 18px; background: #000; transform: translateY(-50%); border-radius: 2px;"></div>
         </div>
         <span>action</span>
-      </button>
-      <button class="tab" data-tab="activity" onclick="go('activity')">
-        <svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><path d="M12 7 L12 12 L16 14" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M12 7 L12 12 L16 14" stroke="#0a0a0a" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        <span>activity</span>
-      </button>
-      <button class="tab" data-tab="addresses" onclick="go('addresses')">
-        <svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2.5" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><path d="M3 9 L21 9" stroke="#a3a3a3" stroke-width="1.5"/><path d="M7 14 L17 14" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/><path d="M7 17 L13 17" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/></svg>
-        <svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2.5" fill="currentColor"/><path d="M3 9 L21 9" stroke="#0a0a0a" stroke-width="1.25"/><path d="M7 14 L17 14" stroke="#0a0a0a" stroke-width="1.25" stroke-linecap="round"/><path d="M7 17 L13 17" stroke="#0a0a0a" stroke-width="1.25" stroke-linecap="round"/></svg>
-        <span>addresses</span>
       </button>
     </div>
   </div>
@@ -2663,7 +2789,7 @@ body {
 </div>
 
 <script>
-const tabScreens = ['profile', 'sessions', 'activity', 'addresses', 'rebalance-dashboard'];
+const tabScreens = ['home', 'sessions', 'activity', 'addresses', 'rebalance-dashboard'];
 const allScreens = [...tabScreens, 'welcome', 'email', 'verify', 'passkey', 'creating', 'rebalance', 'build'];
 
 // ============== JOURNEYS ==============
@@ -2684,6 +2810,20 @@ function toggleFrames(headEl) {
   const isOpen = toggle.classList.toggle('open');
   const label = toggle.querySelector('.frames-toggle-label');
   if (label) label.textContent = isOpen ? 'hide frames' : 'show frames';
+}
+
+function toggleHomeEmptyState() {
+  const feed = document.getElementById('home-sessions-feed');
+  const empty = document.getElementById('home-sessions-empty');
+  if (!feed || !empty) return;
+  const showingEmpty = empty.style.display !== 'none';
+  if (showingEmpty) {
+    feed.style.display = '';
+    empty.style.display = 'none';
+  } else {
+    feed.style.display = 'none';
+    empty.style.display = 'flex';
+  }
 }
 
 function filterActivity(filter) {
@@ -2814,7 +2954,7 @@ function journeyRebalance() {
   authPolicy.keepRunning = false;
   const kt = document.getElementById('auth-keep-toggle');
   if (kt) kt.classList.remove('on');
-  go('profile');
+  go('home');
   setTimeout(() => openAction(), 400);
 }
 
@@ -2822,7 +2962,7 @@ function journeyBuild() {
   // from profile, open action sheet with build highlighted
   closeAction();
   resetBuildQueue();
-  go('profile');
+  go('home');
   setTimeout(() => openAction(), 400);
 }
 
@@ -2950,7 +3090,7 @@ function startCreating() {
     setStage(3, 'done');
   }, 6000);
   setTimeout(() => {
-    go('profile');
+    go('home');
   }, 7200);
 }
 
@@ -2968,7 +3108,7 @@ function startRecovering() {
     setStage(3, 'done', 'r');
   }, 6000);
   setTimeout(() => {
-    go('profile');
+    go('home');
   }, 7200);
 }
 
@@ -2986,7 +3126,7 @@ function startAddingGuardians() {
     setStage(3, 'done', 'g');
   }, 6000);
   setTimeout(() => {
-    go('profile');
+    go('home');
   }, 7200);
 }
 
@@ -3037,7 +3177,7 @@ function startRecoveringGuardians() {
     setStage(3, 'done', 'rg');
   }, 6000);
   setTimeout(() => {
-    go('profile');
+    go('home');
   }, 7200);
 }
 
@@ -3053,29 +3193,6 @@ function setStage(n, state, prefix) {
     icon.innerHTML = '<div class="check">✓</div>';
   } else {
     icon.innerHTML = '';
-  }
-}
-
-function profileView(mode) {
-  const tiles = document.getElementById('profile-tiles');
-  const list = document.getElementById('profile-list');
-  const tBtn = document.getElementById('toggle-tiles');
-  const lBtn = document.getElementById('toggle-list');
-  if (mode === 'tiles') {
-    tiles.classList.remove('hidden');
-    list.classList.remove('active');
-    tBtn.classList.add('active');
-    lBtn.classList.remove('active');
-    // update svg fill
-    tBtn.querySelector('svg').innerHTML = tBtn.querySelector('svg').innerHTML.replace(/#555/g, '#a3a3a3');
-    lBtn.querySelector('svg').innerHTML = lBtn.querySelector('svg').innerHTML.replace(/#a3a3a3/g, '#555');
-  } else {
-    tiles.classList.add('hidden');
-    list.classList.add('active');
-    tBtn.classList.remove('active');
-    lBtn.classList.add('active');
-    tBtn.querySelector('svg').innerHTML = tBtn.querySelector('svg').innerHTML.replace(/#a3a3a3/g, '#555');
-    lBtn.querySelector('svg').innerHTML = lBtn.querySelector('svg').innerHTML.replace(/#555/g, '#a3a3a3');
   }
 }
 
@@ -3272,7 +3389,7 @@ function startAddingDevice() {
   setTimeout(() => { setStage(1, 'done', 'd'); setStage(2, 'active', 'd'); }, 2000);
   setTimeout(() => { setStage(2, 'done', 'd'); setStage(3, 'active', 'd'); }, 4000);
   setTimeout(() => { setStage(3, 'done', 'd'); }, 6000);
-  setTimeout(() => { go('profile'); }, 7200);
+  setTimeout(() => { go('home'); }, 7200);
 }
 
 // ============== SEND ==============
@@ -3578,7 +3695,7 @@ const tourSteps = [
   {
     title: 'welcome to grantr',
     body: 'a frames-native smart account. every action is a chain of frames — verify, approve, sender, default. the chain enforces the rules, not the app.',
-    enter: () => { closeAction(); closeTray(); go('profile'); }
+    enter: () => { closeAction(); closeTray(); go('home'); }
   },
   {
     title: 'send a tx',
@@ -3603,7 +3720,7 @@ const tourSteps = [
   {
     title: 'that\'s grantr',
     body: 'open source, documented, and built as a reference for eip-8141. explore from here.',
-    enter: () => { go('profile'); }
+    enter: () => { go('home'); }
   }
 ];
 let tourIndex = 0;
@@ -4040,7 +4157,7 @@ const txPreviewData = {
       ['max gas', '—'],
       ['network', 'etherex devnet']
     ],
-    onConfirm: () => { closeTxPreview(); go('profile'); },
+    onConfirm: () => { closeTxPreview(); go('home'); },
     onOpen: () => {
       const r = sponsorPool.find(x => x.id === sponsorState.recipient);
       const d = txPreviewData.sponsor.details;
@@ -4060,7 +4177,7 @@ const txPreviewData = {
       ['network', 'etherex devnet'],
       ['gas', '0 ETH · sponsored']
     ],
-    onConfirm: () => { closeTxPreview(); resetBuildQueue(); go('profile'); }
+    onConfirm: () => { closeTxPreview(); resetBuildQueue(); go('home'); }
   },
   'add-guardians': {
     title: 'add your guardians',
@@ -4553,6 +4670,13 @@ document.addEventListener('DOMContentLoaded', () => {
   setSlot('actx-alice', aliceInner);
   setSlot('reb-dash-act-1', pfpInner('lp-rebalancer'));
   setSlot('reb-dash-act-2', logoInner('https://assets.coingecko.com/coins/images/279/large/ethereum.png'), true);
+  // home screen feeds (3 session rows + 3 activity rows)
+  setSlot('home-feed-s1', pfpInner('lp-rebalancer'));
+  setSlot('home-feed-s2', pfpInner('lp-rebalancer'));
+  setSlot('home-feed-s3', pfpInner('ens-renewer'));
+  setSlot('home-feed-a1', pfpInner('bob.eth'));
+  setSlot('home-feed-a2', pfpInner('lp-rebalancer'));
+  setSlot('home-feed-a3', pfpInner('lp-rebalancer'));
 });
 
 // ============== GUARDIAN SELECTION ==============
