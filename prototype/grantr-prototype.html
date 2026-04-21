@@ -114,6 +114,8 @@ body {
 .auth-toggle-knob { width: 16px; height: 16px; border-radius: 50%; background: #fff; position: absolute; top: 3px; left: 3px; transition: transform 0.15s; }
 .auth-toggle.on .auth-toggle-knob { transform: translateX(18px); }
 @keyframes spin { to { transform: rotate(360deg); } }
+@keyframes hp { 0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } 50% { box-shadow: 0 0 0 3px rgba(34,197,94,0.35); } }
+.highlight-pulse { animation: hp 1.2s ease-in-out 2; }
 .stage-label { flex: 1; font-size: 13px; color: var(--text-1); }
 .stage.pending .stage-label { color: var(--text-3); }
 
@@ -199,6 +201,7 @@ body {
 .frame-row { display: flex; align-items: center; gap: 8px; padding-left: 18px; }
 .frames .frame-row { padding-left: 0; }
 .frame-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.frame-dot.pending { background: #2a2a2a; }
 .frame-dot.pass { background: var(--green); }
 .frame-dot.fail { background: var(--red); }
 .frame-dot.off { background: var(--text-4); }
@@ -212,6 +215,8 @@ body {
 .card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; padding-left: 18px; }
 .card-footer-text { font-size: 10px; color: var(--text-4); }
 .revoke-link { font-size: 11px; color: var(--red); cursor: pointer; background: none; border: none; font-family: inherit; }
+.simulate-link { font-size: 11px; color: var(--text-3); cursor: pointer; background: none; border: none; font-family: inherit; padding: 0; }
+.simulate-link:hover { color: var(--text-1); }
 
 /* activity feed */
 .filters { padding: 0 24px 10px; display: flex; gap: 6px; overflow-x: auto; flex-shrink: 0; }
@@ -363,9 +368,9 @@ body {
   <button class="dev-btn j-built" onclick="journeyRecoverGuardians()">4 · recover via guardians</button>
   <button class="dev-btn j-built" onclick="journeyAddDevice()">5 · add second device</button>
   <button class="dev-btn j-built" onclick="journeyCoSign()">6 · co-sign large tx</button>
-  <button class="dev-btn j-todo" onclick="journeyTodo('grant delegation')">7 · grant delegation</button>
-  <button class="dev-btn j-todo" onclick="journeyTodo('agent acts / blocked')">8 · agent acts / blocked</button>
-  <button class="dev-btn j-todo" onclick="journeyTodo('revoke delegation')">9 · revoke delegation</button>
+  <button class="dev-btn j-built" onclick="journeyGrantDelegation()">7 · grant delegation</button>
+  <button class="dev-btn j-built" onclick="journeyAgentActs()">8 · agent acts / blocked</button>
+  <button class="dev-btn j-built" onclick="journeyRevokeDelegation()">9 · revoke delegation</button>
   <button class="dev-btn j-built" onclick="journeyRebalance()">10 · rebalance portfolio</button>
   <button class="dev-btn j-built" onclick="journeyBuild()">11 · build transaction</button>
 
@@ -1204,6 +1209,153 @@ body {
     </div>
   </div>
 
+  <!-- ============== GRANT DELEGATION: AGENT PICKER ============== -->
+  <div id="screen-delegate-pick" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="closeAction(); go('profile')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">pick an<br>agent.</div>
+      <div class="sub">each agent advertises a scope. grantr installs a session key that lets them call only those selectors, nothing else.</div>
+      <div id="delegate-agent-list" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;"></div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" id="delegate-continue-btn" style="opacity: 0.4;" disabled onclick="go('delegate-authorize')">continue</button>
+    </div>
+  </div>
+
+  <!-- ============== GRANT DELEGATION: AUTHORIZE ============== -->
+  <div id="screen-delegate-authorize" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('delegate-pick')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">set the<br>limits.</div>
+      <div class="sub">configure what this agent can do and for how long. you can revoke any time.</div>
+
+      <div style="background:#0f0f0f;border-radius:16px;padding:18px;display:flex;flex-direction:column;margin-top:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed #1f1f1f;">
+          <span style="font-size:12px;color:#737373;">agent</span>
+          <span style="font-size:11px;color:#22c55e;font-family:'DM Mono',monospace;" id="delegate-agent-name">—</span>
+        </div>
+
+        <div style="padding:14px 0;border-bottom:1px dashed #1f1f1f;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:12px;color:#737373;">can spend up to</span>
+            <span style="font-size:11px;color:#555;">per action</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+            <button class="auth-pill" data-delegate-limit="50" onclick="setDelegateLimit(50)">$50</button>
+            <button class="auth-pill active" data-delegate-limit="500" onclick="setDelegateLimit(500)">$500</button>
+            <button class="auth-pill" data-delegate-limit="2500" onclick="setDelegateLimit(2500)">$2,500</button>
+            <button class="auth-pill" data-delegate-limit="10000" onclick="setDelegateLimit(10000)">$10k</button>
+          </div>
+        </div>
+
+        <div style="padding:14px 0;border-bottom:1px dashed #1f1f1f;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:12px;color:#737373;">access window</span>
+            <span style="font-size:11px;color:#555;">session expires after</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+            <button class="auth-pill" data-delegate-window="1h" onclick="setDelegateWindow('1h')">1h</button>
+            <button class="auth-pill" data-delegate-window="24h" onclick="setDelegateWindow('24h')">24h</button>
+            <button class="auth-pill active" data-delegate-window="7d" onclick="setDelegateWindow('7d')">7d</button>
+            <button class="auth-pill" data-delegate-window="30d" onclick="setDelegateWindow('30d')">30d</button>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px dashed #1f1f1f;">
+          <span style="font-size:12px;color:#737373;">can</span>
+          <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;" id="delegate-scope-allow">—</div><div style="font-size:10px;color:#555;margin-top:2px;">locked to these selectors</div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;">
+          <span style="font-size:12px;color:#737373;">cannot</span>
+          <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">everything else</div><div style="font-size:10px;color:#22c55e;margin-top:2px;">enforced by eip-8141</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom" style="padding-top:12px;">
+      <button class="btn btn-primary" onclick="openTxPreview('grant-delegation')">grant access</button>
+    </div>
+  </div>
+
+  <!-- ============== GRANT DELEGATION: SUBMITTING ============== -->
+  <div id="screen-delegate-submitting" class="screen onboarding">
+    <div class="top">
+      <div></div>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+    <div class="main">
+      <div>
+        <div class="headline small">granting<br>access.</div>
+        <div class="gas-pill">
+          <div class="gas-pill-dot"></div>
+          gas paid by grantr
+        </div>
+      </div>
+      <div class="stages">
+        <div id="gstage-1" class="stage active">
+          <div class="stage-icon"><div class="spinner"></div></div>
+          <div class="stage-label">signing with passkey</div>
+        </div>
+        <div id="gstage-2" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">installing session key</div>
+        </div>
+        <div id="gstage-3" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">activating session</div>
+        </div>
+      </div>
+      <details class="frame-detail">
+        <summary>frame detail</summary>
+        <div class="frame-detail-body">
+          <div class="frame-detail-row">
+            <span class="frame-badge verify">verify</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">passkey signature</div>
+              <div class="frame-detail-sub">p-256 · this device</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge approve">approve</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">gas sponsored</div>
+              <div class="frame-detail-sub">grantr paymaster</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge default">default</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">install session key</div>
+              <div class="frame-detail-sub" id="delegate-frame-scope">—</div>
+            </div>
+          </div>
+          <div class="frame-detail-footnote">the session key can only call the advertised selectors. any other call fails at the verify frame.</div>
+        </div>
+      </details>
+    </div>
+    <div class="bottom"></div>
+  </div>
+
   <!-- ============== RECOVER VIA GUARDIANS: PATH CHOICE ============== -->
   <div id="screen-recover-path" class="screen onboarding">
     <div class="top">
@@ -1499,7 +1651,10 @@ body {
         </div>
         <div class="card-footer">
           <div class="card-footer-text">3 executed · 1 blocked</div>
-          <button class="revoke-link" onclick="requestRevoke(this)">revoke</button>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="simulate-link" onclick="openAgentSimulation('lp-rebalancer')">see it work</button>
+            <button class="revoke-link" onclick="requestRevoke(this)">revoke</button>
+          </div>
         </div>
       </div>
       <div class="session-card">
@@ -1517,7 +1672,10 @@ body {
         </div>
         <div class="card-footer">
           <div class="card-footer-text">0 executed</div>
-          <button class="revoke-link" onclick="requestRevoke(this)">revoke</button>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="simulate-link" onclick="openAgentSimulation('ens-renewer')">see it work</button>
+            <button class="revoke-link" onclick="requestRevoke(this)">revoke</button>
+          </div>
         </div>
       </div>
       <button class="past-sessions-link" onclick="togglePastSessions()">
@@ -2164,6 +2322,55 @@ body {
     <div class="action-sheet-spacer"></div>
   </div>
 
+  <!-- ============== AGENT SIMULATION (#8) ============== -->
+  <div id="agent-sim-overlay" class="tray-overlay" onclick="closeAgentSimulation()" style="z-index: 12;"></div>
+  <div id="agent-sim" class="action-sheet" style="z-index: 13; max-height: 88%; overflow-y: auto;">
+    <div class="action-sheet-handle" onclick="closeAgentSimulation()"></div>
+    <div style="padding: 4px 24px 6px; font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px;">live simulation</div>
+    <div style="padding: 0 24px 4px; font-size: 16px; color: var(--text-1); font-weight: 500;" id="agent-sim-title">—</div>
+    <div style="padding: 0 24px 12px; font-size: 11px; color: var(--text-4); line-height: 1.5;" id="agent-sim-desc">watch the agent try two actions in a row. the chain enforces the session scope — no app approval, no agent choice.</div>
+
+    <div style="padding: 0 18px 8px;">
+      <!-- attempt 1: in scope -->
+      <div id="sim-attempt-1" class="session-card" style="margin-bottom: 10px; transition: border-color 0.3s;">
+        <div class="session-card-header" style="padding-bottom: 8px;">
+          <div style="font-size: 10px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">attempt 1 · in scope</div>
+          <span style="flex:1;"></span>
+          <span id="sim-1-status" style="font-size: 11px; color: var(--text-4);">waiting...</span>
+        </div>
+        <div style="font-size: 12px; color: var(--text-2); margin-bottom: 10px; font-family: 'DM Mono', monospace;" id="sim-1-call">—</div>
+        <div class="frame-section">
+          <div class="frame-row" id="sim-1-f1"><div class="frame-dot pending"></div><div class="frame-mode">verify</div><div class="frame-desc" id="sim-1-f1-desc">session key · checking selector</div></div>
+          <div class="frame-row" id="sim-1-f2"><div class="frame-dot pending"></div><div class="frame-mode muted">approve</div><div class="frame-desc muted">gas sponsored by grantr</div></div>
+          <div class="frame-row" id="sim-1-f3"><div class="frame-dot pending"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted" id="sim-1-f3-desc">—</div></div>
+        </div>
+      </div>
+      <!-- attempt 2: out of scope -->
+      <div id="sim-attempt-2" class="session-card" style="transition: border-color 0.3s;">
+        <div class="session-card-header" style="padding-bottom: 8px;">
+          <div style="font-size: 10px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">attempt 2 · out of scope</div>
+          <span style="flex:1;"></span>
+          <span id="sim-2-status" style="font-size: 11px; color: var(--text-4);">waiting...</span>
+        </div>
+        <div style="font-size: 12px; color: var(--text-2); margin-bottom: 10px; font-family: 'DM Mono', monospace;" id="sim-2-call">—</div>
+        <div class="frame-section">
+          <div class="frame-row" id="sim-2-f1"><div class="frame-dot pending"></div><div class="frame-mode">verify</div><div class="frame-desc" id="sim-2-f1-desc">session key · checking selector</div></div>
+          <div class="frame-row" id="sim-2-f2"><div class="frame-dot pending"></div><div class="frame-mode muted">approve</div><div class="frame-desc muted">—</div></div>
+          <div class="frame-row" id="sim-2-f3"><div class="frame-dot pending"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 8px 24px 0; background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; margin: 0 18px 16px; padding: 10px 14px; font-size: 11px; color: var(--text-3); line-height: 1.5;">
+      <span style="color: #22c55e;">key point.</span> the chain refused the second tx at the verify frame. no agent code had a choice, no app approval was needed.
+    </div>
+
+    <div style="padding: 0 18px 16px;">
+      <button class="btn btn-secondary" id="sim-play-btn" onclick="playAgentSimulation()">play simulation</button>
+    </div>
+    <div class="action-sheet-spacer"></div>
+  </div>
+
   <!-- ============== ACTION SHEET ============== -->
   <div id="action-overlay" class="tray-overlay" onclick="closeAction()" style="z-index: 5;"></div>
   <div id="action-sheet" class="action-sheet">
@@ -2502,6 +2709,20 @@ function go(id) {
     if (status) status.textContent = 'awaiting your signature';
     if (card) card.style.borderColor = '#3b82f6';
     if (btn) { btn.disabled = false; btn.textContent = 'simulate signing on laptop'; btn.style.opacity = '1'; }
+  }
+  if (id === 'delegate-pick') {
+    renderDelegateAgentList();
+  }
+  if (id === 'delegate-authorize') {
+    const a = delegateAgentPool.find(x => x.id === delegateState.agentId);
+    const nameEl = document.getElementById('delegate-agent-name');
+    const scopeEl = document.getElementById('delegate-scope-allow');
+    const frameScopeEl = document.getElementById('delegate-frame-scope');
+    if (a) {
+      if (nameEl) nameEl.textContent = a.name;
+      if (scopeEl) scopeEl.textContent = a.selectors;
+      if (frameScopeEl) frameScopeEl.textContent = `scope: ${a.selectors}`;
+    }
   }
 }
 
@@ -2974,6 +3195,245 @@ function simulateLaptopSign() {
   }, 4000);
 }
 
+// ============== GRANT DELEGATION (GENERIC) ==============
+const delegateAgentPool = [
+  { id: 'lp-rebalancer', name: 'lp rebalancer',  pitch: 'keeps your uniswap position in range',   selectors: 'rebalance() · collectFees()', addr: '...9d8f' },
+  { id: 'ens-renewer',   name: 'ens renewer',    pitch: 'auto-renews your ens name before expiry', selectors: 'renew()',                     addr: '...a3c2' },
+  { id: 'dca-bot',       name: 'dca bot',        pitch: 'daily fixed-amount buys on your schedule', selectors: 'exactInputSingle()',         addr: '...b5e4' },
+  { id: 'yield-hopper',  name: 'yield hopper',   pitch: 'moves usdc to the best yield each week',  selectors: 'supply() · withdraw()',       addr: '...c7a1' }
+];
+const delegateState = { agentId: null, limit: 500, window: '7d' };
+
+function renderDelegateAgentList() {
+  const list = document.getElementById('delegate-agent-list');
+  if (!list) return;
+  list.innerHTML = delegateAgentPool.map(a => {
+    const selected = a.id === delegateState.agentId;
+    return `<div onclick="pickDelegateAgent('${a.id}')" style="background: var(--card); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; ${selected ? 'border: 1px solid #22c55e;' : 'border: 1px solid transparent;'}">
+      <div class="addr-avatar">${gradientPfpSvg(a.id)}</div>
+      <div style="flex: 1; min-width: 0;">
+        <div style="font-size: 13px; color: var(--text-1); font-weight: 500;">${a.name}</div>
+        <div style="font-size: 11px; color: var(--text-4); margin-top: 2px;">${a.pitch}</div>
+        <div style="font-size: 10px; color: #555; margin-top: 4px; font-family: 'DM Mono', monospace;">${a.selectors}</div>
+      </div>
+      <div style="width:18px;height:18px;border-radius:50%;${selected ? 'background:#22c55e;' : 'border:1px solid #333;'}display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;flex-shrink:0;">${selected ? '✓' : ''}</div>
+    </div>`;
+  }).join('');
+}
+
+function pickDelegateAgent(id) {
+  delegateState.agentId = id;
+  renderDelegateAgentList();
+  const btn = document.getElementById('delegate-continue-btn');
+  if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+}
+
+function setDelegateLimit(val) {
+  delegateState.limit = val;
+  document.querySelectorAll('[data-delegate-limit]').forEach(b => {
+    b.classList.toggle('active', Number(b.dataset.delegateLimit) === val);
+  });
+}
+
+function setDelegateWindow(val) {
+  delegateState.window = val;
+  document.querySelectorAll('[data-delegate-window]').forEach(b => {
+    b.classList.toggle('active', b.dataset.delegateWindow === val);
+  });
+}
+
+function startGrantingDelegation() {
+  go('delegate-submitting');
+  setTimeout(() => { setStage(1, 'done', 'g'); setStage(2, 'active', 'g'); }, 1800);
+  setTimeout(() => { setStage(2, 'done', 'g'); setStage(3, 'active', 'g'); }, 3500);
+  setTimeout(() => { setStage(3, 'done', 'g'); }, 5000);
+  setTimeout(() => { go('sessions'); }, 6200);
+}
+
+function journeyGrantDelegation() {
+  closeAction();
+  closeTray();
+  delegateState.agentId = null;
+  delegateState.limit = 500;
+  delegateState.window = '7d';
+  document.querySelectorAll('[data-delegate-limit]').forEach(b => {
+    b.classList.toggle('active', b.dataset.delegateLimit === '500');
+  });
+  document.querySelectorAll('[data-delegate-window]').forEach(b => {
+    b.classList.toggle('active', b.dataset.delegateWindow === '7d');
+  });
+  const btn = document.getElementById('delegate-continue-btn');
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.4'; }
+  renderDelegateAgentList();
+  go('delegate-pick');
+}
+
+function journeyRevokeDelegation() {
+  closeAction();
+  closeTray();
+  go('sessions');
+  // soft highlight the first active session card so the user knows where to tap
+  setTimeout(() => {
+    const card = document.querySelector('#screen-sessions .session-card:not(.revoked):not(.expired)');
+    if (!card) return;
+    card.classList.add('highlight-pulse');
+    setTimeout(() => card.classList.remove('highlight-pulse'), 2400);
+  }, 300);
+}
+
+function journeyAgentActs() {
+  closeAction();
+  closeTray();
+  go('sessions');
+  // open the simulation modal for the lp rebalancer session after the sessions tab renders
+  setTimeout(() => { openAgentSimulation('lp-rebalancer'); }, 400);
+}
+
+// ============== AGENT SIMULATION (#8) ==============
+const agentSimScripts = {
+  'lp-rebalancer': {
+    title: 'lp rebalancer · live simulation',
+    desc: 'this agent has a session scoped to rebalance() and collectFees(). watch what happens when it tries an allowed call, then a disallowed one.',
+    attempts: [
+      {
+        call: 'rebalance(params)',
+        verify: 'session key allows rebalance() ✓',
+        sender: 'uniswap v3 position manager',
+        result: 'pass'
+      },
+      {
+        call: 'transfer(bob, 0.5 ETH)',
+        verify: 'transfer() not in session scope ✗',
+        sender: 'would have called 0xETH',
+        result: 'fail'
+      }
+    ]
+  },
+  'ens-renewer': {
+    title: 'ens renewer · live simulation',
+    desc: 'this agent has a session scoped to renew(). watch what happens when it tries an allowed call, then a disallowed one.',
+    attempts: [
+      {
+        call: 'renew("alice.eth", 365d)',
+        verify: 'session key allows renew() ✓',
+        sender: 'ens base registrar',
+        result: 'pass'
+      },
+      {
+        call: 'setOwner("alice.eth", 0x...)',
+        verify: 'setOwner() not in session scope ✗',
+        sender: 'would have called ens registry',
+        result: 'fail'
+      }
+    ]
+  }
+};
+let agentSimTimers = [];
+
+function openAgentSimulation(agentId) {
+  const script = agentSimScripts[agentId];
+  if (!script) return;
+  document.getElementById('agent-sim-title').textContent = script.title;
+  document.getElementById('agent-sim-desc').textContent = script.desc;
+  // set the call text for both attempts
+  document.getElementById('sim-1-call').textContent = script.attempts[0].call;
+  document.getElementById('sim-2-call').textContent = script.attempts[1].call;
+  document.getElementById('sim-1-f3-desc').textContent = script.attempts[0].sender;
+  resetAgentSimulation();
+  // stash the script for play
+  agentSimCurrent = script;
+  document.getElementById('agent-sim').classList.add('open');
+  document.getElementById('agent-sim-overlay').classList.add('open');
+}
+
+function closeAgentSimulation() {
+  document.getElementById('agent-sim').classList.remove('open');
+  document.getElementById('agent-sim-overlay').classList.remove('open');
+  agentSimTimers.forEach(t => clearTimeout(t));
+  agentSimTimers = [];
+}
+
+function resetAgentSimulation() {
+  agentSimTimers.forEach(t => clearTimeout(t));
+  agentSimTimers = [];
+  // reset both cards and all frame dots
+  [1, 2].forEach(n => {
+    const card = document.getElementById('sim-attempt-' + n);
+    if (card) card.style.borderColor = '';
+    const status = document.getElementById('sim-' + n + '-status');
+    if (status) { status.textContent = 'waiting...'; status.style.color = ''; }
+    [1, 2, 3].forEach(f => {
+      const row = document.getElementById(`sim-${n}-f${f}`);
+      if (!row) return;
+      const dot = row.querySelector('.frame-dot');
+      if (dot) { dot.classList.remove('pass', 'fail'); dot.classList.add('pending'); }
+      // also reset muted classes
+      if (f !== 1) {
+        row.querySelector('.frame-mode').classList.add('muted');
+        row.querySelector('.frame-desc').classList.add('muted');
+      }
+    });
+  });
+  const btn = document.getElementById('sim-play-btn');
+  if (btn) { btn.disabled = false; btn.textContent = 'play simulation'; btn.style.opacity = '1'; }
+}
+
+let agentSimCurrent = null;
+
+function playAgentSimulation() {
+  const script = agentSimCurrent;
+  if (!script) return;
+  const btn = document.getElementById('sim-play-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'running...'; btn.style.opacity = '0.7'; }
+  resetAgentSimulation();
+  if (btn) { btn.disabled = true; btn.textContent = 'running...'; btn.style.opacity = '0.7'; }
+
+  const stepPass = (n, frame, desc) => {
+    const row = document.getElementById(`sim-${n}-f${frame}`);
+    if (!row) return;
+    const dot = row.querySelector('.frame-dot');
+    if (dot) { dot.classList.remove('pending', 'fail'); dot.classList.add('pass'); }
+    row.querySelector('.frame-mode').classList.remove('muted');
+    row.querySelector('.frame-desc').classList.remove('muted');
+    if (desc) row.querySelector('.frame-desc').textContent = desc;
+  };
+  const stepFail = (n, frame, desc) => {
+    const row = document.getElementById(`sim-${n}-f${frame}`);
+    if (!row) return;
+    const dot = row.querySelector('.frame-dot');
+    if (dot) { dot.classList.remove('pending', 'pass'); dot.classList.add('fail'); }
+    row.querySelector('.frame-mode').classList.remove('muted');
+    row.querySelector('.frame-desc').classList.remove('muted');
+    if (desc) row.querySelector('.frame-desc').textContent = desc;
+  };
+
+  // attempt 1: pass
+  agentSimTimers.push(setTimeout(() => {
+    stepPass(1, 1, script.attempts[0].verify);
+  }, 600));
+  agentSimTimers.push(setTimeout(() => {
+    stepPass(1, 2, 'gas sponsored by grantr');
+  }, 1200));
+  agentSimTimers.push(setTimeout(() => {
+    stepPass(1, 3, script.attempts[0].sender);
+    const status = document.getElementById('sim-1-status');
+    if (status) { status.textContent = 'confirmed'; status.style.color = '#22c55e'; }
+    const card = document.getElementById('sim-attempt-1');
+    if (card) card.style.borderColor = 'rgba(34,197,94,0.3)';
+  }, 1800));
+
+  // attempt 2: verify fails
+  agentSimTimers.push(setTimeout(() => {
+    stepFail(2, 1, script.attempts[1].verify);
+    const status = document.getElementById('sim-2-status');
+    if (status) { status.textContent = 'blocked'; status.style.color = '#ef4444'; }
+    const card = document.getElementById('sim-attempt-2');
+    if (card) card.style.borderColor = 'rgba(239,68,68,0.3)';
+    const btn2 = document.getElementById('sim-play-btn');
+    if (btn2) { btn2.disabled = false; btn2.textContent = 'play again'; btn2.style.opacity = '1'; }
+  }, 2800));
+}
+
 // ============== SPONSOR ==============
 const sponsorPool = [
   { id: 'bob',   seed: 'bob.eth',   tone: 'amber',  name: 'bob.eth',   addr: '...7e3a', sub: 'frequent contact' },
@@ -3370,6 +3830,34 @@ const txPreviewData = {
       txPreviewData.send.frames[0].sub = above ? '2-of-2 · iphone + macbook' : 'p-256 · this device';
       txPreviewData.send.frames[2].name = `transfer $${sendState.amount.toLocaleString()}`;
       txPreviewData.send.frames[2].sub = r ? `to ${r.name}` : '—';
+    }
+  },
+  'grant-delegation': {
+    title: 'grant session access',
+    desc: 'install a scoped session key for this agent. they can only call the advertised selectors, within your limits.',
+    frames: [
+      { type: 'verify', name: 'passkey signature', sub: 'p-256 · this device' },
+      { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster pays' },
+      { type: 'default', name: 'install session key', sub: '—' }
+    ],
+    details: [
+      ['agent', '—'],
+      ['scope', '—'],
+      ['spending limit', '—'],
+      ['access window', '—'],
+      ['network', 'etherex devnet'],
+      ['gas', '0 ETH · sponsored']
+    ],
+    onConfirm: () => { closeTxPreview(); startGrantingDelegation(); },
+    onOpen: () => {
+      const a = delegateAgentPool.find(x => x.id === delegateState.agentId);
+      if (!a) return;
+      const d = txPreviewData['grant-delegation'].details;
+      d[0][1] = a.name;
+      d[1][1] = a.selectors;
+      d[2][1] = `$${delegateState.limit.toLocaleString()} per action`;
+      d[3][1] = delegateState.window;
+      txPreviewData['grant-delegation'].frames[2].sub = `scope: ${a.selectors}`;
     }
   }
 };
