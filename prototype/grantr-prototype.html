@@ -2961,15 +2961,15 @@ body {
       </button>
 
       <!-- ACTION-MODE TABS (shown when action is open) -->
-      <button class="tab tab-action-mode" onclick="closeActionMorph(); go('rebalance')">
+      <button class="tab tab-action-mode" onclick="go('rebalance')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12 C3 7 7 3 12 3 C17 3 21 7 21 12" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round"/><path d="M21 12 C21 17 17 21 12 21 C7 21 3 17 3 12" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="3 2"/><path d="M18 9 L21 12 L18 15" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span>rebalance</span>
       </button>
-      <button class="tab tab-action-mode" onclick="closeActionMorph(); go('build')">
+      <button class="tab tab-action-mode" onclick="go('build')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="1.5" stroke="#fff" stroke-width="1.75" fill="none"/><rect x="13" y="3" width="8" height="8" rx="1.5" stroke="#fff" stroke-width="1.75" fill="none"/><rect x="3" y="13" width="8" height="8" rx="1.5" stroke="#fff" stroke-width="1.75" fill="none"/><line x1="17" y1="13" x2="17" y2="21" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/><line x1="13" y1="17" x2="21" y2="17" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/></svg>
         <span>build</span>
       </button>
-      <button class="tab tab-action-mode" onclick="closeActionMorph(); go('send')">
+      <button class="tab tab-action-mode" onclick="go('send')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 20 L20 4" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/><path d="M8 4 L20 4 L20 16" stroke="#fff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span>send</span>
       </button>
@@ -3301,15 +3301,6 @@ function closeAction() {
   const wrap = document.getElementById('tab-bar');
   if (tabBar) tabBar.classList.remove('action-mode');
   if (wrap) wrap.classList.remove('action-open');
-  // also close the legacy sheet in case anything opened it
-  const sheet = document.getElementById('action-sheet');
-  const overlay = document.getElementById('action-overlay');
-  if (sheet) sheet.classList.remove('open');
-  if (overlay) overlay.classList.remove('open');
-}
-
-function closeActionMorph() {
-  closeAction();
 }
 
 function grantRebalance() {
@@ -4246,31 +4237,6 @@ function selectVerifyPolicy(type) {
   const body = document.getElementById('verify-config-body');
   if (!body) return;
   const configs = {
-    threshold: {
-      title: 'threshold by value',
-      desc: 'require a second passkey (from a second device) for transactions above a threshold. below the threshold, your primary passkey signs alone.',
-      inputs: `
-        <div style="margin-bottom: 14px;">
-          <div style="font-size: 11px; color: var(--text-4); margin-bottom: 6px;">second device</div>
-          <div style="background: var(--card-dark); border: 1px dashed #2a2a2a; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 10px;">
-            <div style="width: 22px; height: 22px; border-radius: 50%; border: 1px solid #444; display: flex; align-items: center; justify-content: center; color: var(--text-4); font-size: 12px;">+</div>
-            <div style="flex:1; font-size: 12px; color: var(--text-3);">no second device registered yet</div>
-          </div>
-          <div style="font-size: 10px; color: var(--text-4); margin-top: 6px;">add a second device first to enable this policy</div>
-        </div>
-        <div>
-          <div style="font-size: 11px; color: var(--text-4); margin-bottom: 8px;">threshold</div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
-            <button class="auth-pill">$500</button>
-            <button class="auth-pill active">$1,000</button>
-            <button class="auth-pill">$5,000</button>
-            <button class="auth-pill">$10k</button>
-          </div>
-        </div>
-      `,
-      cta: 'add second device first',
-      disabled: true
-    },
     timelock: {
       title: 'time-locked',
       desc: 'delay specific actions by a fixed duration. the transaction is submitted immediately but only executes after the lock expires.',
