@@ -1488,59 +1488,95 @@ body {
     </div>
     <div style="flex: 1; padding: 8px 0 16px; display: flex; flex-direction: column; gap: 0; overflow-y: auto;">
 
-      <div style="font-size: 11px; color: var(--text-4); line-height: 1.6; padding-bottom: 16px;">compose an atomic frame transaction. frames execute in order — if any sender frame fails, the whole batch reverts.</div>
+      <div style="font-size: 11px; color: var(--text-4); line-height: 1.6; padding-bottom: 10px;">build a transaction by stacking steps. they all run together — if any step fails, nothing happens.</div>
 
-      <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; padding-bottom: 8px;">choose frame type</div>
+      <details class="frame-detail" style="margin-bottom: 16px; margin-top: 0;">
+        <summary>what's a frame?</summary>
+        <div class="frame-detail-body">
+          <div style="font-size: 11px; color: var(--text-3); line-height: 1.6; padding-bottom: 8px;">a frame is one step in a transaction. eip-8141 defines four kinds. you stack them to build any action you want.</div>
+          <div class="frame-detail-row">
+            <span class="frame-badge verify">verify</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">who can do this</div>
+              <div class="frame-detail-sub">passkey · session key · guardian quorum</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge approve">approve</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">who pays</div>
+              <div class="frame-detail-sub">you, or a sponsor like grantr</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge sender">sender</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">what happens</div>
+              <div class="frame-detail-sub">send tokens · call a contract</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge default">default</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">what changes after</div>
+              <div class="frame-detail-sub">rotate key · update policy</div>
+            </div>
+          </div>
+          <div class="frame-detail-footnote">all frames execute atomically. one fails, none apply.</div>
+        </div>
+      </details>
 
-      <div class="build-row" onclick="addFrame('verify', 'passkey signature', 'p-256 · signs the transaction hash')">
+      <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; padding-bottom: 8px;">add a step</div>
+
+      <div class="build-row" onclick="addFrame('verify', 'prove it\'s you', 'verify · passkey · p-256')">
         <span class="frame-badge verify">verify</span>
         <div class="build-row-info">
-          <div class="build-row-name">passkey signature</div>
-          <div class="build-row-sub">p-256 · signs the transaction hash</div>
+          <div class="build-row-name">prove it's you</div>
+          <div class="build-row-sub">passkey signature · p-256 · this device</div>
         </div>
         <span style="color: var(--text-4); font-size: 14px;">+</span>
       </div>
 
-      <div class="build-row" onclick="addFrame('verify', 'session key', 'scoped · must match an active session')">
+      <div class="build-row" onclick="addFrame('verify', 'prove an agent is allowed', 'verify · session key · scoped')">
         <span class="frame-badge verify">verify</span>
         <div class="build-row-info">
-          <div class="build-row-name">session key</div>
-          <div class="build-row-sub">scoped · must match an active session</div>
+          <div class="build-row-name">prove an agent is allowed</div>
+          <div class="build-row-sub">session key · scoped to specific actions</div>
         </div>
         <span style="color: var(--text-4); font-size: 14px;">+</span>
       </div>
 
-      <div class="build-row" onclick="addFrame('approve', 'gas sponsored', 'grantr paymaster pays the gas')">
+      <div class="build-row" onclick="addFrame('approve', 'pay with grantr gas', 'approve · paymaster sponsored')">
         <span class="frame-badge approve">approve</span>
         <div class="build-row-info">
-          <div class="build-row-name">gas sponsored</div>
-          <div class="build-row-sub">grantr paymaster pays the gas</div>
+          <div class="build-row-name">pay with grantr gas</div>
+          <div class="build-row-sub">paymaster sponsorship · you hold 0 ETH</div>
         </div>
         <span style="color: var(--text-4); font-size: 14px;">+</span>
       </div>
 
-      <div class="build-row" onclick="addFrame('sender', 'contract call', 'call any contract · atomic flag optional')">
+      <div class="build-row" onclick="addFrame('sender', 'send tokens', 'sender · erc-20 or native ETH')">
         <span class="frame-badge sender">sender</span>
         <div class="build-row-info">
-          <div class="build-row-name">contract call</div>
-          <div class="build-row-sub">call any contract · atomic flag optional</div>
+          <div class="build-row-name">send tokens</div>
+          <div class="build-row-sub">transfer erc-20 or native ETH to an address</div>
         </div>
         <span style="color: var(--text-4); font-size: 14px;">+</span>
       </div>
 
-      <div class="build-row" onclick="addFrame('sender', 'token transfer', 'erc-20 or native ETH')">
+      <div class="build-row" onclick="addFrame('sender', 'call a contract', 'sender · any address + calldata')">
         <span class="frame-badge sender">sender</span>
         <div class="build-row-info">
-          <div class="build-row-name">token transfer</div>
-          <div class="build-row-sub">erc-20 or native ETH</div>
+          <div class="build-row-name">call a contract</div>
+          <div class="build-row-sub">any address + calldata · read or write</div>
         </div>
         <span style="color: var(--text-4); font-size: 14px;">+</span>
       </div>
 
-      <div class="build-row" onclick="addFrame('default', 'policy update', 'rotate key · add guardian · update session')">
+      <div class="build-row" onclick="addFrame('default', 'change your account rules', 'default · post-op policy update')">
         <span class="frame-badge default">default</span>
         <div class="build-row-info">
-          <div class="build-row-name">policy update</div>
+          <div class="build-row-name">change your account rules</div>
           <div class="build-row-sub">rotate key · add guardian · update session</div>
         </div>
         <span style="color: var(--text-4); font-size: 14px;">+</span>
