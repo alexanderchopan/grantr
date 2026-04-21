@@ -102,11 +102,10 @@ body {
 .frame-detail-footnote { font-size: 10px; color: var(--text-4); padding-top: 4px; border-top: 1px solid var(--divider); margin-top: 4px; line-height: 1.5; }
 .guardian-row { padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider); }
 .guardian-row:last-child { border-bottom: none; }
-.guardian-status { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #000; transition: background 0.3s; }
+.guardian-status { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; transition: background 0.3s; }
 .guardian-status.pending { background: #333; }
 .guardian-status.approved { background: #22c55e; }
-.guardian-status.approved::after { content: "✓"; }
-.guardian-status.not-needed { background: transparent; border: 1px solid #444; }
+.guardian-status.not-needed { background: #333; opacity: 0.4; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .stage-label { flex: 1; font-size: 13px; color: var(--text-1); }
 .stage.pending .stage-label { color: var(--text-3); }
@@ -148,10 +147,10 @@ body {
 .sparkline-hero { padding: 8px 24px 4px; flex-shrink: 0; }
 .sparkline-meta { display: flex; justify-content: space-between; margin-top: 4px; font-size: 10px; color: var(--text-4); }
 .tiles { padding: 8px 18px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; flex: 1; align-content: start; }
-.tile { background: #fff; color: #000; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; min-height: 105px; cursor: pointer; }
-.tile-label { font-size: 10px; color: #6b7280; text-transform: lowercase; letter-spacing: 0.5px; }
-.tile-stat { font-size: 22px; color: #000; font-weight: 600; line-height: 1; }
-.tile-sub { font-size: 9px; color: #6b7280; margin-top: 4px; }
+.tile { background: var(--card); color: var(--text-1); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; min-height: 105px; cursor: pointer; }
+.tile-label { font-size: 10px; color: var(--text-4); text-transform: lowercase; letter-spacing: 0.5px; }
+.tile-stat { font-size: 22px; color: var(--text-1); font-weight: 600; line-height: 1; }
+.tile-sub { font-size: 9px; color: var(--text-4); margin-top: 4px; }
 .tile-dots { display: flex; gap: 6px; align-items: center; margin-bottom: 4px; }
 .tile-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
 
@@ -1176,6 +1175,7 @@ body {
     <div class="filters">
       <button class="pill active">all</button>
       <button class="pill">verify</button>
+      <button class="pill">approve</button>
       <button class="pill">sender</button>
       <button class="pill">default</button>
     </div>
@@ -1274,14 +1274,14 @@ body {
       </div>
     </div>
     <div class="addr-filters">
-      <button class="pill" data-addr-filter="own" onclick="filterAddresses('own')">own</button>
-      <button class="pill active" data-addr-filter="guardians" onclick="filterAddresses('guardians')">guardians</button>
+      <button class="pill active" data-addr-filter="own" onclick="filterAddresses('own')">own</button>
+      <button class="pill" data-addr-filter="guardians" onclick="filterAddresses('guardians')">guardians</button>
       <button class="pill" data-addr-filter="agents" onclick="filterAddresses('agents')">agents</button>
       <button class="pill" data-addr-filter="sponsors" onclick="filterAddresses('sponsors')">sponsors</button>
       <button class="pill" data-addr-filter="contracts" onclick="filterAddresses('contracts')">contracts</button>
       <button class="pill" data-addr-filter="sent" onclick="filterAddresses('sent')">sent</button>
     </div>
-    <div class="addr-sub" id="addr-sub">showing 3 guardians · 2-of-3 quorum</div>
+    <div class="addr-sub" id="addr-sub">showing 1 own address</div>
     <div class="addr-list" id="addr-list">
       <!-- populated by JS -->
     </div>
@@ -1698,7 +1698,6 @@ body {
   <div id="action-overlay" class="tray-overlay" onclick="closeAction()" style="z-index: 5;"></div>
   <div id="action-sheet" class="action-sheet">
     <div class="action-sheet-handle" onclick="closeAction()"></div>
-    <div class="action-sheet-label">frame actions</div>
 
     <div class="action-item" onclick="closeAction(); go('rebalance')">
       <div class="action-icon" style="background: #0a1f12;">
@@ -1706,7 +1705,7 @@ body {
       </div>
       <div class="action-item-info">
         <div class="action-item-name">rebalance</div>
-        <div class="action-item-sub">grant lp rebalancer scoped access · verify + sender</div>
+        <div class="action-item-sub">let an agent manage your lp position</div>
       </div>
       <span class="action-item-badge" style="color: #22c55e; background: #141414;">session</span>
     </div>
@@ -1717,7 +1716,7 @@ body {
       </div>
       <div class="action-item-info">
         <div class="action-item-name">build</div>
-        <div class="action-item-sub">compose an atomic frame transaction</div>
+        <div class="action-item-sub">stack steps into one transaction</div>
       </div>
       <span class="action-item-badge" style="color: #a3a3a3; background: #141414;">atomic</span>
     </div>
@@ -1728,7 +1727,7 @@ body {
       </div>
       <div class="action-item-info">
         <div class="action-item-name">sponsor</div>
-        <div class="action-item-sub">pay gas for another account · approve frame</div>
+        <div class="action-item-sub">pay gas for another account</div>
       </div>
       <span class="action-item-badge" style="color: #f59e0b; background: #141414;">approve</span>
     </div>
@@ -1739,7 +1738,7 @@ body {
       </div>
       <div class="action-item-info">
         <div class="action-item-name">verify</div>
-        <div class="action-item-sub">add a custom verify frame policy</div>
+        <div class="action-item-sub">add a signing rule to your account</div>
       </div>
       <span class="action-item-badge" style="color: #3b82f6; background: #141414;">verify</span>
     </div>
@@ -2351,7 +2350,7 @@ function filterAddresses(key) {
 }
 
 // initialize with guardians when DOM is ready
-document.addEventListener('DOMContentLoaded', () => filterAddresses('guardians'));
+document.addEventListener('DOMContentLoaded', () => filterAddresses('own'));
 </script>
 
 </body>
