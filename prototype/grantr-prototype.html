@@ -161,6 +161,22 @@ body {
 .home-section-label span.see-all { color: var(--text-3); font-size: 10px; text-transform: none; letter-spacing: 0.3px; cursor: pointer; }
 .home-section-label span.see-all:hover { color: var(--text-1); }
 
+/* stat tile + chart tile paired row */
+.home-pair { margin: 0 16px 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: stretch; }
+.home-stat-tile { background: var(--card); border: 0.5px solid #1a1a1a; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; justify-content: space-between; }
+.home-stat-label { font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; }
+.home-stat-big { font-size: 22px; color: var(--text-1); font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
+.home-stat-sub { font-size: 10px; color: var(--green); margin-top: 3px; }
+.home-chart-tile { background: var(--card); border: 0.5px solid #1a1a1a; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+.home-chart-bars { display: flex; align-items: flex-end; gap: 3px; height: 40px; }
+.home-chart-bar { flex: 1; border-radius: 2px; min-height: 2px; background: var(--green); }
+.home-chart-bar.muted { background: #222; }
+.home-chart-days { font-size: 9px; color: #555; margin-top: 6px; display: flex; justify-content: space-between; }
+.home-spark-box { height: 40px; }
+
+/* section divider between what's running and what happened */
+.home-section-divider { height: 1px; background: #1a1a1a; margin: 16px 20px 4px; }
+
 .home-rows { padding: 0 16px; display: flex; flex-direction: column; gap: 4px; }
 .home-row { background: var(--card); border: 0.5px solid #1a1a1a; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: background 0.15s; }
 .home-row:hover { background: #141414; }
@@ -1695,30 +1711,29 @@ body {
       </button>
     </div>
 
-    <!-- WHAT'S RUNNING SECTION (bar chart + sessions feed) -->
+    <!-- WHAT'S RUNNING SECTION (stat tile + bar chart tile + sessions feed) -->
     <div class="home-section-label"><span>what's running</span><span class="see-all" onclick="go('sessions')">see all ›</span></div>
-    <div class="activity-hero" style="padding: 4px 20px 14px;">
-      <div class="activity-hero-top">
+    <div class="home-pair">
+      <div class="home-stat-tile">
+        <div class="home-stat-label">executions</div>
         <div>
-          <div class="activity-hero-label">agent executions</div>
-          <div class="activity-hero-stat">9</div>
-        </div>
-        <div class="activity-hero-meta">
-          <div style="color:#22c55e;">+3 vs last week</div>
-          <div>7-day view</div>
+          <div class="home-stat-big">9</div>
+          <div class="home-stat-sub">+3 vs last week</div>
         </div>
       </div>
-      <div class="activity-bars">
-        <div class="activity-bar" style="--h: 33%;"><div class="activity-bar-fill muted"></div></div>
-        <div class="activity-bar" style="--h: 67%;"><div class="activity-bar-fill"></div></div>
-        <div class="activity-bar" style="--h: 50%;"><div class="activity-bar-fill"></div></div>
-        <div class="activity-bar" style="--h: 17%;"><div class="activity-bar-fill muted"></div></div>
-        <div class="activity-bar" style="--h: 83%;"><div class="activity-bar-fill"></div></div>
-        <div class="activity-bar" style="--h: 58%;"><div class="activity-bar-fill"></div></div>
-        <div class="activity-bar" style="--h: 42%;"><div class="activity-bar-fill"></div></div>
-      </div>
-      <div class="activity-days">
-        <span>m</span><span>t</span><span>w</span><span>t</span><span>f</span><span>s</span><span>s</span>
+      <div class="home-chart-tile">
+        <div class="home-chart-bars">
+          <div class="home-chart-bar muted" style="height: 33%;"></div>
+          <div class="home-chart-bar" style="height: 67%;"></div>
+          <div class="home-chart-bar" style="height: 50%;"></div>
+          <div class="home-chart-bar muted" style="height: 17%;"></div>
+          <div class="home-chart-bar" style="height: 83%;"></div>
+          <div class="home-chart-bar" style="height: 58%;"></div>
+          <div class="home-chart-bar" style="height: 42%;"></div>
+        </div>
+        <div class="home-chart-days">
+          <span>m</span><span>t</span><span>w</span><span>t</span><span>f</span><span>s</span><span>s</span>
+        </div>
       </div>
     </div>
     <div class="home-feed" id="home-sessions-feed">
@@ -1760,15 +1775,30 @@ body {
       <button class="home-feed-empty-cta" onclick="closeAction(); toggleAction();">grant a delegation ›</button>
     </div>
 
-    <!-- WHAT HAPPENED SECTION (sparkline + activity feed) -->
-    <div class="home-section-label" style="padding-top:18px;"><span>what happened</span><span class="see-all" onclick="go('activity')">see all ›</span></div>
-    <div class="sparkline-hero" style="padding: 2px 20px 8px;">
-      <svg width="100%" height="48" viewBox="0 0 300 48" preserveAspectRatio="none" style="display: block;">
-        <polyline points="0,36 30,32 60,38 90,28 120,30 150,22 180,26 210,18 240,22 270,14 300,10" fill="none" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-        <polyline points="0,36 30,32 60,38 90,28 120,30 150,22 180,26 210,18 240,22 270,14 300,10 300,48 0,48" fill="url(#gProfile)" stroke="none"/>
-        <defs><linearGradient id="gProfile" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22c55e" stop-opacity="0.18"/><stop offset="100%" stop-color="#22c55e" stop-opacity="0"/></linearGradient></defs>
-      </svg>
-      <div class="sparkline-meta"><span>+2.4% · 7 days</span><span>last: 2 min ago</span></div>
+    <div class="home-section-divider"></div>
+
+    <!-- WHAT HAPPENED SECTION (stat tile + sparkline tile + activity feed) -->
+    <div class="home-section-label"><span>what happened</span><span class="see-all" onclick="go('activity')">see all ›</span></div>
+    <div class="home-pair">
+      <div class="home-stat-tile">
+        <div class="home-stat-label">balance</div>
+        <div>
+          <div class="home-stat-big">+2.4%</div>
+          <div class="home-stat-sub">$67 this week</div>
+        </div>
+      </div>
+      <div class="home-chart-tile">
+        <div class="home-spark-box">
+          <svg width="100%" height="100%" viewBox="0 0 100 40" preserveAspectRatio="none" style="display:block;">
+            <polyline points="0,32 10,30 20,34 30,24 40,26 50,18 60,22 70,14 80,18 90,8 100,6" fill="none" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="0,32 10,30 20,34 30,24 40,26 50,18 60,22 70,14 80,18 90,8 100,6 100,40 0,40" fill="url(#gHomeSpark)" stroke="none"/>
+            <defs><linearGradient id="gHomeSpark" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22c55e" stop-opacity="0.22"/><stop offset="100%" stop-color="#22c55e" stop-opacity="0"/></linearGradient></defs>
+          </svg>
+        </div>
+        <div class="home-chart-days">
+          <span>mon</span><span>sun</span>
+        </div>
+      </div>
     </div>
     <div class="home-feed">
       <div class="home-feed-row" onclick="go('activity')">
