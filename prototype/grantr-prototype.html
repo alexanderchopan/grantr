@@ -334,6 +334,37 @@ body {
 .scope-val { font-size: 12px; color: var(--text-1); font-weight: 500; font-family: 'DM Mono', monospace; }
 .scope-val.green { color: var(--green); font-family: 'DM Sans', sans-serif; }
 
+/* reusable frames-toggle — "simple first, technical on tap" */
+.frames-toggle { border-top: 0.5px solid #1a1a1a; padding-top: 14px; margin-top: 8px; }
+.frames-toggle-head { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; padding: 2px 0; }
+.frames-toggle-head:hover .frames-toggle-label { color: var(--text-3); }
+.frames-toggle-chev { color: #555; font-size: 10px; transition: transform 0.2s; display: inline-block; }
+.frames-toggle.open .frames-toggle-chev { transform: rotate(90deg); }
+.frames-toggle-label { font-size: 10px; color: #555; font-family: 'DM Mono', monospace; letter-spacing: 0.8px; text-transform: uppercase; transition: color 0.15s; }
+.frames-toggle-eip { font-size: 10px; color: #333; margin-left: auto; font-family: 'DM Mono', monospace; }
+.frames-toggle-body { display: none; padding: 10px 0 0; }
+.frames-toggle.open .frames-toggle-body { display: block; }
+.ftb-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; }
+.ftb-badge { font-size: 9px; padding: 3px 8px; border-radius: 999px; letter-spacing: 0.5px; flex-shrink: 0; font-family: 'DM Mono', monospace; text-transform: uppercase; }
+.ftb-badge.verify { background: #0a1428; color: #3b82f6; }
+.ftb-badge.approve { background: #1f1708; color: #f59e0b; }
+.ftb-badge.sender { background: #141414; color: #a3a3a3; }
+.ftb-badge.default { background: #0a1428; color: #3b82f6; }
+.ftb-info { flex: 1; }
+.ftb-name { font-size: 12px; color: #fff; font-weight: 500; }
+.ftb-sub { font-size: 10px; color: #555; margin-top: 2px; line-height: 1.4; }
+.ftb-footnote { font-size: 10px; color: #555; line-height: 1.55; padding: 10px 0 0; border-top: 0.5px solid #1a1a1a; margin-top: 6px; }
+
+/* simplified card for authorize-style choices */
+.choice-card { background: #0a0a0a; border: 0.5px solid #1a1a1a; border-radius: 16px; padding: 16px; margin-bottom: 8px; }
+.choice-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.choice-label { font-size: 12px; color: var(--text-3); }
+.choice-value { font-size: 17px; color: var(--text-1); font-weight: 500; }
+.choice-pills { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.choice-pill { background: transparent; border: 0.5px solid #2a2a2a; color: #888; border-radius: 8px; padding: 8px; font-family: inherit; font-size: 11px; cursor: pointer; transition: all 0.15s; }
+.choice-pill:hover { border-color: #3a3a3a; color: var(--text-2); }
+.choice-pill.active { background: #1a1a1a; border-color: #3a3a3a; color: var(--text-1); }
+
 /* build screen */
 .build-row { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--divider); cursor: pointer; }
 .build-row:last-child { border-bottom: none; }
@@ -525,15 +556,15 @@ body {
       <div class="stages">
         <div id="stage-1" class="stage active">
           <div class="stage-icon"><div class="spinner"></div></div>
-          <div class="stage-label">creating passkey</div>
+          <div class="stage-label">making your passkey</div>
         </div>
         <div id="stage-2" class="stage pending">
           <div class="stage-icon"></div>
-          <div class="stage-label">deploying account</div>
+          <div class="stage-label">creating your account</div>
         </div>
         <div id="stage-3" class="stage pending">
           <div class="stage-icon"></div>
-          <div class="stage-label">setting email recovery</div>
+          <div class="stage-label">linking your email</div>
         </div>
       </div>
 
@@ -613,7 +644,7 @@ body {
           <span>waiting</span>
         </div>
       </div>
-      <div class="sub">click the link to prove you own this email. grantr will issue an attestation that lets you rotate your passkey on-chain.</div>
+      <div class="sub">click the link to prove you own this email. grantr will issue a proof that lets you rotate your passkey on-chain.</div>
     </div>
     <div class="bottom">
       <button class="btn btn-secondary" onclick="go('recover-passkey')">simulate link click</button>
@@ -662,15 +693,15 @@ body {
       <div class="stages">
         <div id="rstage-1" class="stage active">
           <div class="stage-icon"><div class="spinner"></div></div>
-          <div class="stage-label">creating new passkey</div>
+          <div class="stage-label">making a new passkey</div>
         </div>
         <div id="rstage-2" class="stage pending">
           <div class="stage-icon"></div>
-          <div class="stage-label">verifying email attestation</div>
+          <div class="stage-label">checking your email</div>
         </div>
         <div id="rstage-3" class="stage pending">
           <div class="stage-icon"></div>
-          <div class="stage-label">rotating key on-chain</div>
+          <div class="stage-label">swapping in your new passkey</div>
         </div>
       </div>
 
@@ -841,11 +872,11 @@ body {
       <div class="stages">
         <div id="gstage-1" class="stage active">
           <div class="stage-icon"><div class="spinner"></div></div>
-          <div class="stage-label">signing with passkey</div>
+          <div class="stage-label">signing with your passkey</div>
         </div>
         <div id="gstage-2" class="stage pending">
           <div class="stage-icon"></div>
-          <div class="stage-label">submitting policy update</div>
+          <div class="stage-label">saving guardian rules</div>
         </div>
         <div id="gstage-3" class="stage pending">
           <div class="stage-icon"></div>
@@ -1006,31 +1037,66 @@ body {
       <span class="spacer"></span>
     </div>
     <div class="main">
-      <div class="headline">set the<br>threshold.</div>
-      <div class="sub">above this amount, both devices will have to sign. below, either device alone works.</div>
+      <div class="headline">require both<br>devices for<br>big transactions.</div>
+      <div class="sub">above this amount, your laptop will also need to sign. below, either device alone works.</div>
 
-      <div style="margin-top: 16px;">
-        <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">both devices required above</div>
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
-          <button class="auth-pill" data-dev-threshold="500" onclick="setDeviceThreshold(500)">$500</button>
-          <button class="auth-pill active" data-dev-threshold="1000" onclick="setDeviceThreshold(1000)">$1,000</button>
-          <button class="auth-pill" data-dev-threshold="5000" onclick="setDeviceThreshold(5000)">$5,000</button>
-          <button class="auth-pill" data-dev-threshold="10000" onclick="setDeviceThreshold(10000)">$10k</button>
+      <div class="choice-card" style="margin-top: 16px;">
+        <div class="choice-head">
+          <span class="choice-label">both devices required above</span>
+          <span class="choice-value" id="device-threshold-value">$1,000</span>
+        </div>
+        <div class="choice-pills">
+          <button class="choice-pill" data-dev-threshold="500" onclick="setDeviceThreshold(500)">$500</button>
+          <button class="choice-pill active" data-dev-threshold="1000" onclick="setDeviceThreshold(1000)">$1,000</button>
+          <button class="choice-pill" data-dev-threshold="5000" onclick="setDeviceThreshold(5000)">$5,000</button>
+          <button class="choice-pill" data-dev-threshold="10000" onclick="setDeviceThreshold(10000)">$10k</button>
         </div>
       </div>
 
-      <div style="background: var(--card); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+      <div style="background: var(--card); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
         <div style="display: flex; justify-content: space-between; font-size: 11px;">
           <span style="color: var(--text-4);">below threshold</span>
-          <span style="color: var(--text-2);">1 of 2 devices</span>
+          <span style="color: var(--text-2);">either device</span>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 11px;">
           <span style="color: var(--text-4);">at or above</span>
-          <span style="color: var(--text-2);" id="device-threshold-summary">2 of 2 · above $1,000</span>
+          <span style="color: var(--text-2);" id="device-threshold-summary">phone + laptop</span>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 11px;">
           <span style="color: var(--text-4);">revocable from</span>
           <span style="color: var(--text-2);">either device</span>
+        </div>
+      </div>
+
+      <div class="frames-toggle">
+        <div class="frames-toggle-head" onclick="toggleFrames(this)">
+          <span class="frames-toggle-chev">›</span>
+          <span class="frames-toggle-label">show frames</span>
+          <span class="frames-toggle-eip">eip-8141</span>
+        </div>
+        <div class="frames-toggle-body">
+          <div class="ftb-row">
+            <span class="ftb-badge verify">verify</span>
+            <div class="ftb-info">
+              <div class="ftb-name">your phone passkey signs</div>
+              <div class="ftb-sub">p-256 on this device</div>
+            </div>
+          </div>
+          <div class="ftb-row">
+            <span class="ftb-badge approve">approve</span>
+            <div class="ftb-info">
+              <div class="ftb-name">grantr pays gas</div>
+              <div class="ftb-sub">sponsored paymaster</div>
+            </div>
+          </div>
+          <div class="ftb-row">
+            <span class="ftb-badge default">default</span>
+            <div class="ftb-info">
+              <div class="ftb-name">install threshold policy</div>
+              <div class="ftb-sub" id="device-frame-threshold">2-of-2 verify above the configured amount</div>
+            </div>
+          </div>
+          <div class="ftb-footnote">once installed, transactions at or above the threshold need both devices. below it, either alone works. the chain enforces both.</div>
         </div>
       </div>
     </div>
@@ -1062,15 +1128,15 @@ body {
       <div class="stages">
         <div id="dstage-1" class="stage active">
           <div class="stage-icon"><div class="spinner"></div></div>
-          <div class="stage-label">signing with phone passkey</div>
+          <div class="stage-label">signing with your phone</div>
         </div>
         <div id="dstage-2" class="stage pending">
           <div class="stage-icon"></div>
-          <div class="stage-label">registering laptop public key</div>
+          <div class="stage-label">registering your laptop</div>
         </div>
         <div id="dstage-3" class="stage pending">
           <div class="stage-icon"></div>
-          <div class="stage-label">installing threshold policy</div>
+          <div class="stage-label">saving co-sign rules</div>
         </div>
       </div>
       <details class="frame-detail">
@@ -1111,7 +1177,7 @@ body {
       <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">send</div>
       <span class="spacer"></span>
     </div>
-    <div style="flex: 1; padding: 8px 0 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto;">
+    <div style="flex: 1; padding: 8px 0 16px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto;">
       <div>
         <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">to</div>
         <div id="send-recipient-display" style="background: var(--card); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer;" onclick="openSendRecipientPicker()">
@@ -1124,38 +1190,52 @@ body {
         </div>
       </div>
 
-      <div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">amount</div>
-          <div style="font-size: 11px; color: var(--text-4);">usd</div>
+      <div class="choice-card">
+        <div class="choice-head">
+          <span class="choice-label">amount</span>
+          <span class="choice-value" id="send-amount-value">$100</span>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
-          <button class="auth-pill active" data-send-amt="100" onclick="setSendAmount(100)">$100</button>
-          <button class="auth-pill" data-send-amt="500" onclick="setSendAmount(500)">$500</button>
-          <button class="auth-pill" data-send-amt="1500" onclick="setSendAmount(1500)">$1,500</button>
-          <button class="auth-pill" data-send-amt="5000" onclick="setSendAmount(5000)">$5,000</button>
+        <div class="choice-pills">
+          <button class="choice-pill active" data-send-amt="100" onclick="setSendAmount(100)">$100</button>
+          <button class="choice-pill" data-send-amt="500" onclick="setSendAmount(500)">$500</button>
+          <button class="choice-pill" data-send-amt="1500" onclick="setSendAmount(1500)">$1,500</button>
+          <button class="choice-pill" data-send-amt="5000" onclick="setSendAmount(5000)">$5,000</button>
         </div>
       </div>
 
       <div id="send-threshold-note" style="background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 11px; color: var(--text-3); line-height: 1.5;">
-        <span style="color: var(--text-2);">below threshold.</span> one device can sign this alone.
+        <span style="color: var(--text-2);">below threshold.</span> your passkey can sign this alone.
       </div>
 
-      <div>
-        <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">frame structure</div>
-        <div class="receipt-card">
-          <div class="receipt-row">
-            <span class="frame-badge verify">verify</span>
-            <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;" id="send-frame-verify-name">your passkey</div><div style="font-size:10px;color:#555;margin-top:2px;" id="send-frame-verify-sub">p-256 · this device</div></div>
+      <div class="frames-toggle">
+        <div class="frames-toggle-head" onclick="toggleFrames(this)">
+          <span class="frames-toggle-chev">›</span>
+          <span class="frames-toggle-label">show frames</span>
+          <span class="frames-toggle-eip">eip-8141</span>
+        </div>
+        <div class="frames-toggle-body">
+          <div class="ftb-row">
+            <span class="ftb-badge verify">verify</span>
+            <div class="ftb-info">
+              <div class="ftb-name" id="send-frame-verify-name">your passkey signs</div>
+              <div class="ftb-sub" id="send-frame-verify-sub">p-256 on this device</div>
+            </div>
           </div>
-          <div class="receipt-row">
-            <span class="frame-badge approve">approve</span>
-            <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">gas sponsored</div><div style="font-size:10px;color:#22c55e;margin-top:2px;">grantr paymaster</div></div>
+          <div class="ftb-row">
+            <span class="ftb-badge approve">approve</span>
+            <div class="ftb-info">
+              <div class="ftb-name">grantr pays gas</div>
+              <div class="ftb-sub">sponsored paymaster</div>
+            </div>
           </div>
-          <div class="receipt-row" style="border-bottom:none;">
-            <span class="frame-badge sender">sender</span>
-            <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;" id="send-frame-sender-name">transfer</div><div style="font-size:10px;color:#555;margin-top:2px;" id="send-frame-sender-sub">—</div></div>
+          <div class="ftb-row">
+            <span class="ftb-badge sender">sender</span>
+            <div class="ftb-info">
+              <div class="ftb-name" id="send-frame-sender-name">transfer</div>
+              <div class="ftb-sub" id="send-frame-sender-sub">—</div>
+            </div>
           </div>
+          <div class="ftb-footnote">above your threshold, both devices must sign — the verify frame enforces that on-chain.</div>
         </div>
       </div>
     </div>
@@ -1254,7 +1334,7 @@ body {
     </div>
     <div class="main">
       <div class="headline">pick an<br>agent.</div>
-      <div class="sub">each agent advertises a scope. grantr installs a session key that lets them call only those selectors, nothing else.</div>
+      <div class="sub">each agent can only do the specific things it's scoped for. nothing else.</div>
       <div id="delegate-agent-list" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;"></div>
     </div>
     <div class="bottom">
@@ -1274,48 +1354,64 @@ body {
       <span class="spacer"></span>
     </div>
     <div class="main">
-      <div class="headline">set the<br>limits.</div>
-      <div class="sub">configure what this agent can do and for how long. you can revoke any time.</div>
+      <div class="headline"><span id="delegate-auth-verb">let</span><br><span id="delegate-auth-subject">this agent</span><br><span id="delegate-auth-do">do its job.</span></div>
+      <div class="sub" id="delegate-auth-blurb">it can do what it's scoped for. nothing else. revoke any time.</div>
 
-      <div style="background:#0f0f0f;border-radius:16px;padding:18px;display:flex;flex-direction:column;margin-top:16px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed #1f1f1f;">
-          <span style="font-size:12px;color:#737373;">agent</span>
-          <span style="font-size:11px;color:#22c55e;font-family:'DM Mono',monospace;" id="delegate-agent-name">—</span>
+      <div class="choice-card" style="margin-top: 16px;">
+        <div class="choice-head">
+          <span class="choice-label">spend up to</span>
+          <span class="choice-value" id="delegate-limit-value">$500</span>
         </div>
+        <div class="choice-pills">
+          <button class="choice-pill" data-delegate-limit="50" onclick="setDelegateLimit(50)">$50</button>
+          <button class="choice-pill active" data-delegate-limit="500" onclick="setDelegateLimit(500)">$500</button>
+          <button class="choice-pill" data-delegate-limit="2500" onclick="setDelegateLimit(2500)">$2,500</button>
+          <button class="choice-pill" data-delegate-limit="10000" onclick="setDelegateLimit(10000)">$10k</button>
+        </div>
+      </div>
 
-        <div style="padding:14px 0;border-bottom:1px dashed #1f1f1f;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <span style="font-size:12px;color:#737373;">can spend up to</span>
-            <span style="font-size:11px;color:#555;">per action</span>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
-            <button class="auth-pill" data-delegate-limit="50" onclick="setDelegateLimit(50)">$50</button>
-            <button class="auth-pill active" data-delegate-limit="500" onclick="setDelegateLimit(500)">$500</button>
-            <button class="auth-pill" data-delegate-limit="2500" onclick="setDelegateLimit(2500)">$2,500</button>
-            <button class="auth-pill" data-delegate-limit="10000" onclick="setDelegateLimit(10000)">$10k</button>
-          </div>
+      <div class="choice-card">
+        <div class="choice-head">
+          <span class="choice-label">for</span>
+          <span class="choice-value" id="delegate-window-value">7 days</span>
         </div>
+        <div class="choice-pills">
+          <button class="choice-pill" data-delegate-window="1h" onclick="setDelegateWindow('1h')">1h</button>
+          <button class="choice-pill" data-delegate-window="24h" onclick="setDelegateWindow('24h')">24h</button>
+          <button class="choice-pill active" data-delegate-window="7d" onclick="setDelegateWindow('7d')">7d</button>
+          <button class="choice-pill" data-delegate-window="30d" onclick="setDelegateWindow('30d')">30d</button>
+        </div>
+      </div>
 
-        <div style="padding:14px 0;border-bottom:1px dashed #1f1f1f;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <span style="font-size:12px;color:#737373;">access window</span>
-            <span style="font-size:11px;color:#555;">session expires after</span>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
-            <button class="auth-pill" data-delegate-window="1h" onclick="setDelegateWindow('1h')">1h</button>
-            <button class="auth-pill" data-delegate-window="24h" onclick="setDelegateWindow('24h')">24h</button>
-            <button class="auth-pill active" data-delegate-window="7d" onclick="setDelegateWindow('7d')">7d</button>
-            <button class="auth-pill" data-delegate-window="30d" onclick="setDelegateWindow('30d')">30d</button>
-          </div>
+      <div class="frames-toggle" id="delegate-frames-toggle">
+        <div class="frames-toggle-head" onclick="toggleFrames(this)">
+          <span class="frames-toggle-chev">›</span>
+          <span class="frames-toggle-label">show frames</span>
+          <span class="frames-toggle-eip">eip-8141</span>
         </div>
-
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px dashed #1f1f1f;">
-          <span style="font-size:12px;color:#737373;">can</span>
-          <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;" id="delegate-scope-allow">—</div><div style="font-size:10px;color:#555;margin-top:2px;">locked to these selectors</div></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;">
-          <span style="font-size:12px;color:#737373;">cannot</span>
-          <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">everything else</div><div style="font-size:10px;color:#22c55e;margin-top:2px;">enforced by eip-8141</div></div>
+        <div class="frames-toggle-body">
+          <div class="ftb-row">
+            <span class="ftb-badge verify">verify</span>
+            <div class="ftb-info">
+              <div class="ftb-name">your passkey signs</div>
+              <div class="ftb-sub">p-256 on this device</div>
+            </div>
+          </div>
+          <div class="ftb-row">
+            <span class="ftb-badge approve">approve</span>
+            <div class="ftb-info">
+              <div class="ftb-name">grantr pays gas</div>
+              <div class="ftb-sub">sponsored paymaster</div>
+            </div>
+          </div>
+          <div class="ftb-row">
+            <span class="ftb-badge default">default</span>
+            <div class="ftb-info">
+              <div class="ftb-name">install session key</div>
+              <div class="ftb-sub" id="delegate-frame-scope-v2">scoped to the agent's advertised actions</div>
+            </div>
+          </div>
+          <div class="ftb-footnote">any call outside the scope fails at the verify frame. no app approval, no agent code — the chain refuses.</div>
         </div>
       </div>
     </div>
@@ -1346,15 +1442,15 @@ body {
       <div class="stages">
         <div id="gstage-1" class="stage active">
           <div class="stage-icon"><div class="spinner"></div></div>
-          <div class="stage-label">signing with passkey</div>
+          <div class="stage-label">signing with your passkey</div>
         </div>
         <div id="gstage-2" class="stage pending">
           <div class="stage-icon"></div>
-          <div class="stage-label">installing session key</div>
+          <div class="stage-label">saving permission on-chain</div>
         </div>
         <div id="gstage-3" class="stage pending">
           <div class="stage-icon"></div>
-          <div class="stage-label">activating session</div>
+          <div class="stage-label">all done</div>
         </div>
       </div>
       <details class="frame-detail">
@@ -1515,15 +1611,15 @@ body {
       <div class="stages">
         <div id="rgstage-1" class="stage active">
           <div class="stage-icon"><div class="spinner"></div></div>
-          <div class="stage-label">creating new passkey</div>
+          <div class="stage-label">making a new passkey</div>
         </div>
         <div id="rgstage-2" class="stage pending">
           <div class="stage-icon"></div>
-          <div class="stage-label">verifying guardian quorum</div>
+          <div class="stage-label">checking guardian approval</div>
         </div>
         <div id="rgstage-3" class="stage pending">
           <div class="stage-icon"></div>
-          <div class="stage-label">rotating key on-chain</div>
+          <div class="stage-label">swapping in your new passkey</div>
         </div>
       </div>
       <details class="frame-detail">
@@ -1613,8 +1709,8 @@ body {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 5 L19 12 L8 19 Z" fill="#3b82f6"/></svg>
         </div>
         <div style="flex: 1;">
-          <div style="font-size: 13px; color: var(--text-1); font-weight: 500;">guided tour</div>
-          <div style="font-size: 10px; color: var(--text-4); margin-top: 2px;">4 tours · see how grantr works</div>
+          <div style="font-size: 13px; color: var(--text-1); font-weight: 500;">see it in action</div>
+          <div style="font-size: 10px; color: var(--text-4); margin-top: 2px;">replay a flow end to end</div>
         </div>
         <span style="color: #444; font-size: 14px;">›</span>
       </div>
@@ -1637,7 +1733,7 @@ body {
         <div class="list-row-right"><span class="chevron">›</span></div>
       </div>
       <div class="list-row" onclick="openTray('tour')">
-        <div class="list-row-left"><div class="list-row-name">guided tour</div><div class="list-row-sub">4 tours · see how grantr works</div></div>
+        <div class="list-row-left"><div class="list-row-name">see it in action</div><div class="list-row-sub">replay a flow end to end</div></div>
         <div class="list-row-right"><div class="list-dot" style="background: #3b82f6;"></div><span class="chevron">›</span></div>
       </div>
     </div>
@@ -1990,67 +2086,76 @@ body {
       <span onclick="go('rebalance')" style="font-size:11px;color:#555;text-decoration:underline;cursor:pointer;">change</span>
     </div>
 
-    <div class="headline" style="font-size:28px;margin-bottom:4px;">authorize agent.</div>
-    <div style="font-size:13px;color:#737373;margin-bottom:20px;">review and set limits.</div>
+    <div class="headline" style="font-size:28px;margin-bottom:4px;">let grantr rebalance<br>your lp.</div>
+    <div style="font-size:13px;color:#737373;margin-bottom:20px;line-height:1.5;">it can rebalance this position. it can collect fees. it can't do anything else. revoke any time.</div>
 
-    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0;">
-      <div style="background:#0f0f0f;border-radius:16px;padding:18px;display:flex;flex-direction:column;">
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed #1f1f1f;">
-          <span style="font-size:12px;color:#737373;">agent</span>
-          <span style="font-size:11px;color:#22c55e;font-family:'DM Mono',monospace;">grantr lp rebalancer</span>
+    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;">
+      <div class="choice-card">
+        <div class="choice-head">
+          <span class="choice-label">spend up to</span>
+          <span class="choice-value" id="auth-limit-value">$500</span>
         </div>
-
-        <div style="padding:14px 0;border-bottom:1px dashed #1f1f1f;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <span style="font-size:12px;color:#737373;">can spend up to</span>
-            <span style="font-size:11px;color:#555;">per action</span>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
-            <button class="auth-pill" data-auth-limit="100" onclick="setAuthLimit(100)">$100</button>
-            <button class="auth-pill active" data-auth-limit="500" onclick="setAuthLimit(500)">$500</button>
-            <button class="auth-pill" data-auth-limit="1000" onclick="setAuthLimit(1000)">$1,000</button>
-            <button class="auth-pill" data-auth-limit="5000" onclick="setAuthLimit(5000)">$5,000</button>
-          </div>
-        </div>
-
-        <div style="padding:14px 0;border-bottom:1px dashed #1f1f1f;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <span style="font-size:12px;color:#737373;">access window</span>
-            <span style="font-size:11px;color:#555;">session expires after</span>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
-            <button class="auth-pill" data-auth-window="1h" onclick="setAuthWindow('1h')">1h</button>
-            <button class="auth-pill" data-auth-window="6h" onclick="setAuthWindow('6h')">6h</button>
-            <button class="auth-pill" data-auth-window="24h" onclick="setAuthWindow('24h')">24h</button>
-            <button class="auth-pill active" data-auth-window="7d" onclick="setAuthWindow('7d')">7d</button>
-          </div>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px dashed #1f1f1f;gap:12px;">
-          <div style="flex:1;min-width:0;">
-            <div style="font-size:12px;color:#737373;">keep running</div>
-            <div style="font-size:10px;color:#555;margin-top:2px;">if off, agent stops after one rebalance</div>
-          </div>
-          <div class="auth-toggle" id="auth-keep-toggle" onclick="toggleAuthKeepRunning()">
-            <div class="auth-toggle-knob"></div>
-          </div>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px dashed #1f1f1f;">
-          <span style="font-size:12px;color:#737373;">can</span>
-          <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">rebalance · collect fees</div><div style="font-size:10px;color:#555;margin-top:2px;">locked to these selectors</div></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;">
-          <span style="font-size:12px;color:#737373;">cannot</span>
-          <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">transfer · withdraw · anything else</div><div style="font-size:10px;color:#22c55e;margin-top:2px;">enforced by eip-8141</div></div>
+        <div class="choice-pills">
+          <button class="choice-pill" data-auth-limit="100" onclick="setAuthLimit(100)">$100</button>
+          <button class="choice-pill active" data-auth-limit="500" onclick="setAuthLimit(500)">$500</button>
+          <button class="choice-pill" data-auth-limit="1000" onclick="setAuthLimit(1000)">$1,000</button>
+          <button class="choice-pill" data-auth-limit="5000" onclick="setAuthLimit(5000)">$5,000</button>
         </div>
       </div>
 
-      <div style="background:#0a0a0a;border:1px solid #1f1f1f;border-radius:12px;padding:12px 14px;margin-top:8px;">
-        <div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">frame structure</div>
-        <div class="frame-row" style="padding-left:0;margin-bottom:6px;"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">passkey signature · p-256</div></div>
-        <div class="frame-row" style="padding-left:0;margin-bottom:6px;"><div class="frame-dot pass"></div><div class="frame-mode" style="color:#f59e0b;">approve</div><div class="frame-desc">gas sponsored by grantr</div></div>
-        <div class="frame-row" style="padding-left:0;"><div class="frame-dot pass"></div><div class="frame-mode" style="color:#3b82f6;">default</div><div class="frame-desc">add session key · scoped to rebalance selectors</div></div>
+      <div class="choice-card">
+        <div class="choice-head">
+          <span class="choice-label">for</span>
+          <span class="choice-value" id="auth-window-value">7 days</span>
+        </div>
+        <div class="choice-pills">
+          <button class="choice-pill" data-auth-window="1h" onclick="setAuthWindow('1h')">1h</button>
+          <button class="choice-pill" data-auth-window="6h" onclick="setAuthWindow('6h')">6h</button>
+          <button class="choice-pill" data-auth-window="24h" onclick="setAuthWindow('24h')">24h</button>
+          <button class="choice-pill active" data-auth-window="7d" onclick="setAuthWindow('7d')">7d</button>
+        </div>
+      </div>
+
+      <div style="background:#0a0a0a;border:0.5px solid #1a1a1a;border-radius:16px;padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;color:var(--text-1);font-weight:500;">keep running</div>
+          <div style="font-size:11px;color:var(--text-4);margin-top:3px;">if off, agent stops after one rebalance</div>
+        </div>
+        <div class="auth-toggle" id="auth-keep-toggle" onclick="toggleAuthKeepRunning()">
+          <div class="auth-toggle-knob"></div>
+        </div>
+      </div>
+
+      <div class="frames-toggle">
+        <div class="frames-toggle-head" onclick="toggleFrames(this)">
+          <span class="frames-toggle-chev">›</span>
+          <span class="frames-toggle-label">show frames</span>
+          <span class="frames-toggle-eip">eip-8141</span>
+        </div>
+        <div class="frames-toggle-body">
+          <div class="ftb-row">
+            <span class="ftb-badge verify">verify</span>
+            <div class="ftb-info">
+              <div class="ftb-name">your passkey signs</div>
+              <div class="ftb-sub">p-256 on this device</div>
+            </div>
+          </div>
+          <div class="ftb-row">
+            <span class="ftb-badge approve">approve</span>
+            <div class="ftb-info">
+              <div class="ftb-name">grantr pays gas</div>
+              <div class="ftb-sub">sponsored paymaster</div>
+            </div>
+          </div>
+          <div class="ftb-row">
+            <span class="ftb-badge default">default</span>
+            <div class="ftb-info">
+              <div class="ftb-name">install session key</div>
+              <div class="ftb-sub">scoped to rebalance() · collectFees()</div>
+            </div>
+          </div>
+          <div class="ftb-footnote">any call outside the scope fails at the verify frame. the agent can't transfer, withdraw, or touch anything other than this position.</div>
+        </div>
       </div>
     </div>
 
@@ -2344,7 +2449,7 @@ body {
         <span class="frame-badge verify">verify</span>
         <div class="build-row-info">
           <div class="build-row-name">time-locked</div>
-          <div class="build-row-sub">require 24h delay on specific selectors</div>
+          <div class="build-row-sub">require 24h delay on specific actions</div>
         </div>
         <span style="color: var(--text-4); font-size: 14px;">›</span>
       </div>
@@ -2489,10 +2594,10 @@ body {
   <div id="tx-preview-overlay" class="tray-overlay" onclick="closeTxPreview()" style="z-index: 13;"></div>
   <div id="tx-preview" class="action-sheet" style="z-index: 14; max-height: 85%; overflow-y: auto;">
     <div class="action-sheet-handle" onclick="closeTxPreview()"></div>
-    <div style="padding: 4px 24px 6px; font-size: 10px; color: var(--text-3);">transaction preview</div>
-    <div style="padding: 0 24px 8px; font-size: 16px; color: var(--text-1); font-weight: 500;" id="tx-preview-title">—</div>
-    <div style="padding: 0 24px 12px; font-size: 11px; color: var(--text-4); line-height: 1.5;" id="tx-preview-desc">—</div>
-    <div style="padding: 0 24px 10px; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">frames · execute atomically</div>
+    <div style="padding: 4px 24px 6px; font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px;">confirm</div>
+    <div style="padding: 0 24px 8px; font-size: 18px; color: var(--text-1); font-weight: 500; letter-spacing: -0.3px;" id="tx-preview-title">—</div>
+    <div style="padding: 0 24px 12px; font-size: 12px; color: var(--text-3); line-height: 1.5;" id="tx-preview-desc">—</div>
+    <div style="padding: 0 24px 10px; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">what happens when you sign</div>
     <div id="tx-preview-frames" style="padding: 0 24px 8px; display: flex; flex-direction: column; gap: 4px;"></div>
     <div style="padding: 10px 24px 8px; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">details</div>
     <div id="tx-preview-details" style="padding: 0 24px 16px; display: flex; flex-direction: column; gap: 8px;"></div>
@@ -2571,6 +2676,14 @@ function toggleEntry(el) {
   } else {
     el.classList.add('expanded');
   }
+}
+
+function toggleFrames(headEl) {
+  const toggle = headEl.closest('.frames-toggle');
+  if (!toggle) return;
+  const isOpen = toggle.classList.toggle('open');
+  const label = toggle.querySelector('.frames-toggle-label');
+  if (label) label.textContent = isOpen ? 'hide frames' : 'show frames';
 }
 
 function filterActivity(filter) {
@@ -2695,6 +2808,12 @@ function journeyRebalance() {
   // starts from profile, user taps + to see action sheet
   // flow: profile → (action sheet) → rebalance positions → authorize → dashboard
   closeAction();
+  // reset rebalance authorize state so the screen reads clean
+  authPolicy.limit = 500;
+  authPolicy.window = '7d';
+  authPolicy.keepRunning = false;
+  const kt = document.getElementById('auth-keep-toggle');
+  if (kt) kt.classList.remove('on');
   go('profile');
   setTimeout(() => openAction(), 400);
 }
@@ -2702,6 +2821,7 @@ function journeyRebalance() {
 function journeyBuild() {
   // from profile, open action sheet with build highlighted
   closeAction();
+  resetBuildQueue();
   go('profile');
   setTimeout(() => openAction(), 400);
 }
@@ -2775,12 +2895,13 @@ function go(id) {
   }
   if (id === 'delegate-authorize') {
     const a = delegateAgentPool.find(x => x.id === delegateState.agentId);
-    const nameEl = document.getElementById('delegate-agent-name');
-    const scopeEl = document.getElementById('delegate-scope-allow');
-    const frameScopeEl = document.getElementById('delegate-frame-scope');
     if (a) {
-      if (nameEl) nameEl.textContent = a.name;
-      if (scopeEl) scopeEl.textContent = a.selectors;
+      // replay pickDelegateAgent's copy population, and sync the readouts with current state
+      pickDelegateAgent(a.id);
+      setDelegateLimit(delegateState.limit);
+      setDelegateWindow(delegateState.window);
+      // populate the submitting screen's frame detail too so it reads right when that screen arrives
+      const frameScopeEl = document.getElementById('delegate-frame-scope');
       if (frameScopeEl) frameScopeEl.textContent = `scope: ${a.selectors}`;
     }
   }
@@ -3029,8 +3150,8 @@ const trayTemplates = {
     <div class="tray-spacer"></div>
   `,
   tour: `
-    <div class="tray-header"><div class="tray-title">guided tour</div></div>
-    <div style="padding: 0 24px 14px; font-size: 11px; color: var(--text-4); line-height: 1.5;">pick a tour. each one plays a complete flow so you can see how grantr works end to end.</div>
+    <div class="tray-header"><div class="tray-title">see it in action</div></div>
+    <div style="padding: 0 24px 14px; font-size: 11px; color: var(--text-4); line-height: 1.5;">each option replays a full flow so you can watch how it works.</div>
     <div style="padding: 0 18px 8px; display: flex; flex-direction: column; gap: 8px;">
 
       <div class="tour-row" onclick="closeTray(); journeyAccountCreation();">
@@ -3107,6 +3228,8 @@ function setAuthLimit(val) {
   document.querySelectorAll('[data-auth-limit]').forEach(b => {
     b.classList.toggle('active', Number(b.dataset.authLimit) === val);
   });
+  const readout = document.getElementById('auth-limit-value');
+  if (readout) readout.textContent = val >= 1000 ? `$${(val/1000)}k` : `$${val}`;
 }
 
 function setAuthWindow(val) {
@@ -3114,6 +3237,11 @@ function setAuthWindow(val) {
   document.querySelectorAll('[data-auth-window]').forEach(b => {
     b.classList.toggle('active', b.dataset.authWindow === val);
   });
+  const readout = document.getElementById('auth-window-value');
+  if (readout) {
+    const pretty = { '1h': '1 hour', '6h': '6 hours', '24h': '24 hours', '7d': '7 days' }[val] || val;
+    readout.textContent = pretty;
+  }
 }
 
 function toggleAuthKeepRunning() {
@@ -3130,8 +3258,13 @@ function setDeviceThreshold(val) {
   document.querySelectorAll('[data-dev-threshold]').forEach(b => {
     b.classList.toggle('active', Number(b.dataset.devThreshold) === val);
   });
+  const pretty = val >= 1000 ? `$${(val/1000)}k` : `$${val}`;
+  const readout = document.getElementById('device-threshold-value');
+  if (readout) readout.textContent = pretty;
   const summary = document.getElementById('device-threshold-summary');
-  if (summary) summary.textContent = `2 of 2 · above $${val.toLocaleString()}`;
+  if (summary) summary.textContent = 'phone + laptop';
+  const frameSub = document.getElementById('device-frame-threshold');
+  if (frameSub) frameSub.textContent = `2-of-2 verify above ${pretty}`;
 }
 
 function startAddingDevice() {
@@ -3155,6 +3288,9 @@ function renderSendScreen() {
   if (name) name.textContent = r.name;
   const sub = document.getElementById('send-recipient-sub');
   if (sub) sub.textContent = r.addr + ' · ' + r.sub;
+  // big readout for amount
+  const amountEl = document.getElementById('send-amount-value');
+  if (amountEl) amountEl.textContent = `$${sendState.amount.toLocaleString()}`;
   // threshold note + verify frame
   const aboveThreshold = sendState.amount > devicePolicy.threshold;
   const note = document.getElementById('send-threshold-note');
@@ -3164,14 +3300,14 @@ function renderSendScreen() {
   const sSub = document.getElementById('send-frame-sender-sub');
   const btn = document.getElementById('send-sign-btn');
   if (aboveThreshold) {
-    if (note) note.innerHTML = `<span style="color:#f59e0b;">above your $${devicePolicy.threshold.toLocaleString()} threshold.</span> both devices must sign.`;
-    if (vName) vName.textContent = 'both passkeys';
+    if (note) note.innerHTML = `<span style="color:#f59e0b;">above your $${devicePolicy.threshold.toLocaleString()} threshold.</span> both your devices must sign this.`;
+    if (vName) vName.textContent = 'both passkeys sign';
     if (vSub) vSub.textContent = '2-of-2 · iphone + macbook';
     if (btn) btn.textContent = 'sign on this device';
   } else {
-    if (note) note.innerHTML = `<span style="color:var(--text-2);">below $${devicePolicy.threshold.toLocaleString()} threshold.</span> one device can sign this alone.`;
-    if (vName) vName.textContent = 'your passkey';
-    if (vSub) vSub.textContent = 'p-256 · this device';
+    if (note) note.innerHTML = `<span style="color:var(--text-2);">below $${devicePolicy.threshold.toLocaleString()} threshold.</span> your passkey can sign this alone.`;
+    if (vName) vName.textContent = 'your passkey signs';
+    if (vSub) vSub.textContent = 'p-256 on this device';
     if (btn) btn.textContent = 'send';
   }
   if (sName) sName.textContent = `transfer $${sendState.amount.toLocaleString()}`;
@@ -3343,6 +3479,30 @@ function pickDelegateAgent(id) {
   renderDelegateAgentList();
   const btn = document.getElementById('delegate-continue-btn');
   if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+  // populate authorize screen copy from agent
+  const agent = delegateAgentPool.find(a => a.id === id);
+  if (!agent) return;
+  const subjectEl = document.getElementById('delegate-auth-subject');
+  const doEl = document.getElementById('delegate-auth-do');
+  const blurbEl = document.getElementById('delegate-auth-blurb');
+  const scopeV2 = document.getElementById('delegate-frame-scope-v2');
+  // humanize the "do" clause per agent
+  const humanDo = {
+    'lp-rebalancer': 'manage your lp.',
+    'ens-renewer':   'renew your ens.',
+    'dca-bot':       'run your dca.',
+    'yield-hopper':  'hop your yield.'
+  }[id] || 'do its job.';
+  const humanBlurb = {
+    'lp-rebalancer': "it can rebalance your position. it can't do anything else. revoke any time.",
+    'ens-renewer':   "it can renew your ens names. it can't do anything else. revoke any time.",
+    'dca-bot':       "it can execute daily buys. it can't do anything else. revoke any time.",
+    'yield-hopper':  "it can move your usdc between yield sources. it can't do anything else. revoke any time."
+  }[id] || "it can do what it's scoped for. nothing else. revoke any time.";
+  if (subjectEl) subjectEl.textContent = agent.name;
+  if (doEl) doEl.textContent = humanDo;
+  if (blurbEl) blurbEl.textContent = humanBlurb;
+  if (scopeV2) scopeV2.textContent = `scoped to ${agent.selectors}`;
 }
 
 function setDelegateLimit(val) {
@@ -3350,6 +3510,8 @@ function setDelegateLimit(val) {
   document.querySelectorAll('[data-delegate-limit]').forEach(b => {
     b.classList.toggle('active', Number(b.dataset.delegateLimit) === val);
   });
+  const readout = document.getElementById('delegate-limit-value');
+  if (readout) readout.textContent = val >= 1000 ? `$${(val/1000)}k` : `$${val}`;
 }
 
 function setDelegateWindow(val) {
@@ -3357,6 +3519,11 @@ function setDelegateWindow(val) {
   document.querySelectorAll('[data-delegate-window]').forEach(b => {
     b.classList.toggle('active', b.dataset.delegateWindow === val);
   });
+  const readout = document.getElementById('delegate-window-value');
+  if (readout) {
+    const pretty = { '1h': '1 hour', '24h': '24 hours', '7d': '7 days', '30d': '30 days' }[val] || val;
+    readout.textContent = pretty;
+  }
 }
 
 function startGrantingDelegation() {
@@ -3754,7 +3921,7 @@ function selectVerifyPolicy(type) {
           <div style="background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(--text-2); font-family: 'DM Mono', monospace;">
             transfer() · approve() · setApprovalForAll()
           </div>
-          <div style="font-size: 10px; color: var(--text-4); margin-top: 6px;">defaults to high-risk selectors · editable after install</div>
+          <div style="font-size: 10px; color: var(--text-4); margin-top: 6px;">defaults to high-risk actions · editable after install</div>
         </div>
       `,
       cta: 'install time lock',
@@ -3838,11 +4005,11 @@ function renderBuildQueue() {
 
 const txPreviewData = {
   rebalance: {
-    title: 'authorize lp rebalancer',
-    desc: 'grant a scoped session key to the lp rebalancer agent. agent can call rebalance() and collectFees() on your uniswap v3 position — nothing else.',
+    title: 'let grantr rebalance your lp',
+    desc: 'install a session key so the agent can rebalance this position and collect fees. it can\'t do anything else.',
     frames: [
       { type: 'verify', name: 'passkey signature', sub: 'p-256 · your device' },
-      { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster pays' },
+      { type: 'approve', name: 'grantr pays gas', sub: 'sponsored paymaster' },
       { type: 'default', name: 'add session key', sub: 'scope: rebalance() · collectFees()' }
     ],
     details: [
@@ -3862,8 +4029,8 @@ const txPreviewData = {
     }
   },
   sponsor: {
-    title: 'sponsor transaction',
-    desc: 'you pay gas for a recipient. they sign the action, you cover the fees.',
+    title: 'sponsor their gas',
+    desc: 'you pay the gas for this transaction. the recipient still signs the action.',
     frames: [
       { type: 'verify', name: 'your passkey', sub: 'p-256 · authorizes the sponsor approval' },
       { type: 'approve', name: 'pay recipient gas', sub: '—' }
@@ -3887,7 +4054,7 @@ const txPreviewData = {
   },
   build: {
     title: 'custom transaction',
-    desc: 'your frame queue executes atomically on etherex devnet. if any frame fails, the whole batch reverts.',
+    desc: 'these steps run together. if any fails, the whole thing reverts.',
     frames: [],
     details: [
       ['network', 'etherex devnet'],
@@ -3896,11 +4063,11 @@ const txPreviewData = {
     onConfirm: () => { closeTxPreview(); resetBuildQueue(); go('profile'); }
   },
   'add-guardians': {
-    title: 'add guardian policy',
-    desc: 'install a 2-of-3 guardian policy. the guardians can co-sign key rotation — nothing else.',
+    title: 'add your guardians',
+    desc: '2-of-3 of them can co-sign a recovery if you lose your device. they can\'t sign transactions or see your activity.',
     frames: [
-      { type: 'verify', name: 'passkey signature', sub: 'p-256 · this device' },
-      { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster pays' },
+      { type: 'verify', name: 'your passkey signs', sub: 'p-256 · this device' },
+      { type: 'approve', name: 'grantr pays gas', sub: 'sponsored paymaster' },
       { type: 'default', name: 'install guardian policy', sub: '2-of-3 quorum' }
     ],
     details: [
@@ -3921,11 +4088,11 @@ const txPreviewData = {
     }
   },
   'add-device': {
-    title: 'register second device',
-    desc: 'add your laptop as a second signer. below the threshold, either device can sign alone. above, both devices must sign.',
+    title: 'add your laptop as a second signer',
+    desc: 'below the threshold, either device works. above it, both have to sign.',
     frames: [
-      { type: 'verify', name: 'phone passkey signature', sub: 'p-256 · this device' },
-      { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster pays' },
+      { type: 'verify', name: 'your phone passkey signs', sub: 'p-256 · this device' },
+      { type: 'approve', name: 'grantr pays gas', sub: 'sponsored paymaster' },
       { type: 'default', name: 'add laptop key · set threshold', sub: '—' }
     ],
     details: [
@@ -3945,10 +4112,10 @@ const txPreviewData = {
   },
   revoke: {
     title: 'revoke session',
-    desc: 'remove the agent\'s session key. any future frame tx from this agent will fail at verify.',
+    desc: 'the agent can\'t do anything after this. any future attempt fails at the verify frame.',
     frames: [
-      { type: 'verify', name: 'passkey signature', sub: 'p-256 · this device' },
-      { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster pays' },
+      { type: 'verify', name: 'your passkey signs', sub: 'p-256 · this device' },
+      { type: 'approve', name: 'grantr pays gas', sub: 'sponsored paymaster' },
       { type: 'default', name: 'remove session key', sub: '—' }
     ],
     details: [
@@ -3986,7 +4153,7 @@ const txPreviewData = {
   },
   send: {
     title: 'send transaction',
-    desc: 'transfer tokens on-chain. the verify frame enforces your device policy — one passkey below threshold, both above.',
+    desc: 'transfer tokens to another address. grantr covers the gas.',
     frames: [
       { type: 'verify', name: '—', sub: '—' },
       { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster' },
@@ -4021,21 +4188,26 @@ const txPreviewData = {
       txPreviewData.send.frames[0].sub = above ? '2-of-2 · iphone + macbook' : 'p-256 · this device';
       txPreviewData.send.frames[2].name = `transfer $${sendState.amount.toLocaleString()}`;
       txPreviewData.send.frames[2].sub = r ? `to ${r.name}` : '—';
+      // dynamic consequence-first title
+      txPreviewData.send.title = r ? `send $${sendState.amount.toLocaleString()} to ${r.name.replace('.eth', '')}` : `send $${sendState.amount.toLocaleString()}`;
+      txPreviewData.send.desc = above
+        ? `your laptop will also need to sign this — it\'s above your $${devicePolicy.threshold.toLocaleString()} threshold.`
+        : 'your passkey signs, grantr pays the gas.';
     }
   },
   'grant-delegation': {
-    title: 'grant session access',
-    desc: 'install a scoped session key for this agent. they can only call the advertised selectors, within your limits.',
+    title: 'grant access',
+    desc: 'the agent can only do what you\'ve scoped. revoke any time.',
     frames: [
-      { type: 'verify', name: 'passkey signature', sub: 'p-256 · this device' },
-      { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster pays' },
+      { type: 'verify', name: 'your passkey signs', sub: 'p-256 · this device' },
+      { type: 'approve', name: 'grantr pays gas', sub: 'sponsored paymaster' },
       { type: 'default', name: 'install session key', sub: '—' }
     ],
     details: [
       ['agent', '—'],
-      ['scope', '—'],
+      ['can do', '—'],
       ['spending limit', '—'],
-      ['access window', '—'],
+      ['for', '—'],
       ['network', 'etherex devnet'],
       ['gas', '0 ETH · sponsored']
     ],
@@ -4044,11 +4216,20 @@ const txPreviewData = {
       const a = delegateAgentPool.find(x => x.id === delegateState.agentId);
       if (!a) return;
       const d = txPreviewData['grant-delegation'].details;
+      const humanDo = {
+        'lp-rebalancer': 'manage your lp',
+        'ens-renewer':   'renew your ens',
+        'dca-bot':       'run your dca',
+        'yield-hopper':  'hop your yield'
+      }[a.id] || 'do its job';
+      const prettyLimit = delegateState.limit >= 1000 ? `$${delegateState.limit/1000}k` : `$${delegateState.limit}`;
+      const prettyWindow = { '1h': '1 hour', '24h': '24 hours', '7d': '7 days', '30d': '30 days' }[delegateState.window] || delegateState.window;
       d[0][1] = a.name;
       d[1][1] = a.selectors;
-      d[2][1] = `$${delegateState.limit.toLocaleString()} per action`;
-      d[3][1] = delegateState.window;
-      txPreviewData['grant-delegation'].frames[2].sub = `scope: ${a.selectors}`;
+      d[2][1] = `${prettyLimit} per action`;
+      d[3][1] = prettyWindow;
+      txPreviewData['grant-delegation'].frames[2].sub = `scoped to ${a.selectors}`;
+      txPreviewData['grant-delegation'].title = `let ${a.name} ${humanDo}`;
     }
   }
 };
