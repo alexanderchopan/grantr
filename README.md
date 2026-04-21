@@ -193,7 +193,7 @@ superseded by prototype.
 
 ---
 
-## design language
+## 13. design language
 
 **palette:** #000 bg, #0a0a0a cards, #22c55e green (brand/pass/balance), #ef4444 red (fail/blocked), #f59e0b amber (guardians/warnings), #3b82f6 blue (sessions/agents), #fff primary text.
 
@@ -207,7 +207,7 @@ superseded by prototype.
 
 ---
 
-## prototype
+## 14. prototype
 
 ### demo journeys
 
