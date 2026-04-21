@@ -88,6 +88,25 @@ body {
 .stage-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .stage-icon .spinner { width: 14px; height: 14px; border: 2px solid var(--text-4); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; }
 .stage-icon .check { color: var(--green); font-size: 14px; }
+.frame-detail { margin-top: 20px; background: var(--card-dark); border-radius: 12px; border: 1px solid var(--divider); overflow: hidden; }
+.frame-detail summary { padding: 10px 14px; font-size: 11px; color: var(--text-4); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+.frame-detail summary::-webkit-details-marker { display: none; }
+.frame-detail summary::after { content: "›"; color: var(--text-4); transition: transform 0.2s; }
+.frame-detail[open] summary::after { transform: rotate(90deg); }
+.frame-detail[open] summary { border-bottom: 1px solid var(--divider); }
+.frame-detail-body { padding: 10px 14px 12px; display: flex; flex-direction: column; gap: 8px; }
+.frame-detail-row { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
+.frame-detail-info { flex: 1; min-width: 0; }
+.frame-detail-name { font-size: 12px; color: var(--text-2); font-weight: 500; }
+.frame-detail-sub { font-size: 10px; color: var(--text-4); margin-top: 1px; }
+.frame-detail-footnote { font-size: 10px; color: var(--text-4); padding-top: 4px; border-top: 1px solid var(--divider); margin-top: 4px; line-height: 1.5; }
+.guardian-row { padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider); }
+.guardian-row:last-child { border-bottom: none; }
+.guardian-status { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #000; transition: background 0.3s; }
+.guardian-status.pending { background: #333; }
+.guardian-status.approved { background: #22c55e; }
+.guardian-status.approved::after { content: "✓"; }
+.guardian-status.not-needed { background: transparent; border: 1px solid #444; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .stage-label { flex: 1; font-size: 13px; color: var(--text-1); }
 .stage.pending .stage-label { color: var(--text-3); }
@@ -97,14 +116,19 @@ body {
 .balance-bar { padding: 4px 24px 14px; flex-shrink: 0; }
 .balance-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .balance-label { font-size: 11px; color: var(--text-4); text-transform: lowercase; letter-spacing: 1.5px; }
+.balance-amount { font-size: 48px; font-weight: 700; letter-spacing: -0.04em; line-height: 0.9; color: var(--green); }
+.identity-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.avatar-large { width: 20px; height: 20px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+.avatar-large svg { display: block; width: 100%; height: 100%; }
+.identity-meta { display: flex; align-items: center; gap: 8px; }
+.identity-name { font-size: 12px; color: var(--text-2); }
+.identity-addr { font-size: 11px; color: var(--text-4); font-family: 'DM Mono', monospace; }
 .view-toggle { display: flex; gap: 2px; }
 .toggle-btn { width: 28px; height: 22px; background: transparent; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .toggle-btn:first-child { border-radius: 6px 0 0 6px; }
 .toggle-btn:last-child { border-radius: 0 6px 6px 0; }
 .toggle-btn.active { background: var(--border); }
-.balance-amount { font-size: 48px; font-weight: 700; letter-spacing: -0.04em; line-height: 0.9; color: var(--green); }
-.identity-ticker { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
-.avatar { width: 20px; height: 20px; border-radius: 50%; overflow: hidden; background: var(--green); color: #000; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+.avatar { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; background: var(--green); color: #000; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
 .avatar svg { display: block; }
 
 /* sessions tab: activity bars hero */
@@ -201,8 +225,6 @@ body {
 .frames { border-top: 1px solid var(--divider); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
 
 /* addresses */
-.addr-search { padding: 0 24px 10px; flex-shrink: 0; }
-.addr-search input { width: 100%; background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; color: var(--text-1); font-size: 13px; font-family: inherit; outline: none; }
 .addr-filters { padding: 0 24px 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; flex-shrink: 0; }
 .addr-sub { padding: 0 24px 10px; font-size: 11px; color: var(--text-4); flex-shrink: 0; }
 .addr-list { flex: 1; overflow-y: auto; padding: 0 18px 12px; display: flex; flex-direction: column; gap: 2px; }
@@ -253,7 +275,7 @@ body {
 .action-sheet { position: absolute; bottom: 0; left: 0; right: 0; background: var(--card); border-top-left-radius: 20px; border-top-right-radius: 20px; border-top: 1px solid var(--border); display: none; flex-direction: column; z-index: 6; }
 .action-sheet.open { display: flex; }
 .action-sheet-handle { width: 36px; height: 4px; background: #333; border-radius: 2px; align-self: center; margin: 12px 0 4px; flex-shrink: 0; cursor: pointer; }
-.action-sheet-label { font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1.5px; padding: 8px 24px 4px; }
+.action-sheet-label { font-size: 10px; color: var(--text-3); padding: 8px 24px 4px; }
 .action-item { display: flex; align-items: center; gap: 14px; padding: 14px 24px; cursor: pointer; border-top: 1px solid var(--divider); }
 .action-item:first-of-type { border-top: none; }
 .action-item:hover { background: rgba(255,255,255,0.02); }
@@ -278,33 +300,48 @@ body {
 .frame-badge.verify { background: #141414; color: var(--green); }
 .frame-badge.sender { background: #141414; color: var(--text-2); }
 .frame-badge.default { background: #141414; color: var(--blue); }
+.frame-badge.approve { background: #141414; color: #f59e0b; }
 .build-row-info { flex: 1; display: flex; flex-direction: column; gap: 1px; }
 .build-row-name { font-size: 13px; color: var(--text-1); font-weight: 500; }
 .build-row-sub { font-size: 10px; color: var(--text-4); }
 
 /* devtools */
-.devtools { position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.8); border: 1px solid #333; border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 4px; z-index: 9999; font-size: 10px; color: #888; }
+.devtools { position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.8); border: 1px solid #333; border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 4px; z-index: 9999; font-size: 10px; color: #888; max-height: calc(100vh - 20px); overflow-y: auto; }
+.devtools.collapsed { padding: 0; background: transparent; border: none; }
+.devtools.collapsed > *:not(.devtools-toggle) { display: none; }
+.devtools-toggle { align-self: flex-end; background: rgba(0,0,0,0.85); border: 1px solid #333; color: #888; width: 24px; height: 24px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; padding: 0; margin-bottom: 2px; }
+.devtools-toggle:hover { background: #141414; color: #fff; }
+.devtools.collapsed .devtools-toggle { margin-bottom: 0; }
 .devtools-label { font-size: 9px; color: #555; text-transform: uppercase; letter-spacing: 1px; padding: 4px 6px 0; }
 .dev-btn { background: transparent; border: 1px solid #333; color: #aaa; padding: 4px 8px; font-size: 10px; font-family: inherit; border-radius: 4px; cursor: pointer; text-align: left; white-space: nowrap; }
 .dev-btn:hover { background: #141414; color: #fff; }
+.dev-btn.j-built { border-color: #1f3a26; color: #22c55e; }
+.dev-btn.j-built:hover { background: #0a1f12; color: #4ade80; }
+.dev-btn.j-todo { border-color: #2a2a2a; color: #555; border-style: dashed; }
+.dev-btn.j-todo:hover { background: #0f0f0f; color: #888; }
+@media (max-width: 640px) {
+  .devtools { top: 8px; left: 8px; font-size: 11px; }
+}
 </style>
 </head>
 <body>
 
-<!-- devtools panel for jumping to any screen -->
-<div class="devtools">
-  <div class="devtools-label">actions</div>
-  <button class="dev-btn" onclick="openAction()">action sheet</button>
-  <button class="dev-btn" onclick="go('rebalance')">rebalance: positions</button>
-  <button class="dev-btn" onclick="go('rebalance-authorize')">rebalance: authorize</button>
-  <button class="dev-btn" onclick="go('rebalance-dashboard')">rebalance: dashboard</button>
-  <button class="dev-btn" onclick="go('build')">build</button>
-  <div class="devtools-label">jump to</div>
-  <button class="dev-btn" onclick="go('welcome')">welcome</button>
-  <button class="dev-btn" onclick="go('email')">email entry</button>
-  <button class="dev-btn" onclick="go('verify')">verification</button>
-  <button class="dev-btn" onclick="go('passkey')">passkey prompt</button>
-  <button class="dev-btn" onclick="go('creating')">creating account</button>
+<!-- devtools panel: 11 demo journeys from the spec -->
+<div id="devtools" class="devtools">
+  <button class="devtools-toggle" onclick="toggleDevtools()" title="toggle devtools" aria-label="toggle devtools"><span id="devtools-toggle-icon">×</span></button>
+  <div class="devtools-label">journeys</div>
+  <button class="dev-btn j-built" onclick="journeyAccountCreation()">1 · account creation</button>
+  <button class="dev-btn j-built" onclick="journeyEmailRecovery()">2 · email recovery</button>
+  <button class="dev-btn j-built" onclick="journeyAddGuardians()">3 · add guardians</button>
+  <button class="dev-btn j-built" onclick="journeyRecoverGuardians()">4 · recover via guardians</button>
+  <button class="dev-btn j-todo" onclick="journeyTodo('add second device')">5 · add second device</button>
+  <button class="dev-btn j-todo" onclick="journeyTodo('co-sign large tx')">6 · co-sign large tx</button>
+  <button class="dev-btn j-todo" onclick="journeyTodo('grant delegation')">7 · grant delegation</button>
+  <button class="dev-btn j-todo" onclick="journeyTodo('agent acts / blocked')">8 · agent acts / blocked</button>
+  <button class="dev-btn j-todo" onclick="journeyTodo('revoke delegation')">9 · revoke delegation</button>
+  <button class="dev-btn j-built" onclick="journeyRebalance()">10 · rebalance portfolio</button>
+  <button class="dev-btn j-built" onclick="journeyBuild()">11 · build transaction</button>
+
   <div class="devtools-label">tabs</div>
   <button class="dev-btn" onclick="go('profile')">profile</button>
   <button class="dev-btn" onclick="go('sessions')">sessions</button>
@@ -325,7 +362,7 @@ body {
     <div class="bottom">
       <button class="btn btn-primary" onclick="go('email')">create account</button>
       <button class="btn btn-secondary" onclick="go('profile')">sign in</button>
-      <div style="text-align: center; font-size: 11px; color: var(--text-4); padding-top: 4px; cursor: pointer;">lost access? <span style="color: var(--text-2);">recover account →</span></div>
+      <div style="text-align: center; font-size: 11px; color: var(--text-4); padding-top: 4px; cursor: pointer;" onclick="go('recover-path')">lost access? <span style="color: var(--text-2);">recover account →</span></div>
     </div>
   </div>
 
@@ -435,6 +472,507 @@ body {
           <div class="stage-label">setting email recovery</div>
         </div>
       </div>
+
+      <details class="frame-detail">
+        <summary>frame detail</summary>
+        <div class="frame-detail-body">
+          <div class="frame-detail-row">
+            <span class="frame-badge verify">verify</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">passkey signature</div>
+              <div class="frame-detail-sub">p-256 · this device</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge approve">approve</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">gas sponsored</div>
+              <div class="frame-detail-sub">grantr paymaster</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge default">default</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">deploy account · set email recovery</div>
+              <div class="frame-detail-sub">post-op installs initial policy</div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </div>
+    <div class="bottom"></div>
+  </div>
+
+  <!-- ============== RECOVER: EMAIL ENTRY ============== -->
+  <div id="screen-recover-email" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('welcome')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">enter your<br>recovery email.</div>
+      <div class="field">
+        <input id="recover-email-input" class="input" type="email" placeholder="you@example.com" value="alice@example.com">
+        <div class="hint">we'll send you a link to verify this device. your account stays the same.</div>
+      </div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="go('recover-verify')">continue</button>
+    </div>
+  </div>
+
+  <!-- ============== RECOVER: EMAIL VERIFICATION ============== -->
+  <div id="screen-recover-verify" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('recover-email')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">check your<br>email.</div>
+      <div class="email-card">
+        <div class="email-card-content">
+          <div class="email-card-label">sent to</div>
+          <div class="email-card-value">alice@example.com</div>
+        </div>
+        <div class="email-card-status">
+          <div class="status-dot"></div>
+          <span>waiting</span>
+        </div>
+      </div>
+      <div class="sub">click the link to prove you own this email. grantr will issue an attestation that lets you rotate your passkey on-chain.</div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-secondary" onclick="go('recover-passkey')">simulate link click</button>
+    </div>
+  </div>
+
+  <!-- ============== RECOVER: NEW PASSKEY ============== -->
+  <div id="screen-recover-passkey" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('recover-verify')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">create a new<br>passkey.</div>
+      <div class="sub">this device will be your new signer. your address, balance, and history stay the same — only the key changes.</div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="startRecovering()">create passkey</button>
+    </div>
+  </div>
+
+  <!-- ============== RECOVER: ROTATING ============== -->
+  <div id="screen-recovering" class="screen onboarding">
+    <div class="top">
+      <div></div>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+    <div class="main">
+      <div>
+        <div class="headline small">restoring<br>your account.</div>
+        <div class="gas-pill">
+          <div class="gas-pill-dot"></div>
+          gas paid by grantr
+        </div>
+      </div>
+      <div class="stages">
+        <div id="rstage-1" class="stage active">
+          <div class="stage-icon"><div class="spinner"></div></div>
+          <div class="stage-label">creating new passkey</div>
+        </div>
+        <div id="rstage-2" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">verifying email attestation</div>
+        </div>
+        <div id="rstage-3" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">rotating key on-chain</div>
+        </div>
+      </div>
+
+      <details class="frame-detail">
+        <summary>frame detail</summary>
+        <div class="frame-detail-body">
+          <div class="frame-detail-row">
+            <span class="frame-badge verify">verify</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">email attestation</div>
+              <div class="frame-detail-sub">grantr service · signed over new passkey</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge approve">approve</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">gas sponsored</div>
+              <div class="frame-detail-sub">grantr paymaster</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge default">default</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">rotate passkey</div>
+              <div class="frame-detail-sub">swap old key for new · post-op</div>
+            </div>
+          </div>
+          <div class="frame-detail-footnote">all three frames execute atomically. if any fails, no changes apply.</div>
+        </div>
+      </details>
+    </div>
+    <div class="bottom"></div>
+  </div>
+
+  <!-- ============== ADD GUARDIANS: INTRO ============== -->
+  <div id="screen-guardians-intro" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="closeTray(); go('profile')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">add<br>guardians.</div>
+      <div class="sub">guardians can help you recover if you lose your device. they can only co-sign a key rotation — they can't sign transactions or see your activity.</div>
+      <div style="background: var(--card); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; margin-top: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">you pick 3 trusted people</div></div>
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">2 of 3 must approve recovery</div></div>
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">they can't access your funds</div></div>
+      </div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="go('guardians-pick')">continue</button>
+    </div>
+  </div>
+
+  <!-- ============== ADD GUARDIANS: PICKER ============== -->
+  <div id="screen-guardians-pick" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('guardians-intro')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">pick three<br>guardians.</div>
+      <div class="sub">invite by ens or email. they'll create a passkey that can only co-sign your key rotation.</div>
+      <div style="background: var(--card); border-radius: 14px; padding: 8px 0; margin-top: 12px;">
+        <div style="padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider);">
+          <div class="avatar" style="background:#f59e0b;">b</div>
+          <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">bob.eth</div><div style="font-size:11px;color:var(--text-4);">invited · ens</div></div>
+          <div style="width:16px;height:16px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-size:10px;font-weight:700;">✓</div>
+        </div>
+        <div style="padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider);">
+          <div class="avatar" style="background:#f59e0b;">c</div>
+          <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">carol.eth</div><div style="font-size:11px;color:var(--text-4);">invited · ens</div></div>
+          <div style="width:16px;height:16px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-size:10px;font-weight:700;">✓</div>
+        </div>
+        <div style="padding: 10px 16px; display: flex; align-items: center; gap: 12px;">
+          <div class="avatar" style="background:#f59e0b;">d</div>
+          <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">dan.eth</div><div style="font-size:11px;color:var(--text-4);">invited · ens</div></div>
+          <div style="width:16px;height:16px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-size:10px;font-weight:700;">✓</div>
+        </div>
+      </div>
+      <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+        <span style="color: var(--text-4);">quorum</span>
+        <span style="color: var(--text-2);">2 of 3 required</span>
+      </div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="go('guardians-confirm')">all 3 accepted · continue</button>
+    </div>
+  </div>
+
+  <!-- ============== ADD GUARDIANS: CONFIRM ============== -->
+  <div id="screen-guardians-confirm" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('guardians-pick')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">review<br>and sign.</div>
+      <div class="sub">this adds a guardian policy to your account. you can change or remove it anytime.</div>
+      <div style="background: var(--card); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: var(--text-4);">guardians</span>
+          <span style="color: var(--text-2);">bob · carol · dan</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: var(--text-4);">quorum</span>
+          <span style="color: var(--text-2);">2 of 3</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: var(--text-4);">authority</span>
+          <span style="color: var(--text-2);">key rotation only</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: var(--text-4);">gas</span>
+          <span style="color: #22c55e;">sponsored by grantr</span>
+        </div>
+      </div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="openTxPreview('add-guardians')">add guardians</button>
+    </div>
+  </div>
+
+  <!-- ============== ADD GUARDIANS: SUBMITTING ============== -->
+  <div id="screen-guardians-submitting" class="screen onboarding">
+    <div class="top">
+      <div></div>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+    <div class="main">
+      <div>
+        <div class="headline small">adding<br>guardians.</div>
+        <div class="gas-pill">
+          <div class="gas-pill-dot"></div>
+          gas paid by grantr
+        </div>
+      </div>
+      <div class="stages">
+        <div id="gstage-1" class="stage active">
+          <div class="stage-icon"><div class="spinner"></div></div>
+          <div class="stage-label">signing with passkey</div>
+        </div>
+        <div id="gstage-2" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">submitting policy update</div>
+        </div>
+        <div id="gstage-3" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">updating your account</div>
+        </div>
+      </div>
+      <details class="frame-detail">
+        <summary>frame detail</summary>
+        <div class="frame-detail-body">
+          <div class="frame-detail-row">
+            <span class="frame-badge verify">verify</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">passkey signature</div>
+              <div class="frame-detail-sub">p-256 · this device</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge approve">approve</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">gas sponsored</div>
+              <div class="frame-detail-sub">grantr paymaster</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge default">default</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">install guardian policy</div>
+              <div class="frame-detail-sub">2-of-3 · bob · carol · dan</div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </div>
+    <div class="bottom"></div>
+  </div>
+
+  <!-- ============== RECOVER VIA GUARDIANS: PATH CHOICE ============== -->
+  <div id="screen-recover-path" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('welcome')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">choose a<br>recovery path.</div>
+      <div class="sub">your account has both email and guardian recovery set up. pick how you want to verify your new device.</div>
+      <div class="build-row" style="margin-top: 16px;" onclick="go('recover-email')">
+        <span class="frame-badge verify">verify</span>
+        <div class="build-row-info">
+          <div class="build-row-name">email attestation</div>
+          <div class="build-row-sub">get a link sent to alice@example.com · fastest</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">›</span>
+      </div>
+      <div class="build-row" onclick="go('recover-guardians-waiting')">
+        <span class="frame-badge verify">verify</span>
+        <div class="build-row-info">
+          <div class="build-row-name">guardian quorum</div>
+          <div class="build-row-sub">2 of 3 guardians must approve · bob · carol · dan</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">›</span>
+      </div>
+    </div>
+    <div class="bottom"></div>
+  </div>
+
+  <!-- ============== RECOVER VIA GUARDIANS: WAITING ============== -->
+  <div id="screen-recover-guardians-waiting" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('recover-path')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">waiting on<br>guardians.</div>
+      <div class="sub">they've been notified. once 2 of 3 approve, you can create a new passkey on this device.</div>
+      <div style="background: var(--card); border-radius: 14px; padding: 8px 0; margin-top: 16px;">
+        <div class="guardian-row" id="guardian-bob">
+          <div class="avatar" style="background:#f59e0b;">b</div>
+          <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">bob.eth</div><div style="font-size:11px;color:var(--text-4);" id="guardian-bob-status">notified · waiting</div></div>
+          <div class="guardian-status pending" id="guardian-bob-dot"></div>
+        </div>
+        <div class="guardian-row" id="guardian-carol">
+          <div class="avatar" style="background:#f59e0b;">c</div>
+          <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">carol.eth</div><div style="font-size:11px;color:var(--text-4);" id="guardian-carol-status">notified · waiting</div></div>
+          <div class="guardian-status pending" id="guardian-carol-dot"></div>
+        </div>
+        <div class="guardian-row" id="guardian-dan">
+          <div class="avatar" style="background:#f59e0b;">d</div>
+          <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">dan.eth</div><div style="font-size:11px;color:var(--text-4);" id="guardian-dan-status">notified · waiting</div></div>
+          <div class="guardian-status pending" id="guardian-dan-dot"></div>
+        </div>
+      </div>
+      <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+        <span style="color: var(--text-4);">quorum</span>
+        <span style="color: var(--text-2);" id="quorum-progress">0 of 2 required</span>
+      </div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-secondary" onclick="simulateGuardianApprovals()">simulate approvals</button>
+    </div>
+  </div>
+
+  <!-- ============== RECOVER VIA GUARDIANS: NEW PASSKEY ============== -->
+  <div id="screen-recover-guardians-passkey" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('recover-guardians-waiting')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">quorum<br>reached.</div>
+      <div class="sub">bob and carol approved. create a new passkey on this device — your address, balance, and history stay the same.</div>
+      <div style="background: var(--card); border-radius: 14px; padding: 12px 16px; margin-top: 16px; display: flex; flex-direction: column; gap: 6px;">
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: var(--text-4);">approved by</span>
+          <span style="color: #22c55e;">bob.eth · carol.eth</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+          <span style="color: var(--text-4);">not required</span>
+          <span style="color: var(--text-3);">dan.eth</span>
+        </div>
+      </div>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-primary" onclick="startRecoveringGuardians()">create passkey</button>
+    </div>
+  </div>
+
+  <!-- ============== RECOVER VIA GUARDIANS: SUBMITTING ============== -->
+  <div id="screen-recovering-guardians" class="screen onboarding">
+    <div class="top">
+      <div></div>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg done"></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+    <div class="main">
+      <div>
+        <div class="headline small">restoring<br>your account.</div>
+        <div class="gas-pill">
+          <div class="gas-pill-dot"></div>
+          gas paid by grantr
+        </div>
+      </div>
+      <div class="stages">
+        <div id="rgstage-1" class="stage active">
+          <div class="stage-icon"><div class="spinner"></div></div>
+          <div class="stage-label">creating new passkey</div>
+        </div>
+        <div id="rgstage-2" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">verifying guardian quorum</div>
+        </div>
+        <div id="rgstage-3" class="stage pending">
+          <div class="stage-icon"></div>
+          <div class="stage-label">rotating key on-chain</div>
+        </div>
+      </div>
+      <details class="frame-detail">
+        <summary>frame detail</summary>
+        <div class="frame-detail-body">
+          <div class="frame-detail-row">
+            <span class="frame-badge verify">verify</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">guardian quorum</div>
+              <div class="frame-detail-sub">bob · carol signatures · 2-of-3</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge approve">approve</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">gas sponsored</div>
+              <div class="frame-detail-sub">grantr paymaster</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge default">default</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">rotate passkey</div>
+              <div class="frame-detail-sub">swap old key for new · post-op</div>
+            </div>
+          </div>
+          <div class="frame-detail-footnote">all frames execute atomically. guardians never hold funds or signing authority — they can only co-sign key rotation.</div>
+        </div>
+      </details>
     </div>
     <div class="bottom"></div>
   </div>
@@ -454,10 +992,12 @@ body {
         </div>
       </div>
       <div class="balance-amount">$2,847.30</div>
-      <div class="identity-ticker">
-        <div class="avatar"><svg width="20" height="20" viewBox="0 0 6 6"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
-        <span style="font-size: 12px; color: #a3a3a3;">alice.eth</span>
-        <span style="font-size: 11px; color: #555; font-family: 'DM Mono', monospace;">...4c7a</span>
+      <div class="identity-row">
+        <div class="avatar-large"><svg viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
+        <div class="identity-meta">
+          <span class="identity-name">alice.eth</span>
+          <span class="identity-addr">...4c7a</span>
+        </div>
       </div>
     </div>
     <div class="sparkline-hero">
@@ -486,7 +1026,7 @@ body {
       </div>
       <div class="tile" onclick="openTray('account')">
         <div class="tile-label">account</div>
-        <div><div class="tile-stat" style="font-size: 16px; font-family: 'DM Mono', monospace;">...4c7a</div><div class="tile-sub">etherex · 2 days</div></div>
+        <div><div class="tile-stat" style="font-size: 16px; font-family: 'DM Mono', monospace;">...4c7a</div><div class="tile-sub">etherex devnet</div></div>
       </div>
     </div>
     <div id="profile-list" class="list-view">
@@ -503,7 +1043,7 @@ body {
         <div class="list-row-right"><div class="list-dot" style="background: #3b82f6;"></div><span class="chevron">›</span></div>
       </div>
       <div class="list-row" onclick="openTray('account')">
-        <div class="list-row-left"><div class="list-row-name">account</div><div class="list-row-sub" style="font-family: 'DM Mono', monospace;">0x8f2e...4c7a · etherex · 2 days old</div></div>
+        <div class="list-row-left"><div class="list-row-name">account</div><div class="list-row-sub" style="font-family: 'DM Mono', monospace;">...4c7a · etherex devnet</div></div>
         <div class="list-row-right"><span class="chevron">›</span></div>
       </div>
     </div>
@@ -514,10 +1054,12 @@ body {
     <div class="balance-bar">
       <div class="balance-label">balance</div>
       <div class="balance-amount">$2,847.30</div>
-      <div class="identity-ticker">
-        <div class="avatar"><svg width="20" height="20" viewBox="0 0 6 6"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
-        <span style="font-size: 12px; color: #a3a3a3;">alice.eth</span>
-        <span style="font-size: 11px; color: #555; font-family: 'DM Mono', monospace;">...4c7a</span>
+      <div class="identity-row">
+        <div class="avatar-large"><svg viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
+        <div class="identity-meta">
+          <span class="identity-name">alice.eth</span>
+          <span class="identity-addr">...4c7a</span>
+        </div>
       </div>
     </div>
     <div class="activity-hero">
@@ -556,8 +1098,8 @@ body {
           </div>
         </div>
         <div class="frame-section">
-          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · scoped selectors</div></div>
-          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">rebalance on uniswap v3</div></div>
+          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · rebalance() · collectFees()</div></div>
+          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">uniswap v3 position manager</div></div>
         </div>
         <div class="card-footer">
           <div class="card-footer-text">3 executed · 1 blocked</div>
@@ -574,8 +1116,8 @@ body {
           </div>
         </div>
         <div class="frame-section">
-          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · renew selector only</div></div>
-          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">renew on ens registrar</div></div>
+          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · renew()</div></div>
+          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">ens base registrar</div></div>
         </div>
         <div class="card-footer">
           <div class="card-footer-text">0 executed</div>
@@ -596,8 +1138,8 @@ body {
             </div>
           </div>
           <div class="frame-section">
-            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">verify</div><div class="frame-desc muted">session key · read selectors</div></div>
-            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted">update price feed</div></div>
+            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">verify</div><div class="frame-desc muted">session key · updatePrice()</div></div>
+            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted">chainlink price oracle</div></div>
           </div>
         </div>
         <div class="session-card expired">
@@ -610,8 +1152,8 @@ body {
             </div>
           </div>
           <div class="frame-section">
-            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">verify</div><div class="frame-desc muted">session key · swap selector</div></div>
-            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted">swap ETH → USDC weekly</div></div>
+            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">verify</div><div class="frame-desc muted">session key · exactInputSingle()</div></div>
+            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted">uniswap v3 router · ETH → USDC</div></div>
           </div>
         </div>
       </div>
@@ -623,10 +1165,12 @@ body {
     <div class="balance-bar">
       <div class="balance-label">balance</div>
       <div class="balance-amount">$2,847.30</div>
-      <div class="identity-ticker">
-        <div class="avatar"><svg width="20" height="20" viewBox="0 0 6 6"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
-        <span style="font-size: 12px; color: #a3a3a3;">alice.eth</span>
-        <span style="font-size: 11px; color: #555; font-family: 'DM Mono', monospace;">...4c7a</span>
+      <div class="identity-row">
+        <div class="avatar-large"><svg viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
+        <div class="identity-meta">
+          <span class="identity-name">alice.eth</span>
+          <span class="identity-addr">...4c7a</span>
+        </div>
       </div>
     </div>
     <div class="filters">
@@ -636,11 +1180,12 @@ body {
       <button class="pill">default</button>
     </div>
     <div class="feed">
+      <div class="section-label">today</div>
       <div class="entry">
         <div class="entry-header">
           <div class="entry-info">
             <div class="entry-title">sent 0.5 ETH to ...9f2b</div>
-            <div class="entry-sub">2 min ago</div>
+            <div class="entry-sub">2 min ago · 2 frames</div>
           </div>
           <div class="entry-amount white">-$1,390</div>
         </div>
@@ -653,7 +1198,7 @@ body {
         <div class="entry-header">
           <div class="entry-info">
             <div class="entry-title red">lp rebalancer blocked</div>
-            <div class="entry-sub">42 min ago · via session</div>
+            <div class="entry-sub">42 min ago · via session · 2 frames</div>
           </div>
           <div class="entry-amount red">blocked</div>
         </div>
@@ -666,11 +1211,11 @@ body {
         <div class="entry-header">
           <div class="entry-info">
             <div class="entry-title">lp rebalancer · rebalance</div>
-            <div class="entry-sub">1 hr ago · via session</div>
+            <div class="entry-sub">1 hr ago · via session · 2 frames</div>
           </div>
         </div>
         <div class="frames">
-          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">session key · scoped selectors</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">session key · rebalance()</div><div class="frame-status pass">✓</div></div>
           <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">rebalance on uniswap v3</div><div class="frame-status pass">✓</div></div>
         </div>
       </div>
@@ -678,7 +1223,7 @@ body {
         <div class="entry-header">
           <div class="entry-info">
             <div class="entry-title">session granted · lp rebalancer</div>
-            <div class="entry-sub">3 hrs ago</div>
+            <div class="entry-sub">3 hrs ago · 2 frames</div>
           </div>
         </div>
         <div class="frames">
@@ -686,11 +1231,12 @@ body {
           <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">add session key with scope</div><div class="frame-status pass">✓</div></div>
         </div>
       </div>
+      <div class="section-label" style="margin-top: 12px;">earlier this week</div>
       <div class="entry">
         <div class="entry-header">
           <div class="entry-info">
             <div class="entry-title">received 250 USDC from ...3e8c</div>
-            <div class="entry-sub">yesterday</div>
+            <div class="entry-sub">yesterday · 2 frames</div>
           </div>
           <div class="entry-amount green">+$250</div>
         </div>
@@ -703,7 +1249,7 @@ body {
         <div class="entry-header">
           <div class="entry-info">
             <div class="entry-title">account created</div>
-            <div class="entry-sub">2 days ago · gas by grantr</div>
+            <div class="entry-sub">2 days ago · gas by grantr · 2 frames</div>
           </div>
         </div>
         <div class="frames">
@@ -719,13 +1265,14 @@ body {
     <div class="balance-bar">
       <div class="balance-label">balance</div>
       <div class="balance-amount">$2,847.30</div>
-      <div class="identity-ticker">
-        <div class="avatar"><svg width="20" height="20" viewBox="0 0 6 6"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
-        <span style="font-size: 12px; color: #a3a3a3;">alice.eth</span>
-        <span style="font-size: 11px; color: #555; font-family: 'DM Mono', monospace;">...4c7a</span>
+      <div class="identity-row">
+        <div class="avatar-large"><svg viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
+        <div class="identity-meta">
+          <span class="identity-name">alice.eth</span>
+          <span class="identity-addr">...4c7a</span>
+        </div>
       </div>
     </div>
-    <div class="addr-search"><input type="text" placeholder="search"></div>
     <div class="addr-filters">
       <button class="pill" data-addr-filter="own" onclick="filterAddresses('own')">own</button>
       <button class="pill active" data-addr-filter="guardians" onclick="filterAddresses('guardians')">guardians</button>
@@ -856,13 +1403,14 @@ body {
 
       <div style="background:#0a0a0a;border:1px solid #1f1f1f;border-radius:12px;padding:12px 14px;margin-top:8px;">
         <div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">frame structure</div>
-        <div class="frame-row" style="padding-left:0;margin-bottom:6px;"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · scoped selectors</div></div>
-        <div class="frame-row" style="padding-left:0;"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">rebalance on uniswap v3 · atomic</div></div>
+        <div class="frame-row" style="padding-left:0;margin-bottom:6px;"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">passkey signature · p-256</div></div>
+        <div class="frame-row" style="padding-left:0;margin-bottom:6px;"><div class="frame-dot pass"></div><div class="frame-mode" style="color:#f59e0b;">approve</div><div class="frame-desc">gas sponsored by grantr</div></div>
+        <div class="frame-row" style="padding-left:0;"><div class="frame-dot pass"></div><div class="frame-mode" style="color:#3b82f6;">default</div><div class="frame-desc">add session key · scoped to rebalance selectors</div></div>
       </div>
     </div>
 
     <div class="bottom" style="padding-top:12px;">
-      <button class="btn btn-primary" id="auth-btn" onclick="grantRebalance()">authorize · sign with passkey</button>
+      <button class="btn btn-primary" id="auth-btn" onclick="openTxPreview('rebalance')">authorize</button>
       <button class="btn btn-secondary" onclick="closeAction(); go('profile')">cancel</button>
     </div>
   </div>
@@ -872,10 +1420,12 @@ body {
     <div class="balance-bar">
       <div class="balance-label">balance</div>
       <div class="balance-amount">$2,847.30</div>
-      <div class="identity-ticker">
-        <div class="avatar"><svg width="20" height="20" viewBox="0 0 6 6"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
-        <span style="font-size: 12px; color: #a3a3a3;">alice.eth</span>
-        <span style="font-size: 11px; color: #555; font-family: 'DM Mono', monospace;">...4c7a</span>
+      <div class="identity-row">
+        <div class="avatar-large"><svg viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="6" fill="#15803d"/><rect x="1" y="1" width="1" height="1" fill="#22c55e"/><rect x="4" y="1" width="1" height="1" fill="#22c55e"/><rect x="2" y="2" width="2" height="1" fill="#86efac"/><rect x="1" y="3" width="1" height="2" fill="#22c55e"/><rect x="4" y="3" width="1" height="2" fill="#22c55e"/><rect x="2" y="4" width="2" height="1" fill="#86efac"/></svg></div>
+        <div class="identity-meta">
+          <span class="identity-name">alice.eth</span>
+          <span class="identity-addr">...4c7a</span>
+        </div>
       </div>
     </div>
 
@@ -886,9 +1436,9 @@ body {
           <div style="width:8px;height:8px;border-radius:50%;background:#3b82f6;"></div>
           <span style="font-size:13px;color:#fff;font-weight:500;">lp rebalancer · active</span>
         </div>
-        <button onclick="go('activity')" style="font-size:11px;color:#ef4444;background:none;border:none;font-family:inherit;cursor:pointer;">revoke</button>
+        <button onclick="go('sessions')" style="font-size:11px;color:#ef4444;background:none;border:none;font-family:inherit;cursor:pointer;">revoke</button>
       </div>
-      <div class="frame-row" style="padding-left:0;margin-bottom:4px;"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · scoped selectors</div></div>
+      <div class="frame-row" style="padding-left:0;margin-bottom:4px;"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · rebalance() · collectFees()</div></div>
       <div class="frame-row" style="padding-left:0;"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">rebalance on uniswap v3</div></div>
       <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid #1a1a1a;">
         <span style="font-size:10px;color:#555;">$0 / $500 · 30 days left</span>
@@ -897,7 +1447,7 @@ body {
     </div>
 
     <!-- activity feed -->
-    <div style="padding:0 18px 8px;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;">recent activity</div>
+    <div class="section-label" style="padding: 0 18px 8px;">recent activity</div>
     <div class="feed" style="padding:0 18px 12px;">
       <div class="entry">
         <div class="entry-header">
@@ -932,17 +1482,17 @@ body {
   <!-- ============== BUILD SCREEN ============== -->
   <div id="screen-build" class="screen onboarding">
     <div class="top">
-      <span class="back" onclick="closeAction(); go('profile')">←</span>
+      <span class="back" onclick="resetBuildQueue(); closeAction(); go('profile')">←</span>
       <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">build transaction</div>
       <span class="spacer"></span>
     </div>
-    <div style="flex: 1; padding: 16px 0; display: flex; flex-direction: column; gap: 0; overflow-y: auto;">
+    <div style="flex: 1; padding: 8px 0 16px; display: flex; flex-direction: column; gap: 0; overflow-y: auto;">
 
       <div style="font-size: 11px; color: var(--text-4); line-height: 1.6; padding-bottom: 16px;">compose an atomic frame transaction. frames execute in order — if any sender frame fails, the whole batch reverts.</div>
 
       <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; padding-bottom: 8px;">choose frame type</div>
 
-      <div class="build-row">
+      <div class="build-row" onclick="addFrame('verify', 'passkey signature', 'p-256 · signs the transaction hash')">
         <span class="frame-badge verify">verify</span>
         <div class="build-row-info">
           <div class="build-row-name">passkey signature</div>
@@ -951,7 +1501,7 @@ body {
         <span style="color: var(--text-4); font-size: 14px;">+</span>
       </div>
 
-      <div class="build-row">
+      <div class="build-row" onclick="addFrame('verify', 'session key', 'scoped · must match an active session')">
         <span class="frame-badge verify">verify</span>
         <div class="build-row-info">
           <div class="build-row-name">session key</div>
@@ -960,7 +1510,16 @@ body {
         <span style="color: var(--text-4); font-size: 14px;">+</span>
       </div>
 
-      <div class="build-row">
+      <div class="build-row" onclick="addFrame('approve', 'gas sponsored', 'grantr paymaster pays the gas')">
+        <span class="frame-badge approve">approve</span>
+        <div class="build-row-info">
+          <div class="build-row-name">gas sponsored</div>
+          <div class="build-row-sub">grantr paymaster pays the gas</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">+</span>
+      </div>
+
+      <div class="build-row" onclick="addFrame('sender', 'contract call', 'call any contract · atomic flag optional')">
         <span class="frame-badge sender">sender</span>
         <div class="build-row-info">
           <div class="build-row-name">contract call</div>
@@ -969,7 +1528,7 @@ body {
         <span style="color: var(--text-4); font-size: 14px;">+</span>
       </div>
 
-      <div class="build-row">
+      <div class="build-row" onclick="addFrame('sender', 'token transfer', 'erc-20 or native ETH')">
         <span class="frame-badge sender">sender</span>
         <div class="build-row-info">
           <div class="build-row-name">token transfer</div>
@@ -978,7 +1537,7 @@ body {
         <span style="color: var(--text-4); font-size: 14px;">+</span>
       </div>
 
-      <div class="build-row">
+      <div class="build-row" onclick="addFrame('default', 'policy update', 'rotate key · add guardian · update session')">
         <span class="frame-badge default">default</span>
         <div class="build-row-info">
           <div class="build-row-name">policy update</div>
@@ -988,13 +1547,114 @@ body {
       </div>
 
       <div style="margin-top: 20px; padding: 14px 16px; background: var(--card-dark); border-radius: 14px; display: flex; flex-direction: column; gap: 8px;">
-        <div style="font-size: 10px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">your frame queue</div>
-        <div style="font-size: 12px; color: #555; font-style: italic;">empty — add frames above</div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 10px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">your frame queue</div>
+          <button id="build-clear" onclick="resetBuildQueue()" style="background: transparent; border: none; color: var(--text-4); font-size: 10px; font-family: inherit; cursor: pointer; display: none;">clear</button>
+        </div>
+        <div id="build-queue">
+          <div id="build-queue-empty" style="font-size: 12px; color: #555; font-style: italic;">empty — add frames above</div>
+        </div>
       </div>
 
     </div>
     <div class="bottom" style="padding-top: 0;">
-      <button class="btn btn-primary" style="opacity: 0.4;" disabled>preview transaction</button>
+      <button id="build-preview-btn" class="btn btn-primary" style="opacity: 0.4;" disabled onclick="openTxPreview('build')">preview transaction</button>
+    </div>
+  </div>
+
+  <!-- ============== SPONSOR ============== -->
+  <div id="screen-sponsor" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="closeAction(); go('profile')">←</span>
+      <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">sponsor</div>
+      <span class="spacer"></span>
+    </div>
+    <div style="flex: 1; padding: 8px 0 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto;">
+      <div style="font-size: 11px; color: var(--text-4); line-height: 1.6;">pay gas for someone else's transaction. they approve the action, you cover the gas via your <span style="color: var(--text-2);">approve</span> frame.</div>
+
+      <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">pay for</div>
+      <div style="background: var(--card); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 11px; color: var(--text-4);">recipient</div>
+          <div style="font-size: 12px; color: var(--text-2); font-family: 'DM Mono', monospace;">bob.eth · ...7e3a</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 11px; color: var(--text-4);">action</div>
+          <div style="font-size: 12px; color: var(--text-2);">their next tx</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 11px; color: var(--text-4);">max gas</div>
+          <div style="font-size: 12px; color: var(--text-2);">0.005 ETH</div>
+        </div>
+      </div>
+
+      <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">frame structure</div>
+      <div class="receipt-card">
+        <div class="receipt-row">
+          <span class="frame-badge verify">verify</span>
+          <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">your passkey</div><div style="font-size:10px;color:#555;margin-top:2px;">p-256 signature</div></div>
+        </div>
+        <div class="receipt-row">
+          <span class="frame-badge approve">approve</span>
+          <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">you pay bob's gas</div><div style="font-size:10px;color:#22c55e;margin-top:2px;">up to 0.005 ETH</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom" style="padding-top: 0;">
+      <button class="btn btn-primary" onclick="openTxPreview('sponsor')">sponsor transaction</button>
+    </div>
+  </div>
+
+  <!-- ============== VERIFY POLICY ============== -->
+  <div id="screen-verify-policy" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="closeAction(); go('profile')">←</span>
+      <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">add verify policy</div>
+      <span class="spacer"></span>
+    </div>
+    <div style="flex: 1; padding: 8px 0 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto;">
+      <div style="font-size: 11px; color: var(--text-4); line-height: 1.6;">add a custom signature check to your account. any tx must pass this verify frame alongside your passkey.</div>
+
+      <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">policy type</div>
+
+      <div class="build-row">
+        <span class="frame-badge verify">verify</span>
+        <div class="build-row-info">
+          <div class="build-row-name">guardian quorum</div>
+          <div class="build-row-sub">require 2-of-3 guardians for key rotation</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">›</span>
+      </div>
+
+      <div class="build-row">
+        <span class="frame-badge verify">verify</span>
+        <div class="build-row-info">
+          <div class="build-row-name">threshold by value</div>
+          <div class="build-row-sub">require second device above $1,000</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">›</span>
+      </div>
+
+      <div class="build-row">
+        <span class="frame-badge verify">verify</span>
+        <div class="build-row-info">
+          <div class="build-row-name">time-locked</div>
+          <div class="build-row-sub">require 24h delay on specific selectors</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">›</span>
+      </div>
+
+      <div class="build-row">
+        <span class="frame-badge verify">verify</span>
+        <div class="build-row-info">
+          <div class="build-row-name">custom signer</div>
+          <div class="build-row-sub">paste a contract address that returns valid</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">›</span>
+      </div>
+    </div>
+    <div class="bottom" style="padding-top: 0;">
+      <button class="btn btn-primary" style="opacity: 0.4;" disabled>select a policy type</button>
     </div>
   </div>
 
@@ -1026,18 +1686,18 @@ body {
       <span class="action-item-badge" style="color: #a3a3a3; background: #141414;">atomic</span>
     </div>
 
-    <div class="action-item" style="opacity: 0.4; cursor: default;">
+    <div class="action-item" onclick="closeAction(); go('sponsor')">
       <div class="action-icon" style="background: #1f1708;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#f59e0b" stroke-width="1.5" fill="none"/><path d="M12 7 L12 13" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="16" r="0.75" fill="#f59e0b"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 8 L12 4 L20 8 L20 16 L12 20 L4 16 Z" stroke="#f59e0b" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M12 4 L12 20" stroke="#f59e0b" stroke-width="1.5"/><path d="M4 8 L20 8" stroke="#f59e0b" stroke-width="1.5"/><path d="M4 16 L20 16" stroke="#f59e0b" stroke-width="1.5"/></svg>
       </div>
       <div class="action-item-info">
         <div class="action-item-name">sponsor</div>
         <div class="action-item-sub">pay gas for another account · approve frame</div>
       </div>
-      <span class="action-item-badge" style="color: #555; background: #141414;">soon</span>
+      <span class="action-item-badge" style="color: #f59e0b; background: #141414;">approve</span>
     </div>
 
-    <div class="action-item" style="opacity: 0.4; cursor: default;">
+    <div class="action-item" onclick="closeAction(); go('verify-policy')">
       <div class="action-icon" style="background: #0a1428;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 12 L11 14 L15 10" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="#3b82f6" stroke-width="1.5" fill="none"/></svg>
       </div>
@@ -1045,9 +1705,26 @@ body {
         <div class="action-item-name">verify</div>
         <div class="action-item-sub">add a custom verify frame policy</div>
       </div>
-      <span class="action-item-badge" style="color: #555; background: #141414;">soon</span>
+      <span class="action-item-badge" style="color: #3b82f6; background: #141414;">verify</span>
     </div>
 
+    <div class="action-sheet-spacer"></div>
+  </div>
+
+  <!-- ============== TX PREVIEW MODAL ============== -->
+  <div id="tx-preview-overlay" class="tray-overlay" onclick="closeTxPreview()" style="z-index: 10;"></div>
+  <div id="tx-preview" class="action-sheet" style="z-index: 11; max-height: 85%; overflow-y: auto;">
+    <div class="action-sheet-handle" onclick="closeTxPreview()"></div>
+    <div style="padding: 4px 24px 6px; font-size: 10px; color: var(--text-3);">transaction preview</div>
+    <div style="padding: 0 24px 8px; font-size: 16px; color: var(--text-1); font-weight: 500;" id="tx-preview-title">—</div>
+    <div style="padding: 0 24px 12px; font-size: 11px; color: var(--text-4); line-height: 1.5;" id="tx-preview-desc">—</div>
+    <div style="padding: 0 24px 10px; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">frames · execute atomically</div>
+    <div id="tx-preview-frames" style="padding: 0 24px 8px; display: flex; flex-direction: column; gap: 4px;"></div>
+    <div style="padding: 10px 24px 8px; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">details</div>
+    <div id="tx-preview-details" style="padding: 0 24px 16px; display: flex; flex-direction: column; gap: 8px;"></div>
+    <div style="padding: 0 24px 20px;">
+      <button class="btn btn-primary" onclick="confirmTxPreview()">sign with passkey</button>
+    </div>
     <div class="action-sheet-spacer"></div>
   </div>
 
@@ -1097,6 +1774,70 @@ body {
 const tabScreens = ['profile', 'sessions', 'activity', 'addresses', 'rebalance-dashboard'];
 const allScreens = [...tabScreens, 'welcome', 'email', 'verify', 'passkey', 'creating', 'rebalance', 'build'];
 
+// ============== JOURNEYS ==============
+// each journey sets up state and jumps to the starting screen.
+// built = fully walked journey · todo = placeholder until screens exist.
+
+function toggleDevtools() {
+  const panel = document.getElementById('devtools');
+  const icon = document.getElementById('devtools-toggle-icon');
+  const collapsed = panel.classList.toggle('collapsed');
+  icon.textContent = collapsed ? '≡' : '×';
+}
+
+// collapse devtools by default on narrow screens (phones)
+if (window.matchMedia('(max-width: 640px)').matches) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const panel = document.getElementById('devtools');
+    const icon = document.getElementById('devtools-toggle-icon');
+    panel.classList.add('collapsed');
+    if (icon) icon.textContent = '≡';
+  });
+}
+
+function journeyAccountCreation() {
+  // full flow: welcome → email → verify → passkey → creating → profile
+  closeAction();
+  go('welcome');
+}
+
+function journeyEmailRecovery() {
+  // lost device flow: welcome → recover-email → recover-verify → recover-passkey → recovering → profile
+  closeAction();
+  go('welcome');
+}
+
+function journeyAddGuardians() {
+  // setup: profile → security tile → add guardian → intro → pick → confirm → submitting → profile
+  closeAction();
+  go('guardians-intro');
+}
+
+function journeyRecoverGuardians() {
+  // lost device flow with guardians as recovery path
+  closeAction();
+  go('welcome');
+}
+
+function journeyRebalance() {
+  // starts from profile, user taps + to see action sheet
+  // flow: profile → (action sheet) → rebalance positions → authorize → dashboard
+  closeAction();
+  go('profile');
+  setTimeout(() => openAction(), 400);
+}
+
+function journeyBuild() {
+  // from profile, open action sheet with build highlighted
+  closeAction();
+  go('profile');
+  setTimeout(() => openAction(), 400);
+}
+
+function journeyTodo(name) {
+  alert('"' + name + '" journey is planned but not yet built.\n\nnext up: build the screens, then wire them here.');
+}
+
 function go(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const target = document.getElementById('screen-' + id);
@@ -1143,21 +1884,98 @@ function startCreating() {
   setTimeout(() => {
     setStage(1, 'done');
     setStage(2, 'active');
-  }, 1200);
+  }, 2000);
   setTimeout(() => {
     setStage(2, 'done');
     setStage(3, 'active');
-  }, 2400);
+  }, 4000);
   setTimeout(() => {
     setStage(3, 'done');
-  }, 3600);
+  }, 6000);
   setTimeout(() => {
     go('profile');
-  }, 4400);
+  }, 7200);
 }
 
-function setStage(n, state) {
-  const el = document.getElementById('stage-' + n);
+function startRecovering() {
+  go('recovering');
+  setTimeout(() => {
+    setStage(1, 'done', 'r');
+    setStage(2, 'active', 'r');
+  }, 2000);
+  setTimeout(() => {
+    setStage(2, 'done', 'r');
+    setStage(3, 'active', 'r');
+  }, 4000);
+  setTimeout(() => {
+    setStage(3, 'done', 'r');
+  }, 6000);
+  setTimeout(() => {
+    go('profile');
+  }, 7200);
+}
+
+function startAddingGuardians() {
+  go('guardians-submitting');
+  setTimeout(() => {
+    setStage(1, 'done', 'g');
+    setStage(2, 'active', 'g');
+  }, 2000);
+  setTimeout(() => {
+    setStage(2, 'done', 'g');
+    setStage(3, 'active', 'g');
+  }, 4000);
+  setTimeout(() => {
+    setStage(3, 'done', 'g');
+  }, 6000);
+  setTimeout(() => {
+    go('profile');
+  }, 7200);
+}
+
+function simulateGuardianApprovals() {
+  // bob approves after 1s, carol after 2.5s, then advance
+  setTimeout(() => {
+    document.getElementById('guardian-bob-dot').classList.remove('pending');
+    document.getElementById('guardian-bob-dot').classList.add('approved');
+    document.getElementById('guardian-bob-status').textContent = 'approved · just now';
+    document.getElementById('guardian-bob-status').style.color = '#22c55e';
+    document.getElementById('quorum-progress').textContent = '1 of 2 required';
+  }, 1000);
+  setTimeout(() => {
+    document.getElementById('guardian-carol-dot').classList.remove('pending');
+    document.getElementById('guardian-carol-dot').classList.add('approved');
+    document.getElementById('guardian-carol-status').textContent = 'approved · just now';
+    document.getElementById('guardian-carol-status').style.color = '#22c55e';
+    document.getElementById('quorum-progress').textContent = '2 of 2 required · quorum met';
+    document.getElementById('quorum-progress').style.color = '#22c55e';
+  }, 2500);
+  setTimeout(() => {
+    go('recover-guardians-passkey');
+  }, 4000);
+}
+
+function startRecoveringGuardians() {
+  go('recovering-guardians');
+  setTimeout(() => {
+    setStage(1, 'done', 'rg');
+    setStage(2, 'active', 'rg');
+  }, 2000);
+  setTimeout(() => {
+    setStage(2, 'done', 'rg');
+    setStage(3, 'active', 'rg');
+  }, 4000);
+  setTimeout(() => {
+    setStage(3, 'done', 'rg');
+  }, 6000);
+  setTimeout(() => {
+    go('profile');
+  }, 7200);
+}
+
+function setStage(n, state, prefix) {
+  const id = (prefix || '') + 'stage-' + n;
+  const el = document.getElementById(id);
   el.classList.remove('pending', 'active', 'done');
   el.classList.add(state);
   const icon = el.querySelector('.stage-icon');
@@ -1217,7 +2035,7 @@ const trayTemplates = {
       <div class="tray-section"><div class="tray-section-label">token approvals</div></div>
       <div class="tray-row" style="border-bottom: none;"><div><div class="tray-row-name" style="color: #555;">none</div></div></div>
     </div>
-    <div class="tray-action"><button class="tray-btn">add guardian</button></div>
+    <div class="tray-action"><button class="tray-btn" onclick="closeTray(); go('guardians-intro')">add guardian</button></div>
     <div class="tray-spacer"></div>
   `,
   signing: `
@@ -1244,7 +2062,7 @@ const trayTemplates = {
     <div class="tray-header"><div class="tray-title">account</div></div>
     <div class="tray-list">
       <div class="tray-row">
-        <div><div class="tray-row-name">address</div><div class="tray-row-sub">0x8f2e4d...4c7a</div></div>
+        <div><div class="tray-row-name">address</div><div class="tray-row-sub" style="word-break: break-all;">0x8f2e4d9b7a3f1c8e6d5a2b4c9f7e0d3a1b5c4c7a</div></div>
       </div>
       <div class="tray-row">
         <div><div class="tray-row-name">ens</div><div class="tray-row-sub" style="font-family: 'DM Sans', sans-serif;">alice.eth</div></div>
@@ -1278,6 +2096,154 @@ function closeTray() {
   document.getElementById('tray-overlay').classList.remove('open');
 }
 
+// ============== BUILD QUEUE ==============
+let buildQueue = [];
+
+function addFrame(type, name, sub) {
+  buildQueue.push({ type, name, sub });
+  renderBuildQueue();
+}
+
+function removeFrame(idx) {
+  buildQueue.splice(idx, 1);
+  renderBuildQueue();
+}
+
+function resetBuildQueue() {
+  buildQueue = [];
+  renderBuildQueue();
+}
+
+function renderBuildQueue() {
+  const queue = document.getElementById('build-queue');
+  const empty = document.getElementById('build-queue-empty');
+  const btn = document.getElementById('build-preview-btn');
+  const clear = document.getElementById('build-clear');
+  if (!queue) return;
+  if (buildQueue.length === 0) {
+    queue.innerHTML = '<div id="build-queue-empty" style="font-size: 12px; color: #555; font-style: italic;">empty — add frames above</div>';
+    if (btn) { btn.disabled = true; btn.style.opacity = '0.4'; }
+    if (clear) clear.style.display = 'none';
+  } else {
+    queue.innerHTML = buildQueue.map((f, i) =>
+      `<div style="display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid #1a1a1a;">
+        <span class="frame-badge ${f.type}">${f.type}</span>
+        <div style="flex: 1; font-size: 12px; color: var(--text-2);">${f.name}</div>
+        <button onclick="removeFrame(${i})" style="background: transparent; border: none; color: var(--text-4); font-size: 14px; cursor: pointer; padding: 0 4px;">×</button>
+      </div>`
+    ).join('');
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+    if (clear) clear.style.display = 'block';
+  }
+}
+
+// ============== TX PREVIEW MODAL ==============
+
+const txPreviewData = {
+  rebalance: {
+    title: 'authorize lp rebalancer',
+    desc: 'grant a scoped session key to the lp rebalancer agent. agent can call rebalance() and collectFees() on your uniswap v3 position — nothing else.',
+    frames: [
+      { type: 'verify', name: 'passkey signature', sub: 'p-256 · your device' },
+      { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster pays' },
+      { type: 'default', name: 'add session key', sub: 'scope: rebalance() · collectFees()' }
+    ],
+    details: [
+      ['session limit', '$500 / 30 days'],
+      ['agent', 'lp rebalancer · ...9d8f'],
+      ['network', 'etherex devnet'],
+      ['gas', '0 ETH · sponsored']
+    ],
+    onConfirm: () => { closeTxPreview(); go('rebalance-authorize'); setTimeout(() => grantRebalance(), 100); }
+  },
+  sponsor: {
+    title: 'sponsor bob\'s transaction',
+    desc: 'you pay gas for bob.eth. he still has to sign whatever action he takes — you just cover the fees.',
+    frames: [
+      { type: 'verify', name: 'your passkey', sub: 'p-256 · authorizes the sponsor approval' },
+      { type: 'approve', name: 'pay bob\'s gas', sub: 'up to 0.005 ETH' }
+    ],
+    details: [
+      ['recipient', 'bob.eth · ...7e3a'],
+      ['max gas', '0.005 ETH'],
+      ['network', 'etherex devnet']
+    ],
+    onConfirm: () => { closeTxPreview(); go('profile'); }
+  },
+  build: {
+    title: 'custom transaction',
+    desc: 'your frame queue executes atomically on etherex devnet. if any frame fails, the whole batch reverts.',
+    frames: [],
+    details: [
+      ['network', 'etherex devnet'],
+      ['gas', '0 ETH · sponsored']
+    ],
+    onConfirm: () => { closeTxPreview(); resetBuildQueue(); go('profile'); }
+  },
+  'add-guardians': {
+    title: 'add guardian policy',
+    desc: 'install a 2-of-3 guardian policy. bob, carol, and dan will be able to co-sign key rotation — nothing else.',
+    frames: [
+      { type: 'verify', name: 'passkey signature', sub: 'p-256 · this device' },
+      { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster pays' },
+      { type: 'default', name: 'install guardian policy', sub: '2-of-3 · bob · carol · dan' }
+    ],
+    details: [
+      ['guardians', 'bob · carol · dan'],
+      ['quorum', '2 of 3'],
+      ['authority', 'key rotation only'],
+      ['network', 'etherex devnet'],
+      ['gas', '0 ETH · sponsored']
+    ],
+    onConfirm: () => { closeTxPreview(); startAddingGuardians(); }
+  }
+};
+
+let currentTxPreview = null;
+
+function openTxPreview(key) {
+  const data = txPreviewData[key];
+  if (!data) return;
+  currentTxPreview = key;
+  document.getElementById('tx-preview-title').textContent = data.title;
+  document.getElementById('tx-preview-desc').textContent = data.desc;
+
+  // for build, use the live queue
+  const frames = key === 'build' ? buildQueue : data.frames;
+
+  document.getElementById('tx-preview-frames').innerHTML = frames.map(f =>
+    `<div style="display: flex; align-items: center; gap: 10px; padding: 8px 0;">
+      <span class="frame-badge ${f.type}">${f.type}</span>
+      <div style="flex: 1; text-align: right;">
+        <div style="font-size: 12px; color: var(--text-2); font-weight: 500;">${f.name}</div>
+        <div style="font-size: 10px; color: var(--text-4); margin-top: 2px;">${f.sub}</div>
+      </div>
+    </div>`
+  ).join('');
+
+  document.getElementById('tx-preview-details').innerHTML = data.details.map(([k, v]) =>
+    `<div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+      <span style="color: var(--text-4);">${k}</span>
+      <span style="color: var(--text-2);">${v}</span>
+    </div>`
+  ).join('');
+
+  document.getElementById('tx-preview').classList.add('open');
+  document.getElementById('tx-preview-overlay').classList.add('open');
+}
+
+function closeTxPreview() {
+  document.getElementById('tx-preview').classList.remove('open');
+  document.getElementById('tx-preview-overlay').classList.remove('open');
+}
+
+function confirmTxPreview() {
+  const data = txPreviewData[currentTxPreview];
+  if (data && data.onConfirm) {
+    data.onConfirm();
+  }
+}
+
 function togglePastSessions() {
   const group = document.getElementById('past-sessions');
   const chev = document.getElementById('past-sessions-chevron');
@@ -1290,43 +2256,43 @@ const addrData = {
   own: {
     sub: 'showing 1 own address',
     rows: [
-      { avatar: 'a', color: '#22c55e', name: 'alice.eth', addr: '0x8f2e...4c7a', pill: 'this device', pillColor: '#22c55e' }
+      { avatar: 'a', color: '#22c55e', name: 'alice.eth', addr: '...4c7a', pill: 'this device', pillColor: '#22c55e' }
     ]
   },
   guardians: {
     sub: 'showing 3 guardians · 2-of-3 quorum',
     rows: [
-      { avatar: 'b', color: '#f59e0b', name: 'bob.eth', addr: '0x8f2e...7e3a', pill: '1 of 3', pillColor: '#f59e0b' },
-      { avatar: 'c', color: '#f59e0b', name: 'carol.eth', addr: '0x1a4d...f291', pill: '2 of 3', pillColor: '#f59e0b' },
-      { avatar: 'd', color: '#f59e0b', name: 'dan.eth', addr: '0x9c5f...1b4c', pill: '3 of 3', pillColor: '#f59e0b' }
+      { avatar: 'b', color: '#f59e0b', name: 'bob.eth', addr: '...7e3a', pill: '1 of 3', pillColor: '#f59e0b' },
+      { avatar: 'c', color: '#f59e0b', name: 'carol.eth', addr: '...f291', pill: '2 of 3', pillColor: '#f59e0b' },
+      { avatar: 'd', color: '#f59e0b', name: 'dan.eth', addr: '...1b4c', pill: '3 of 3', pillColor: '#f59e0b' }
     ]
   },
   agents: {
     sub: 'showing 2 authorized agents',
     rows: [
-      { avatar: 'l', color: '#3b82f6', name: 'lp rebalancer', addr: '0x4a2c...9d8f', pill: 'active', pillColor: '#3b82f6' },
-      { avatar: 'e', color: '#3b82f6', name: 'ens renewer', addr: '0x7e1b...a3c2', pill: 'active', pillColor: '#3b82f6' }
+      { avatar: 'l', color: '#3b82f6', name: 'lp rebalancer', addr: '...9d8f', pill: 'active', pillColor: '#3b82f6' },
+      { avatar: 'e', color: '#3b82f6', name: 'ens renewer', addr: '...a3c2', pill: 'active', pillColor: '#3b82f6' }
     ]
   },
   sponsors: {
     sub: 'showing 1 gas sponsor',
     rows: [
-      { avatar: 'g', color: '#22c55e', name: 'grantr paymaster', addr: '0xaa00...0001', pill: 'default', pillColor: '#22c55e' }
+      { avatar: 'g', color: '#22c55e', name: 'grantr paymaster', addr: '...0001', pill: 'default', pillColor: '#22c55e' }
     ]
   },
   contracts: {
     sub: 'showing 3 contracts interacted with',
     rows: [
-      { avatar: 'u', color: '#555', name: 'uniswap v3', addr: '0xc36a...29d5', pill: '4 tx', pillColor: '#a3a3a3' },
-      { avatar: 'e', color: '#555', name: 'ens registrar', addr: '0x57f1...bf85', pill: '1 tx', pillColor: '#a3a3a3' },
-      { avatar: 'u', color: '#555', name: 'usdc token', addr: '0xa0b8...eb48', pill: '8 tx', pillColor: '#a3a3a3' }
+      { avatar: 'u', color: '#555', name: 'uniswap v3', addr: '...29d5', pill: '4 tx', pillColor: '#a3a3a3' },
+      { avatar: 'e', color: '#555', name: 'ens registrar', addr: '...bf85', pill: '1 tx', pillColor: '#a3a3a3' },
+      { avatar: 'u', color: '#555', name: 'usdc token', addr: '...eb48', pill: '8 tx', pillColor: '#a3a3a3' }
     ]
   },
   sent: {
     sub: 'showing 2 recent recipients',
     rows: [
-      { avatar: '?', color: '#555', name: '...9f2b', addr: '0x6d3e...9f2b', pill: '2 min ago', pillColor: '#a3a3a3' },
-      { avatar: '?', color: '#555', name: '...3e8c', addr: '0x8a1c...3e8c', pill: 'yesterday', pillColor: '#a3a3a3' }
+      { avatar: '?', color: '#555', name: '...9f2b', addr: '...9f2b', pill: '2 min ago', pillColor: '#a3a3a3' },
+      { avatar: '?', color: '#555', name: '...3e8c', addr: '...3e8c', pill: 'yesterday', pillColor: '#a3a3a3' }
     ]
   }
 };
