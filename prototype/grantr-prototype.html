@@ -362,7 +362,7 @@ body {
   <button class="dev-btn j-built" onclick="journeyAddGuardians()">3 · add guardians</button>
   <button class="dev-btn j-built" onclick="journeyRecoverGuardians()">4 · recover via guardians</button>
   <button class="dev-btn j-built" onclick="journeyAddDevice()">5 · add second device</button>
-  <button class="dev-btn j-todo" onclick="journeyTodo('co-sign large tx')">6 · co-sign large tx</button>
+  <button class="dev-btn j-built" onclick="journeyCoSign()">6 · co-sign large tx</button>
   <button class="dev-btn j-todo" onclick="journeyTodo('grant delegation')">7 · grant delegation</button>
   <button class="dev-btn j-todo" onclick="journeyTodo('agent acts / blocked')">8 · agent acts / blocked</button>
   <button class="dev-btn j-todo" onclick="journeyTodo('revoke delegation')">9 · revoke delegation</button>
@@ -1065,6 +1065,143 @@ body {
       </details>
     </div>
     <div class="bottom"></div>
+  </div>
+
+  <!-- ============== SEND ============== -->
+  <div id="screen-send" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('profile')">←</span>
+      <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">send</div>
+      <span class="spacer"></span>
+    </div>
+    <div style="flex: 1; padding: 8px 0 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto;">
+      <div>
+        <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">to</div>
+        <div id="send-recipient-display" style="background: var(--card); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer;" onclick="openSendRecipientPicker()">
+          <div class="addr-avatar" id="send-recipient-avatar"></div>
+          <div style="flex: 1;">
+            <div style="font-size: 13px; color: var(--text-1); font-weight: 500;" id="send-recipient-name">—</div>
+            <div style="font-size: 11px; color: var(--text-4);" id="send-recipient-sub">tap to change</div>
+          </div>
+          <span style="color: var(--text-4); font-size: 14px;">›</span>
+        </div>
+      </div>
+
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">amount</div>
+          <div style="font-size: 11px; color: var(--text-4);">usd</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+          <button class="auth-pill active" data-send-amt="100" onclick="setSendAmount(100)">$100</button>
+          <button class="auth-pill" data-send-amt="500" onclick="setSendAmount(500)">$500</button>
+          <button class="auth-pill" data-send-amt="1500" onclick="setSendAmount(1500)">$1,500</button>
+          <button class="auth-pill" data-send-amt="5000" onclick="setSendAmount(5000)">$5,000</button>
+        </div>
+      </div>
+
+      <div id="send-threshold-note" style="background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 11px; color: var(--text-3); line-height: 1.5;">
+        <span style="color: var(--text-2);">below threshold.</span> one device can sign this alone.
+      </div>
+
+      <div>
+        <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">frame structure</div>
+        <div class="receipt-card">
+          <div class="receipt-row">
+            <span class="frame-badge verify">verify</span>
+            <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;" id="send-frame-verify-name">your passkey</div><div style="font-size:10px;color:#555;margin-top:2px;" id="send-frame-verify-sub">p-256 · this device</div></div>
+          </div>
+          <div class="receipt-row">
+            <span class="frame-badge approve">approve</span>
+            <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">gas sponsored</div><div style="font-size:10px;color:#22c55e;margin-top:2px;">grantr paymaster</div></div>
+          </div>
+          <div class="receipt-row" style="border-bottom:none;">
+            <span class="frame-badge sender">sender</span>
+            <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;" id="send-frame-sender-name">transfer</div><div style="font-size:10px;color:#555;margin-top:2px;" id="send-frame-sender-sub">—</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom" style="padding-top: 0;">
+      <button class="btn btn-primary" onclick="openTxPreview('send')" id="send-sign-btn">send</button>
+    </div>
+  </div>
+
+  <!-- ============== SEND: RECIPIENT PICKER ============== -->
+  <div id="send-picker-overlay" class="tray-overlay" onclick="closeSendRecipientPicker()" style="z-index: 10;"></div>
+  <div id="send-picker" class="action-sheet" style="z-index: 11; max-height: 70%; overflow-y: auto;">
+    <div class="action-sheet-handle" onclick="closeSendRecipientPicker()"></div>
+    <div style="padding: 4px 24px 12px; font-size: 15px; color: var(--text-1); font-weight: 500;">send to</div>
+    <div style="padding: 0 24px 8px;"><input type="text" id="send-picker-search" placeholder="search by name or ens" oninput="renderSendRecipientPicker()" style="width: 100%; background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; padding: 9px 14px; color: var(--text-1); font-size: 13px; font-family: inherit; outline: none; box-sizing: border-box;"></div>
+    <div id="send-picker-list" style="padding: 4px 18px 12px;"></div>
+    <div class="action-sheet-spacer"></div>
+  </div>
+
+  <!-- ============== CO-SIGN: WAITING FOR LAPTOP ============== -->
+  <div id="screen-cosign-waiting" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('send')">←</span>
+      <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">co-sign required</div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">waiting on<br>your laptop.</div>
+      <div class="sub" id="cosign-threshold-note">this transaction is above your threshold. both devices must sign.</div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px;">
+        <div style="background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: #141414; display: flex; align-items: center; justify-content: center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="14" height="18" rx="2" stroke="#22c55e" stroke-width="1.5" fill="none"/><line x1="11" y1="18" x2="13" y2="18" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 12px; color: var(--text-1); font-weight: 500;">iphone 15</div>
+            <div style="font-size: 10px; color: var(--text-4); margin-top: 2px;">signed · just now</div>
+          </div>
+          <div style="font-size: 9px; color: #22c55e; background: #141414; padding: 3px 8px; border-radius: 999px;">✓ signed</div>
+        </div>
+        <div id="cosign-laptop-card" style="background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 1px solid #3b82f6;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: #141414; display: flex; align-items: center; justify-content: center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="12" rx="1.5" stroke="#3b82f6" stroke-width="1.5" fill="none"/><line x1="2" y1="19" x2="22" y2="19" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 12px; color: var(--text-1); font-weight: 500;">macbook air</div>
+            <div style="font-size: 10px; color: var(--text-4); margin-top: 2px;" id="cosign-laptop-status">awaiting your signature</div>
+          </div>
+          <div style="font-size: 9px; color: #3b82f6; background: #141414; padding: 3px 8px; border-radius: 999px;" id="cosign-laptop-pill"><div class="spinner" style="width:10px;height:10px;border:1.5px solid #3b82f6;border-top-color:transparent;border-radius:50%;display:inline-block;vertical-align:middle;animation:spin 0.8s linear infinite;"></div> waiting</div>
+        </div>
+      </div>
+
+      <details class="frame-detail">
+        <summary>frame detail</summary>
+        <div class="frame-detail-body">
+          <div class="frame-detail-row">
+            <span class="frame-badge verify">verify</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">both passkeys</div>
+              <div class="frame-detail-sub">2-of-2 · iphone + macbook</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge approve">approve</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">gas sponsored</div>
+              <div class="frame-detail-sub">grantr paymaster</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge sender">sender</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name" id="cosign-sender-name">—</div>
+              <div class="frame-detail-sub" id="cosign-sender-sub">—</div>
+            </div>
+          </div>
+          <div class="frame-detail-footnote">verify requires both signatures because the amount is above your threshold. tx doesn't submit until both sign.</div>
+        </div>
+      </details>
+    </div>
+    <div class="bottom">
+      <button class="btn btn-secondary" id="cosign-simulate-btn" onclick="simulateLaptopSign()">simulate signing on laptop</button>
+    </div>
   </div>
 
   <!-- ============== RECOVER VIA GUARDIANS: PATH CHOICE ============== -->
@@ -2032,6 +2169,17 @@ body {
   <div id="action-sheet" class="action-sheet">
     <div class="action-sheet-handle" onclick="closeAction()"></div>
 
+    <div class="action-item" onclick="closeAction(); go('send')">
+      <div class="action-icon" style="background: #141414;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 20 L20 4" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/><path d="M8 4 L20 4 L20 16" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="action-item-info">
+        <div class="action-item-name">send</div>
+        <div class="action-item-sub">transfer tokens or eth to someone</div>
+      </div>
+      <span class="action-item-badge" style="color: #a3a3a3; background: #141414;">verify + sender</span>
+    </div>
+
     <div class="action-item" onclick="closeAction(); go('rebalance')">
       <div class="action-icon" style="background: #0a1f12;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 12 C3 7 7 3 12 3 C17 3 21 7 21 12" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/><path d="M21 12 C21 17 17 21 12 21 C7 21 3 17 3 12" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="3 2"/><path d="M18 9 L21 12 L18 15" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -2263,6 +2411,15 @@ function journeyAddDevice() {
   go('device-intro');
 }
 
+function journeyCoSign() {
+  closeAction();
+  closeTray();
+  // ensure sendState is a large amount so the threshold triggers
+  sendState.amount = 1500;
+  sendState.recipient = 'bob';
+  go('send');
+}
+
 function journeyRebalance() {
   // starts from profile, user taps + to see action sheet
   // flow: profile → (action sheet) → rebalance positions → authorize → dashboard
@@ -2322,6 +2479,29 @@ function go(id) {
   }
   if (id === 'sponsor') {
     renderSponsorRecipient();
+  }
+  if (id === 'send') {
+    renderSendScreen();
+  }
+  if (id === 'cosign-waiting') {
+    // populate sender row + reset laptop side for re-runs
+    const r = sponsorPool.find(x => x.id === sendState.recipient);
+    const name = document.getElementById('cosign-sender-name');
+    const sub = document.getElementById('cosign-sender-sub');
+    if (name) name.textContent = `transfer $${sendState.amount.toLocaleString()}`;
+    if (sub && r) sub.textContent = `to ${r.name}`;
+    // dynamic threshold copy
+    const note = document.getElementById('cosign-threshold-note');
+    if (note) note.textContent = `this transaction is above your $${devicePolicy.threshold.toLocaleString()} threshold. both devices must sign.`;
+    // reset laptop card state
+    const pill = document.getElementById('cosign-laptop-pill');
+    const status = document.getElementById('cosign-laptop-status');
+    const card = document.getElementById('cosign-laptop-card');
+    const btn = document.getElementById('cosign-simulate-btn');
+    if (pill) { pill.innerHTML = '<div class="spinner" style="width:10px;height:10px;border:1.5px solid #3b82f6;border-top-color:transparent;border-radius:50%;display:inline-block;vertical-align:middle;animation:spin 0.8s linear infinite;"></div> waiting'; pill.style.color = '#3b82f6'; }
+    if (status) status.textContent = 'awaiting your signature';
+    if (card) card.style.borderColor = '#3b82f6';
+    if (btn) { btn.disabled = false; btn.textContent = 'simulate signing on laptop'; btn.style.opacity = '1'; }
   }
 }
 
@@ -2622,6 +2802,176 @@ function startAddingDevice() {
   setTimeout(() => { setStage(2, 'done', 'd'); setStage(3, 'active', 'd'); }, 4000);
   setTimeout(() => { setStage(3, 'done', 'd'); }, 6000);
   setTimeout(() => { go('profile'); }, 7200);
+}
+
+// ============== SEND ==============
+// reuses sponsorPool since it's the same address book of recipients
+const sendState = { recipient: 'bob', amount: 100 };
+
+function renderSendScreen() {
+  const r = sponsorPool.find(x => x.id === sendState.recipient);
+  if (!r) return;
+  const avatar = document.getElementById('send-recipient-avatar');
+  if (avatar) avatar.innerHTML = identicon(r.seed, r.tone);
+  const name = document.getElementById('send-recipient-name');
+  if (name) name.textContent = r.name;
+  const sub = document.getElementById('send-recipient-sub');
+  if (sub) sub.textContent = r.addr + ' · ' + r.sub;
+  // threshold note + verify frame
+  const aboveThreshold = sendState.amount > devicePolicy.threshold;
+  const note = document.getElementById('send-threshold-note');
+  const vName = document.getElementById('send-frame-verify-name');
+  const vSub = document.getElementById('send-frame-verify-sub');
+  const sName = document.getElementById('send-frame-sender-name');
+  const sSub = document.getElementById('send-frame-sender-sub');
+  const btn = document.getElementById('send-sign-btn');
+  if (aboveThreshold) {
+    if (note) note.innerHTML = `<span style="color:#f59e0b;">above your $${devicePolicy.threshold.toLocaleString()} threshold.</span> both devices must sign.`;
+    if (vName) vName.textContent = 'both passkeys';
+    if (vSub) vSub.textContent = '2-of-2 · iphone + macbook';
+    if (btn) btn.textContent = 'sign on this device';
+  } else {
+    if (note) note.innerHTML = `<span style="color:var(--text-2);">below $${devicePolicy.threshold.toLocaleString()} threshold.</span> one device can sign this alone.`;
+    if (vName) vName.textContent = 'your passkey';
+    if (vSub) vSub.textContent = 'p-256 · this device';
+    if (btn) btn.textContent = 'send';
+  }
+  if (sName) sName.textContent = `transfer $${sendState.amount.toLocaleString()}`;
+  if (sSub) sSub.textContent = `to ${r.name}`;
+}
+
+function setSendAmount(val) {
+  sendState.amount = val;
+  document.querySelectorAll('[data-send-amt]').forEach(b => {
+    b.classList.toggle('active', Number(b.dataset.sendAmt) === val);
+  });
+  renderSendScreen();
+}
+
+function openSendRecipientPicker() {
+  document.getElementById('send-picker').classList.add('open');
+  document.getElementById('send-picker-overlay').classList.add('open');
+  const input = document.getElementById('send-picker-search');
+  if (input) input.value = '';
+  renderSendRecipientPicker();
+}
+
+function closeSendRecipientPicker() {
+  document.getElementById('send-picker').classList.remove('open');
+  document.getElementById('send-picker-overlay').classList.remove('open');
+}
+
+function renderSendRecipientPicker() {
+  const list = document.getElementById('send-picker-list');
+  if (!list) return;
+  const q = (document.getElementById('send-picker-search')?.value || '').toLowerCase().trim();
+  const filtered = q ? sponsorPool.filter(r => r.name.toLowerCase().includes(q) || r.addr.toLowerCase().includes(q)) : sponsorPool;
+  list.innerHTML = filtered.map(r => {
+    const selected = r.id === sendState.recipient;
+    return `<div onclick="pickSendRecipient('${r.id}')" style="padding: 10px 6px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider); cursor: pointer;">
+      <div class="addr-avatar">${identicon(r.seed, r.tone)}</div>
+      <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">${r.name}</div><div style="font-size:11px;color:var(--text-4);">${r.addr} · ${r.sub}</div></div>
+      ${selected ? '<div style="width:18px;height:18px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;">✓</div>' : ''}
+    </div>`;
+  }).join('');
+  const lastRow = list.querySelector(':scope > div:last-child');
+  if (lastRow) lastRow.style.borderBottom = 'none';
+}
+
+function pickSendRecipient(id) {
+  sendState.recipient = id;
+  renderSendScreen();
+  closeSendRecipientPicker();
+}
+
+function onSendSign() {
+  // legacy — kept for safety. actual flow goes through openTxPreview('send').
+  openTxPreview('send');
+}
+
+function simulateSendSubmit() {
+  // below-threshold: tx submits. show a brief loader then jump to activity with the new entry prepended.
+  const btn = document.getElementById('send-sign-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'submitting...'; btn.style.opacity = '0.7'; }
+  setTimeout(() => {
+    addActivityEntryForSend(false);
+    if (btn) { btn.disabled = false; btn.textContent = 'send'; btn.style.opacity = '1'; }
+    go('activity');
+  }, 1200);
+}
+
+function addActivityEntryForSend(wasCoSigned) {
+  // prepend an activity entry to the feed reflecting the completed send
+  const feed = document.querySelector('#screen-activity .feed');
+  if (!feed) return;
+  const r = sponsorPool.find(x => x.id === sendState.recipient);
+  const amount = sendState.amount;
+  const recipientShort = r ? r.name.replace('.eth', '') : '...';
+  const avatarInner = r ? identicon(r.seed, r.tone) : '';
+
+  const framesHtml = wasCoSigned ? `
+    <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">both passkeys · 2-of-2</div><div class="frame-status pass">✓</div></div>
+    <div class="frame-row"><div class="frame-mode" style="color:#f59e0b;">approve</div><div class="frame-desc">gas sponsored by grantr</div><div class="frame-status pass">✓</div></div>
+    <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">transfer $${amount.toLocaleString()} to ${r ? r.name : '—'}</div><div class="frame-status pass">✓</div></div>
+  ` : `
+    <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">your passkey · p-256</div><div class="frame-status pass">✓</div></div>
+    <div class="frame-row"><div class="frame-mode" style="color:#f59e0b;">approve</div><div class="frame-desc">gas sponsored by grantr</div><div class="frame-status pass">✓</div></div>
+    <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">transfer $${amount.toLocaleString()} to ${r ? r.name : '—'}</div><div class="frame-status pass">✓</div></div>
+  `;
+
+  const frameDataList = wasCoSigned ? 'verify,approve,sender' : 'verify,approve,sender';
+
+  const entryHtml = `
+    <div class="entry expanded" onclick="toggleEntry(this)" data-frames="${frameDataList}" data-blocked="false">
+      <div class="entry-avatar">${avatarInner}</div>
+      <div class="entry-body">
+        <div class="entry-title">sent to ${r ? r.name : '—'}</div>
+        <div class="entry-sub">just now${wasCoSigned ? ' · co-signed on laptop' : ''}</div>
+      </div>
+      <div class="entry-right">
+        <div class="entry-amount white">−$${amount.toLocaleString()}</div>
+        <div class="entry-amount-sub">${wasCoSigned ? '2-of-2' : '1 device'}</div>
+      </div>
+      <div class="entry-chevron">›</div>
+      <div class="frames">${framesHtml}</div>
+    </div>
+  `;
+
+  // find the first section-label ("today") and insert the new entry right after it.
+  // collapse any previously-expanded entry so only our fresh one is expanded (variant B behavior).
+  feed.querySelectorAll('.entry.expanded').forEach(e => e.classList.remove('expanded'));
+  const firstSection = feed.querySelector('.section-label');
+  if (firstSection) {
+    firstSection.insertAdjacentHTML('afterend', entryHtml);
+  } else {
+    feed.insertAdjacentHTML('afterbegin', entryHtml);
+  }
+  // if a filter was set, reset to 'all' so the new entry is visible
+  filterActivity('all');
+}
+
+function simulateLaptopSign() {
+  const btn = document.getElementById('cosign-simulate-btn');
+  const pill = document.getElementById('cosign-laptop-pill');
+  const status = document.getElementById('cosign-laptop-status');
+  const card = document.getElementById('cosign-laptop-card');
+  if (btn) { btn.disabled = true; btn.textContent = 'signing on laptop...'; btn.style.opacity = '0.7'; }
+  // laptop signs
+  setTimeout(() => {
+    if (pill) { pill.innerHTML = '✓ signed'; pill.style.color = '#22c55e'; }
+    if (status) status.textContent = 'signed · just now';
+    if (card) card.style.borderColor = '#22c55e';
+    if (btn) btn.textContent = 'both signed · submitting...';
+  }, 1200);
+  // tx submits and confirms
+  setTimeout(() => {
+    if (btn) btn.textContent = 'confirmed';
+  }, 2800);
+  // prepend activity entry + land on activity
+  setTimeout(() => {
+    addActivityEntryForSend(true);
+    go('activity');
+  }, 4000);
 }
 
 // ============== SPONSOR ==============
@@ -2982,6 +3332,45 @@ const txPreviewData = {
       txPreviewData.revoke.details[1][1] = footer;
       txPreviewData.revoke.frames[2].sub = `${name} session key`;
     }
+  },
+  send: {
+    title: 'send transaction',
+    desc: 'transfer tokens on-chain. the verify frame enforces your device policy — one passkey below threshold, both above.',
+    frames: [
+      { type: 'verify', name: '—', sub: '—' },
+      { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster' },
+      { type: 'sender', name: '—', sub: '—' }
+    ],
+    details: [
+      ['recipient', '—'],
+      ['amount', '—'],
+      ['signing', '—'],
+      ['network', 'etherex devnet'],
+      ['gas', '0 ETH · sponsored']
+    ],
+    onConfirm: () => {
+      closeTxPreview();
+      const above = sendState.amount > devicePolicy.threshold;
+      if (above) {
+        // route to cosign-waiting, phone already signed
+        go('cosign-waiting');
+      } else {
+        // submit directly, add activity entry, land on activity
+        simulateSendSubmit();
+      }
+    },
+    onOpen: () => {
+      const r = sponsorPool.find(x => x.id === sendState.recipient);
+      const above = sendState.amount > devicePolicy.threshold;
+      const d = txPreviewData.send.details;
+      d[0][1] = r ? `${r.name} · ${r.addr}` : '—';
+      d[1][1] = `$${sendState.amount.toLocaleString()}`;
+      d[2][1] = above ? `2-of-2 · iphone + macbook` : `your passkey · this device`;
+      txPreviewData.send.frames[0].name = above ? 'both passkeys' : 'your passkey';
+      txPreviewData.send.frames[0].sub = above ? '2-of-2 · iphone + macbook' : 'p-256 · this device';
+      txPreviewData.send.frames[2].name = `transfer $${sendState.amount.toLocaleString()}`;
+      txPreviewData.send.frames[2].sub = r ? `to ${r.name}` : '—';
+    }
   }
 };
 
@@ -3151,40 +3540,56 @@ function logoAvatar(url) {
   return `<div class="addr-avatar" style="background:#fff;"><img src="${url}" style="width:72%;height:72%;object-fit:contain;display:block;margin:14%;" alt=""/></div>`;
 }
 
+// returns the inner svg for a gradient pfp (same algorithm as pfpInner in activity feed)
+function gradientPfpSvg(seed) {
+  const palettes = [['#fca5a5','#c084fc'],['#fcd34d','#fb923c'],['#86efac','#67e8f9'],['#c4b5fd','#f9a8d4'],['#fdba74','#f472b6'],['#6ee7b7','#a5b4fc'],['#fde68a','#fca5a5'],['#93c5fd','#c4b5fd']];
+  let h = 0; for (let i = 0; i < seed.length; i++) h = ((h << 5) - h + seed.charCodeAt(i)) | 0;
+  const p = palettes[Math.abs(h) % palettes.length];
+  const angle = (Math.abs(h >> 3) % 8) * 45;
+  const gid = 'addr-pfp-' + Math.abs(h).toString(36);
+  return `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><defs><linearGradient id="${gid}" gradientTransform="rotate(${angle} 16 16)"><stop offset="0%" stop-color="${p[0]}"/><stop offset="100%" stop-color="${p[1]}"/></linearGradient></defs><rect width="32" height="32" fill="url(#${gid})"/></svg>`;
+}
+function gradientPfpDiv(seed) { return `<div class="addr-avatar">${gradientPfpSvg(seed)}</div>`; }
+function logoDiv(url) { return `<div class="addr-avatar" style="background:#fff;"><img src="${url}" style="width:72%;height:72%;object-fit:contain;display:block;margin:14%;" alt=""/></div>`; }
+function grantrMarkDiv() { return `<div class="addr-avatar" style="background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-weight:700;font-family:'DM Mono',monospace;font-size:14px;">g</div>`; }
+
+// alice uses her illustrated character, not a gradient
+const aliceAvatarDiv = `<div class="addr-avatar"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>`;
+
 const addrData = {
   own: {
     sub: 'showing 1 own address',
     rows: [
-      { avatar: `<div class="addr-avatar"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>`, name: 'alice.eth', addr: '...4c7a', pill: 'this device', pillColor: '#22c55e' }
+      { avatar: aliceAvatarDiv, name: 'alice.eth', addr: '...4c7a', pill: 'this device', pillColor: '#22c55e' }
     ]
   },
   guardians: {
     sub: 'showing 3 guardians · 2-of-3 quorum',
     rows: [
-      { avatar: identAvatar('bob.eth', 'amber'), name: 'bob.eth', addr: '...7e3a', pill: '1 of 3', pillColor: '#f59e0b' },
-      { avatar: identAvatar('carol.eth', 'pink'), name: 'carol.eth', addr: '...f291', pill: '2 of 3', pillColor: '#f59e0b' },
-      { avatar: identAvatar('dan.eth', 'teal'), name: 'dan.eth', addr: '...1b4c', pill: '3 of 3', pillColor: '#f59e0b' }
+      { avatar: gradientPfpDiv('bob.eth'), name: 'bob.eth', addr: '...7e3a', pill: '1 of 3', pillColor: '#f59e0b' },
+      { avatar: gradientPfpDiv('carol.eth'), name: 'carol.eth', addr: '...f291', pill: '2 of 3', pillColor: '#f59e0b' },
+      { avatar: gradientPfpDiv('dan.eth'), name: 'dan.eth', addr: '...1b4c', pill: '3 of 3', pillColor: '#f59e0b' }
     ]
   },
   agents: {
     sub: 'showing 2 authorized agents',
     rows: [
-      { avatar: identAvatar('lp-rebalancer', 'blue'), name: 'lp rebalancer', addr: '...9d8f', pill: 'active', pillColor: '#3b82f6' },
-      { avatar: identAvatar('ens-renewer', 'blue'), name: 'ens renewer', addr: '...a3c2', pill: 'active', pillColor: '#3b82f6' }
+      { avatar: gradientPfpDiv('lp-rebalancer'), name: 'lp rebalancer', addr: '...9d8f', pill: 'active', pillColor: '#3b82f6' },
+      { avatar: gradientPfpDiv('ens-renewer'), name: 'ens renewer', addr: '...a3c2', pill: 'active', pillColor: '#3b82f6' }
     ]
   },
   sponsors: {
     sub: 'showing 1 gas sponsor',
     rows: [
-      { avatar: identAvatar('grantr-paymaster', 'green'), name: 'grantr paymaster', addr: '...0001', pill: 'default', pillColor: '#22c55e' }
+      { avatar: grantrMarkDiv(), name: 'grantr paymaster', addr: '...0001', pill: 'default', pillColor: '#22c55e' }
     ]
   },
   contracts: {
     sub: 'showing 3 contracts interacted with',
     rows: [
-      { avatar: identAvatar('uniswap-v3', 'gray'), name: 'uniswap v3', addr: '...29d5', pill: '4 tx', pillColor: '#a3a3a3' },
-      { avatar: identAvatar('ens-registrar', 'gray'), name: 'ens registrar', addr: '...bf85', pill: '1 tx', pillColor: '#a3a3a3' },
-      { avatar: identAvatar('usdc-token', 'gray'), name: 'usdc token', addr: '...eb48', pill: '8 tx', pillColor: '#a3a3a3' }
+      { avatar: logoDiv('https://assets.coingecko.com/coins/images/12504/large/uni.jpg'), name: 'uniswap v3', addr: '...29d5', pill: '4 tx', pillColor: '#a3a3a3' },
+      { avatar: logoDiv('https://assets.coingecko.com/coins/images/23593/large/ENS.jpg'), name: 'ens registrar', addr: '...bf85', pill: '1 tx', pillColor: '#a3a3a3' },
+      { avatar: logoDiv('https://assets.coingecko.com/coins/images/6319/large/usdc.png'), name: 'usdc token', addr: '...eb48', pill: '8 tx', pillColor: '#a3a3a3' }
     ]
   },
   sent: {
