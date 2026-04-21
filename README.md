@@ -8,7 +8,9 @@ grantr | frames-native smart account · eip-8141 reference implementation
 
 ## 1. summary
 
-grantr is a frames-native account, with an app built to manage it. as a reference implementation for eip-8141, it covers account creation, recovery, delegation, and multi-device — not swaps, bridging, or the rest of a full financial product. no seed phrase, no lost accounts, no blanket approvals. your passkey signs, your address is permanent, and every permission you grant is enforced by the chain — not by an app asking nicely. open source, documented, and intended as a guide for developers and designers building on frames. try the prototype: https://alexanderchopan.github.io/grantr/prototype/grantr-prototype.html
+grantr is a frames-native account, with an app built to manage it. as a reference implementation for eip-8141, it covers account creation, recovery, delegation, and multi-device — not swaps, bridging, or the rest of a full financial product. no seed phrase, no lost accounts, no blanket approvals. your passkey signs, your address is permanent, and every permission you grant is enforced by the chain — not by an app asking nicely. open source, documented, and intended as a guide for developers and designers building on frames.
+
+**try the prototype:** [alexanderchopan.github.io/grantr](https://alexanderchopan.github.io/grantr/)
 
 ## 2. references
 
@@ -49,167 +51,11 @@ a user can move between these — or combine them — without changing wallets. 
 
 **a note on smart accounts:** most of what grantr does is possible today in some smart wallet — passkey signing, social recovery, device thresholds, session keys — but each is a bespoke implementation. grantr makes them frame policies on a shared primitive. switching setups is a policy update, and any frames-compatible client can interact with the account the same way.
 
-## 5. user journey — with email recovery (default)
+## 5. prototype
 
-one passkey signs; a verified email authorizes recovery if the device is lost.
+the prototype is a single html file with a dev tools panel on the left and a mobile app on the right. nothing to install — open it in a browser.
 
-| step | user | app |
-| --- | --- | --- |
-| 1 | opens the app | welcome screen: "create account" / "recover account" |
-| 2 | taps create account | prompts for email |
-| 3 | enters email | sends verification link |
-| 4 | back in app, prompted for passkey | "use your device to secure your account" |
-| 5 | confirms with face id / touch id | device generates P-256 keypair in secure enclave |
-| 6 | sees "creating your account…" | submits account-creation frame tx (pending → submitted → confirmed) |
-| 7 | lands on home | address, zero balance, email recovery badge |
-| 8 | loses phone, opens grantr on new device | taps "recover account" |
-| 9 | prompted for email | grantr sends verification link |
-| 10 | clicks link, back in app | creates new passkey on new device |
-| 11 | grantr submits recovery tx | frame 0: verify email attestation · frame 1: swap in new passkey |
-| 12 | lands on home | same address, same balance, same history — access restored |
-
-setup fee covered by grantr. account upgradeable to guardians or multi-device at any time.
-
-## 6. user journey — with guardians
-
-alice adds guardians so recovery doesn't depend on grantr. guardians can only co-sign a key rotation — they can't sign transactions or see activity.
-
-### adding guardians
-
-| step | user | app |
-| --- | --- | --- |
-| 1 | taps "add guardians" | explains what guardians do |
-| 2 | picks 3 guardians, 2-of-3 quorum | — |
-| 3 | invites each by ens (primary) or email (fallback) | generates invite with one-time code |
-| 4 | each guardian accepts, creates passkey | sends public key to grantr |
-| 5 | all confirmed | shows full list, prompts confirmation |
-| 6 | alice confirms | tx preview: add guardian policy · verify (passkey) · execute (update policy) |
-| 7 | signs with passkey | submits policy-update frame tx |
-| 8 | lands on home | guardians badge active |
-
-### recovering via guardians
-
-| step | user | app |
-| --- | --- | --- |
-| 1 | loses phone, opens grantr on new device | taps "recover account" |
-| 2 | enters address or ens | grantr detects guardian policy |
-| 3 | shown recovery options | "2-of-3 guardian quorum must approve" |
-| 4 | creates new passkey | new P-256 keypair in secure enclave |
-| 5 | sends recovery request to guardians | guardians notified via ens / email |
-| 6 | two guardians approve | each signs with own passkey (VERIFY frames) |
-| 7 | quorum met | key-rotation frame tx: verify quorum → execute swap |
-| 8 | lands on home | same address — access restored |
-
-## 7. user journey — with multi-device
-
-alice adds her laptop as a second signer. the laptop creates a NEW passkey distinct from the synced copy.
-
-### adding a second device
-
-| step | user | app |
-| --- | --- | --- |
-| 1 | taps "add device" on phone | prompts to open grantr on laptop |
-| 2 | signs in on laptop with synced passkey | detected as new device: "register as second signer?" |
-| 3 | creates new passkey on laptop | new P-256 keypair, distinct from phone's |
-| 4 | laptop sends public key | phone prompted to confirm |
-| 5 | confirms | — |
-| 6 | sets threshold | "above $1,000: both devices required" |
-| 7 | confirms | tx preview: add device + threshold policy |
-| 8 | signs with phone passkey | submits policy-update frame tx |
-| 9 | both devices show account | device indicator and threshold visible |
-
-### signing a large transaction
-
-| step | user | app |
-| --- | --- | --- |
-| 1 | initiates tx above threshold on phone | tx preview: requires both passkeys |
-| 2 | signs with phone | laptop receives co-sign notification |
-| 3 | phone shows "waiting for laptop" | — |
-| 4 | opens grantr on laptop | same tx preview: "you are the second signer" |
-| 5 | signs with laptop | frame tx submitted with both signatures |
-| 6 | confirmed on both devices | activity updates simultaneously |
-
-## 8. user journey — with delegation
-
-alice grants a scoped session key to an agent. the chain enforces the scope.
-
-### granting a session
-
-| step | user | app |
-| --- | --- | --- |
-| 1 | accepts agent request (walletconnect-style) | shown: agent name, contracts, selectors, limits, duration |
-| 2 | reviews and adjusts limits | can tighten caps, shorten duration, narrow selectors |
-| 3 | taps authorize | tx preview: grant session key · verify (passkey) · execute (add session key) |
-| 4 | signs with passkey | submits grant frame tx |
-| 5 | lands on home | active session shown with scope and limits |
-
-### the agent acts (and is bounded)
-
-| step | actor | chain |
-| --- | --- | --- |
-| 1 | agent submits allowed action | verify (session key) ✓ → execute ✓ |
-| 2 | alice sees success in activity | — |
-| 3 | agent submits action outside scope | verify (session key) ✗ — rejected |
-| 4 | alice sees blocked entry in activity | shows what was tried and why it failed |
-
-### revoking a session
-
-| step | user | app |
-| --- | --- | --- |
-| 1 | taps agent in sessions list | full session detail: scope, history, time remaining |
-| 2 | taps revoke | tx preview: revoke session key |
-| 3 | signs with passkey | submits revoke frame tx |
-| 4 | session removed | agent's future frame txs fail at verify |
-
-## 9. screens
-
-five tabs with persistent balance bar. see prototype for complete screen set.
-
-| tab | question | purpose |
-| --- | --- | --- |
-| profile | who | sparkline activity chart + 2×2 tiles (security, signing, sessions, account). tile/list toggle. tap tile → bottom tray with detail. |
-| sessions | what | frame receipt cards per session. blue dots for active, gray expired, red revoked. frame policy rows inline. divider between header and frames. |
-| ⬩ (action) | — | send, receive, scan |
-| activity | when | card per entry with stacked frame rows. dots (6px): green pass, red fail. filter pills: own · guardians · agents · sponsors · contracts · sent. white active pill. |
-| addresses | who/where else | full directory. 2×3 stacked filter pills. contextual role pills (guardian shows quorum position, agent shows session status). search bar. |
-
-## 10. feedback
-
-~30 toasts organized by journey. green = success, red = failure/blocked, amber = warning, neutral = informational.
-
-## 11. user flow diagrams
-
-superseded by prototype.
-
-## 12. constraints
-
-**in:** four journeys, passkey signing (P-256), key rotation, session keys, multi-device thresholds, sponsored gas, frame-visible tx preview, activity feed with frame detail.
-
-**out:** multi-chain, swaps/bridging, portfolio management, push notifications, fiat ramp, post-quantum, mempool handling, cross-chain.
-
-**limited:** one account per device, ens + email for guardians, single example agent, no social features.
-
-**not in scope:** contract audit, regulatory.
-
----
-
-## 13. design language
-
-**palette:** #000 bg, #0a0a0a cards, #22c55e green (brand/pass/balance), #ef4444 red (fail/blocked), #f59e0b amber (guardians/warnings), #3b82f6 blue (sessions/agents), #fff primary text.
-
-**typography:** DM Sans for UI, DM Mono for addresses and frame labels. all lowercase.
-
-**dots:** 6px green = pass, red = fail. 8px blue = active session, gray = expired, red = revoked.
-
-**components:** white active pills (not green). cards with 14px radius. bottom trays (cash app pattern). filled tab icons when active, outlined when inactive.
-
-**references:** cash app (tab bar, balance, trays), apple mail (dot status indicators), linear (feed patterns, dividers, dark mode).
-
----
-
-## 14. prototype
-
-### demo journeys
+**11 demo journeys, all wired:**
 
 1. account creation
 2. email recovery
@@ -223,39 +69,43 @@ superseded by prototype.
 10. rebalance portfolio
 11. build transaction
 
-### using the prototype
-
-the prototype is a single html file with a dev tools panel on the left and a mobile app on the right. nothing to install — open it in a browser.
+**dev tools panel:**
 
 - **tour** — a 6-step narrated walkthrough that threads through the whole product. start here if you've never seen grantr before.
-- **journeys** — every one of the 11 journeys above wired as a single click. the scripted path, not a free-explore.
-- **actions** — deep-links to send / rebalance / build / sponsor / verify screens. for demos where you want to skip the opening and land mid-flow.
-- **tabs** — profile / sessions / activity / addresses. direct navigation.
+- **journeys** — every one of the 11 journeys above wired as a single click.
+- **actions** — deep-links to send / rebalance / build / sponsor / verify screens.
+- **tabs** — profile / sessions / activity / addresses.
 
-on the phone:
+**on the phone:**
 
 - tap ⊕ in the tab bar for the action sheet
 - tap any active session card's **see it work** to run a live simulation — the agent attempts one allowed action (passes) and one out-of-scope action (blocked at the verify frame)
 - tap any activity entry to expand its frame chain
 - every tile, row, and pill is wired — nothing is decorative
 
-### what's visible at every layer
+**frames are the thesis. the prototype makes them visible wherever a transaction touches the ui:**
 
-frames are the thesis. the prototype makes them visible wherever a transaction touches the ui:
-
-- **session cards** list their frame policy inline (verify: session key · rebalance() · collectFees() / sender: uniswap v3)
+- **session cards** list their frame policy inline
 - **activity entries** expand to show the frame chain of every tx — including blocked ones, with the failing frame marked
 - **tx previews** show the full frame sequence before signing, not a single "approve" button
 - **agent simulations** animate frames turning green (pass) or red (blocked) so you can watch the chain enforce the scope in real time
 
-the goal is that a developer can scroll any screen in the app and see the eip-8141 primitives it's built on.
+## 6. constraints
 
-### status
+**in:** four journeys, passkey signing (P-256), key rotation, session keys, multi-device thresholds, sponsored gas, frame-visible tx preview, activity feed with frame detail.
 
-- **feature-complete prototype** covering all four spec journeys (email recovery, guardians, multi-device, delegation) plus the 11 demo journeys listed above
+**out:** multi-chain, swaps/bridging, portfolio management, push notifications, fiat ramp, post-quantum, mempool handling, cross-chain.
+
+**limited:** one account per device, ens + email for guardians, single example agent, no social features.
+
+**not in scope:** contract audit, regulatory.
+
+## 7. status
+
+- **feature-complete prototype** covering all four spec journeys plus the 11 demo journeys
 - **not production software** — no real backend, no real etherex deployment, passkeys are simulated, accounts are mock state
 - **future work**: connect to a real etherex devnet, backend for passkey registration + guardian invites, agent marketplace with real scoped agents, browser extension version
 
-### contributing
+## 8. contributing
 
 if you're building another eip-8141 reference implementation, an sdk, or a design system that borrows from this, take what's useful. prs and issues welcome.
