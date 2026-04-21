@@ -88,6 +88,18 @@ body {
 .stage-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .stage-icon .spinner { width: 14px; height: 14px; border: 2px solid var(--text-4); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; }
 .stage-icon .check { color: var(--green); font-size: 14px; }
+.frame-detail { margin-top: 20px; background: var(--card-dark); border-radius: 12px; border: 1px solid var(--divider); overflow: hidden; }
+.frame-detail summary { padding: 10px 14px; font-size: 11px; color: var(--text-4); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+.frame-detail summary::-webkit-details-marker { display: none; }
+.frame-detail summary::after { content: "›"; color: var(--text-4); transition: transform 0.2s; }
+.frame-detail[open] summary::after { transform: rotate(90deg); }
+.frame-detail[open] summary { border-bottom: 1px solid var(--divider); }
+.frame-detail-body { padding: 10px 14px 12px; display: flex; flex-direction: column; gap: 8px; }
+.frame-detail-row { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
+.frame-detail-info { flex: 1; min-width: 0; }
+.frame-detail-name { font-size: 12px; color: var(--text-2); font-weight: 500; }
+.frame-detail-sub { font-size: 10px; color: var(--text-4); margin-top: 1px; }
+.frame-detail-footnote { font-size: 10px; color: var(--text-4); padding-top: 4px; border-top: 1px solid var(--divider); margin-top: 4px; line-height: 1.5; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .stage-label { flex: 1; font-size: 13px; color: var(--text-1); }
 .stage.pending .stage-label { color: var(--text-3); }
@@ -281,6 +293,7 @@ body {
 .frame-badge.verify { background: #141414; color: var(--green); }
 .frame-badge.sender { background: #141414; color: var(--text-2); }
 .frame-badge.default { background: #141414; color: var(--blue); }
+.frame-badge.approve { background: #141414; color: #f59e0b; }
 .build-row-info { flex: 1; display: flex; flex-direction: column; gap: 1px; }
 .build-row-name { font-size: 13px; color: var(--text-1); font-weight: 500; }
 .build-row-sub { font-size: 10px; color: var(--text-4); }
@@ -452,6 +465,33 @@ body {
           <div class="stage-label">setting email recovery</div>
         </div>
       </div>
+
+      <details class="frame-detail">
+        <summary>frame detail</summary>
+        <div class="frame-detail-body">
+          <div class="frame-detail-row">
+            <span class="frame-badge verify">verify</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">passkey signature</div>
+              <div class="frame-detail-sub">p-256 · this device</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge approve">approve</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">gas sponsored</div>
+              <div class="frame-detail-sub">grantr paymaster</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge default">default</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">deploy account · set email recovery</div>
+              <div class="frame-detail-sub">post-op installs initial policy</div>
+            </div>
+          </div>
+        </div>
+      </details>
     </div>
     <div class="bottom"></div>
   </div>
@@ -562,6 +602,34 @@ body {
           <div class="stage-label">rotating key on-chain</div>
         </div>
       </div>
+
+      <details class="frame-detail">
+        <summary>frame detail</summary>
+        <div class="frame-detail-body">
+          <div class="frame-detail-row">
+            <span class="frame-badge verify">verify</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">email attestation</div>
+              <div class="frame-detail-sub">grantr service · signed over new passkey</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge approve">approve</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">gas sponsored</div>
+              <div class="frame-detail-sub">grantr paymaster</div>
+            </div>
+          </div>
+          <div class="frame-detail-row">
+            <span class="frame-badge default">default</span>
+            <div class="frame-detail-info">
+              <div class="frame-detail-name">rotate passkey</div>
+              <div class="frame-detail-sub">swap old key for new · post-op</div>
+            </div>
+          </div>
+          <div class="frame-detail-footnote">all three frames execute atomically. if any fails, no changes apply.</div>
+        </div>
+      </details>
     </div>
     <div class="bottom"></div>
   </div>
@@ -615,7 +683,7 @@ body {
       </div>
       <div class="tile" onclick="openTray('account')">
         <div class="tile-label">account</div>
-        <div><div class="tile-stat" style="font-size: 16px; font-family: 'DM Mono', monospace;">...4c7a</div><div class="tile-sub">etherex · 2 days</div></div>
+        <div><div class="tile-stat" style="font-size: 16px; font-family: 'DM Mono', monospace;">...4c7a</div><div class="tile-sub">etherex devnet</div></div>
       </div>
     </div>
     <div id="profile-list" class="list-view">
@@ -632,7 +700,7 @@ body {
         <div class="list-row-right"><div class="list-dot" style="background: #3b82f6;"></div><span class="chevron">›</span></div>
       </div>
       <div class="list-row" onclick="openTray('account')">
-        <div class="list-row-left"><div class="list-row-name">account</div><div class="list-row-sub" style="font-family: 'DM Mono', monospace;">...4c7a · etherex · 2 days old</div></div>
+        <div class="list-row-left"><div class="list-row-name">account</div><div class="list-row-sub" style="font-family: 'DM Mono', monospace;">...4c7a · etherex devnet</div></div>
         <div class="list-row-right"><span class="chevron">›</span></div>
       </div>
     </div>
@@ -687,8 +755,8 @@ body {
           </div>
         </div>
         <div class="frame-section">
-          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · scoped selectors</div></div>
-          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">rebalance on uniswap v3</div></div>
+          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · rebalance() · collectFees()</div></div>
+          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">uniswap v3 position manager</div></div>
         </div>
         <div class="card-footer">
           <div class="card-footer-text">3 executed · 1 blocked</div>
@@ -705,8 +773,8 @@ body {
           </div>
         </div>
         <div class="frame-section">
-          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · renew selector only</div></div>
-          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">renew on ens registrar</div></div>
+          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · renew()</div></div>
+          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">ens base registrar</div></div>
         </div>
         <div class="card-footer">
           <div class="card-footer-text">0 executed</div>
@@ -727,8 +795,8 @@ body {
             </div>
           </div>
           <div class="frame-section">
-            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">verify</div><div class="frame-desc muted">session key · read selectors</div></div>
-            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted">update price feed</div></div>
+            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">verify</div><div class="frame-desc muted">session key · updatePrice()</div></div>
+            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted">chainlink price oracle</div></div>
           </div>
         </div>
         <div class="session-card expired">
@@ -741,8 +809,8 @@ body {
             </div>
           </div>
           <div class="frame-section">
-            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">verify</div><div class="frame-desc muted">session key · swap selector</div></div>
-            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted">swap ETH → USDC weekly</div></div>
+            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">verify</div><div class="frame-desc muted">session key · exactInputSingle()</div></div>
+            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted">uniswap v3 router · ETH → USDC</div></div>
           </div>
         </div>
       </div>
@@ -774,7 +842,7 @@ body {
         <div class="entry-header">
           <div class="entry-info">
             <div class="entry-title">sent 0.5 ETH to ...9f2b</div>
-            <div class="entry-sub">2 min ago</div>
+            <div class="entry-sub">2 min ago · 2 frames</div>
           </div>
           <div class="entry-amount white">-$1,390</div>
         </div>
@@ -787,7 +855,7 @@ body {
         <div class="entry-header">
           <div class="entry-info">
             <div class="entry-title red">lp rebalancer blocked</div>
-            <div class="entry-sub">42 min ago · via session</div>
+            <div class="entry-sub">42 min ago · via session · 2 frames</div>
           </div>
           <div class="entry-amount red">blocked</div>
         </div>
@@ -800,11 +868,11 @@ body {
         <div class="entry-header">
           <div class="entry-info">
             <div class="entry-title">lp rebalancer · rebalance</div>
-            <div class="entry-sub">1 hr ago · via session</div>
+            <div class="entry-sub">1 hr ago · via session · 2 frames</div>
           </div>
         </div>
         <div class="frames">
-          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">session key · scoped selectors</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">session key · rebalance()</div><div class="frame-status pass">✓</div></div>
           <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">rebalance on uniswap v3</div><div class="frame-status pass">✓</div></div>
         </div>
       </div>
@@ -812,7 +880,7 @@ body {
         <div class="entry-header">
           <div class="entry-info">
             <div class="entry-title">session granted · lp rebalancer</div>
-            <div class="entry-sub">3 hrs ago</div>
+            <div class="entry-sub">3 hrs ago · 2 frames</div>
           </div>
         </div>
         <div class="frames">
@@ -825,7 +893,7 @@ body {
         <div class="entry-header">
           <div class="entry-info">
             <div class="entry-title">received 250 USDC from ...3e8c</div>
-            <div class="entry-sub">yesterday</div>
+            <div class="entry-sub">yesterday · 2 frames</div>
           </div>
           <div class="entry-amount green">+$250</div>
         </div>
@@ -838,7 +906,7 @@ body {
         <div class="entry-header">
           <div class="entry-info">
             <div class="entry-title">account created</div>
-            <div class="entry-sub">2 days ago · gas by grantr</div>
+            <div class="entry-sub">2 days ago · gas by grantr · 2 frames</div>
           </div>
         </div>
         <div class="frames">
@@ -992,13 +1060,14 @@ body {
 
       <div style="background:#0a0a0a;border:1px solid #1f1f1f;border-radius:12px;padding:12px 14px;margin-top:8px;">
         <div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">frame structure</div>
-        <div class="frame-row" style="padding-left:0;margin-bottom:6px;"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · scoped selectors</div></div>
-        <div class="frame-row" style="padding-left:0;"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">rebalance on uniswap v3 · atomic</div></div>
+        <div class="frame-row" style="padding-left:0;margin-bottom:6px;"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">passkey signature · p-256</div></div>
+        <div class="frame-row" style="padding-left:0;margin-bottom:6px;"><div class="frame-dot pass"></div><div class="frame-mode" style="color:#f59e0b;">approve</div><div class="frame-desc">gas sponsored by grantr</div></div>
+        <div class="frame-row" style="padding-left:0;"><div class="frame-dot pass"></div><div class="frame-mode" style="color:#3b82f6;">default</div><div class="frame-desc">add session key · scoped to rebalance selectors</div></div>
       </div>
     </div>
 
     <div class="bottom" style="padding-top:12px;">
-      <button class="btn btn-primary" id="auth-btn" onclick="grantRebalance()">authorize · sign with passkey</button>
+      <button class="btn btn-primary" id="auth-btn" onclick="openTxPreview('rebalance')">authorize</button>
       <button class="btn btn-secondary" onclick="closeAction(); go('profile')">cancel</button>
     </div>
   </div>
@@ -1026,7 +1095,7 @@ body {
         </div>
         <button onclick="go('sessions')" style="font-size:11px;color:#ef4444;background:none;border:none;font-family:inherit;cursor:pointer;">revoke</button>
       </div>
-      <div class="frame-row" style="padding-left:0;margin-bottom:4px;"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · scoped selectors</div></div>
+      <div class="frame-row" style="padding-left:0;margin-bottom:4px;"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · rebalance() · collectFees()</div></div>
       <div class="frame-row" style="padding-left:0;"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">rebalance on uniswap v3</div></div>
       <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid #1a1a1a;">
         <span style="font-size:10px;color:#555;">$0 / $500 · 30 days left</span>
@@ -1070,17 +1139,17 @@ body {
   <!-- ============== BUILD SCREEN ============== -->
   <div id="screen-build" class="screen onboarding">
     <div class="top">
-      <span class="back" onclick="closeAction(); go('profile')">←</span>
+      <span class="back" onclick="resetBuildQueue(); closeAction(); go('profile')">←</span>
       <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">build transaction</div>
       <span class="spacer"></span>
     </div>
-    <div style="flex: 1; padding: 16px 0; display: flex; flex-direction: column; gap: 0; overflow-y: auto;">
+    <div style="flex: 1; padding: 8px 0 16px; display: flex; flex-direction: column; gap: 0; overflow-y: auto;">
 
       <div style="font-size: 11px; color: var(--text-4); line-height: 1.6; padding-bottom: 16px;">compose an atomic frame transaction. frames execute in order — if any sender frame fails, the whole batch reverts.</div>
 
       <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; padding-bottom: 8px;">choose frame type</div>
 
-      <div class="build-row">
+      <div class="build-row" onclick="addFrame('verify', 'passkey signature', 'p-256 · signs the transaction hash')">
         <span class="frame-badge verify">verify</span>
         <div class="build-row-info">
           <div class="build-row-name">passkey signature</div>
@@ -1089,7 +1158,7 @@ body {
         <span style="color: var(--text-4); font-size: 14px;">+</span>
       </div>
 
-      <div class="build-row">
+      <div class="build-row" onclick="addFrame('verify', 'session key', 'scoped · must match an active session')">
         <span class="frame-badge verify">verify</span>
         <div class="build-row-info">
           <div class="build-row-name">session key</div>
@@ -1098,7 +1167,16 @@ body {
         <span style="color: var(--text-4); font-size: 14px;">+</span>
       </div>
 
-      <div class="build-row">
+      <div class="build-row" onclick="addFrame('approve', 'gas sponsored', 'grantr paymaster pays the gas')">
+        <span class="frame-badge approve">approve</span>
+        <div class="build-row-info">
+          <div class="build-row-name">gas sponsored</div>
+          <div class="build-row-sub">grantr paymaster pays the gas</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">+</span>
+      </div>
+
+      <div class="build-row" onclick="addFrame('sender', 'contract call', 'call any contract · atomic flag optional')">
         <span class="frame-badge sender">sender</span>
         <div class="build-row-info">
           <div class="build-row-name">contract call</div>
@@ -1107,7 +1185,7 @@ body {
         <span style="color: var(--text-4); font-size: 14px;">+</span>
       </div>
 
-      <div class="build-row">
+      <div class="build-row" onclick="addFrame('sender', 'token transfer', 'erc-20 or native ETH')">
         <span class="frame-badge sender">sender</span>
         <div class="build-row-info">
           <div class="build-row-name">token transfer</div>
@@ -1116,7 +1194,7 @@ body {
         <span style="color: var(--text-4); font-size: 14px;">+</span>
       </div>
 
-      <div class="build-row">
+      <div class="build-row" onclick="addFrame('default', 'policy update', 'rotate key · add guardian · update session')">
         <span class="frame-badge default">default</span>
         <div class="build-row-info">
           <div class="build-row-name">policy update</div>
@@ -1126,13 +1204,114 @@ body {
       </div>
 
       <div style="margin-top: 20px; padding: 14px 16px; background: var(--card-dark); border-radius: 14px; display: flex; flex-direction: column; gap: 8px;">
-        <div style="font-size: 10px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">your frame queue</div>
-        <div style="font-size: 12px; color: #555; font-style: italic;">empty — add frames above</div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 10px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">your frame queue</div>
+          <button id="build-clear" onclick="resetBuildQueue()" style="background: transparent; border: none; color: var(--text-4); font-size: 10px; font-family: inherit; cursor: pointer; display: none;">clear</button>
+        </div>
+        <div id="build-queue">
+          <div id="build-queue-empty" style="font-size: 12px; color: #555; font-style: italic;">empty — add frames above</div>
+        </div>
       </div>
 
     </div>
     <div class="bottom" style="padding-top: 0;">
-      <button class="btn btn-primary" style="opacity: 0.4;" disabled>preview transaction</button>
+      <button id="build-preview-btn" class="btn btn-primary" style="opacity: 0.4;" disabled onclick="openTxPreview('build')">preview transaction</button>
+    </div>
+  </div>
+
+  <!-- ============== SPONSOR ============== -->
+  <div id="screen-sponsor" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="closeAction(); go('profile')">←</span>
+      <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">sponsor</div>
+      <span class="spacer"></span>
+    </div>
+    <div style="flex: 1; padding: 8px 0 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto;">
+      <div style="font-size: 11px; color: var(--text-4); line-height: 1.6;">pay gas for someone else's transaction. they approve the action, you cover the gas via your <span style="color: var(--text-2);">approve</span> frame.</div>
+
+      <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">pay for</div>
+      <div style="background: var(--card); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 11px; color: var(--text-4);">recipient</div>
+          <div style="font-size: 12px; color: var(--text-2); font-family: 'DM Mono', monospace;">bob.eth · ...7e3a</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 11px; color: var(--text-4);">action</div>
+          <div style="font-size: 12px; color: var(--text-2);">their next tx</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 11px; color: var(--text-4);">max gas</div>
+          <div style="font-size: 12px; color: var(--text-2);">0.005 ETH</div>
+        </div>
+      </div>
+
+      <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">frame structure</div>
+      <div class="receipt-card">
+        <div class="receipt-row">
+          <span class="frame-badge verify">verify</span>
+          <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">your passkey</div><div style="font-size:10px;color:#555;margin-top:2px;">p-256 signature</div></div>
+        </div>
+        <div class="receipt-row">
+          <span class="frame-badge approve">approve</span>
+          <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">you pay bob's gas</div><div style="font-size:10px;color:#22c55e;margin-top:2px;">up to 0.005 ETH</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom" style="padding-top: 0;">
+      <button class="btn btn-primary" onclick="openTxPreview('sponsor')">sponsor transaction</button>
+    </div>
+  </div>
+
+  <!-- ============== VERIFY POLICY ============== -->
+  <div id="screen-verify-policy" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="closeAction(); go('profile')">←</span>
+      <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">add verify policy</div>
+      <span class="spacer"></span>
+    </div>
+    <div style="flex: 1; padding: 8px 0 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto;">
+      <div style="font-size: 11px; color: var(--text-4); line-height: 1.6;">add a custom signature check to your account. any tx must pass this verify frame alongside your passkey.</div>
+
+      <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">policy type</div>
+
+      <div class="build-row">
+        <span class="frame-badge verify">verify</span>
+        <div class="build-row-info">
+          <div class="build-row-name">guardian quorum</div>
+          <div class="build-row-sub">require 2-of-3 guardians for key rotation</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">›</span>
+      </div>
+
+      <div class="build-row">
+        <span class="frame-badge verify">verify</span>
+        <div class="build-row-info">
+          <div class="build-row-name">threshold by value</div>
+          <div class="build-row-sub">require second device above $1,000</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">›</span>
+      </div>
+
+      <div class="build-row">
+        <span class="frame-badge verify">verify</span>
+        <div class="build-row-info">
+          <div class="build-row-name">time-locked</div>
+          <div class="build-row-sub">require 24h delay on specific selectors</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">›</span>
+      </div>
+
+      <div class="build-row">
+        <span class="frame-badge verify">verify</span>
+        <div class="build-row-info">
+          <div class="build-row-name">custom signer</div>
+          <div class="build-row-sub">paste a contract address that returns valid</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">›</span>
+      </div>
+    </div>
+    <div class="bottom" style="padding-top: 0;">
+      <button class="btn btn-primary" style="opacity: 0.4;" disabled>select a policy type</button>
     </div>
   </div>
 
@@ -1164,6 +1343,45 @@ body {
       <span class="action-item-badge" style="color: #a3a3a3; background: #141414;">atomic</span>
     </div>
 
+    <div class="action-item" onclick="closeAction(); go('sponsor')">
+      <div class="action-icon" style="background: #1f1708;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 8 L12 4 L20 8 L20 16 L12 20 L4 16 Z" stroke="#f59e0b" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M12 4 L12 20" stroke="#f59e0b" stroke-width="1.5"/><path d="M4 8 L20 8" stroke="#f59e0b" stroke-width="1.5"/><path d="M4 16 L20 16" stroke="#f59e0b" stroke-width="1.5"/></svg>
+      </div>
+      <div class="action-item-info">
+        <div class="action-item-name">sponsor</div>
+        <div class="action-item-sub">pay gas for another account · approve frame</div>
+      </div>
+      <span class="action-item-badge" style="color: #f59e0b; background: #141414;">approve</span>
+    </div>
+
+    <div class="action-item" onclick="closeAction(); go('verify-policy')">
+      <div class="action-icon" style="background: #0a1428;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 12 L11 14 L15 10" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="#3b82f6" stroke-width="1.5" fill="none"/></svg>
+      </div>
+      <div class="action-item-info">
+        <div class="action-item-name">verify</div>
+        <div class="action-item-sub">add a custom verify frame policy</div>
+      </div>
+      <span class="action-item-badge" style="color: #3b82f6; background: #141414;">verify</span>
+    </div>
+
+    <div class="action-sheet-spacer"></div>
+  </div>
+
+  <!-- ============== TX PREVIEW MODAL ============== -->
+  <div id="tx-preview-overlay" class="tray-overlay" onclick="closeTxPreview()" style="z-index: 10;"></div>
+  <div id="tx-preview" class="action-sheet" style="z-index: 11; max-height: 85%; overflow-y: auto;">
+    <div class="action-sheet-handle" onclick="closeTxPreview()"></div>
+    <div style="padding: 4px 24px 6px; font-size: 10px; color: var(--text-3);">transaction preview</div>
+    <div style="padding: 0 24px 8px; font-size: 16px; color: var(--text-1); font-weight: 500;" id="tx-preview-title">—</div>
+    <div style="padding: 0 24px 12px; font-size: 11px; color: var(--text-4); line-height: 1.5;" id="tx-preview-desc">—</div>
+    <div style="padding: 0 24px 10px; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">frames · execute atomically</div>
+    <div id="tx-preview-frames" style="padding: 0 24px 8px; display: flex; flex-direction: column; gap: 4px;"></div>
+    <div style="padding: 10px 24px 8px; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">details</div>
+    <div id="tx-preview-details" style="padding: 0 24px 16px; display: flex; flex-direction: column; gap: 8px;"></div>
+    <div style="padding: 0 24px 20px;">
+      <button class="btn btn-primary" onclick="confirmTxPreview()">sign with passkey</button>
+    </div>
     <div class="action-sheet-spacer"></div>
   </div>
 
@@ -1463,6 +1681,137 @@ function openTray(id) {
 function closeTray() {
   document.getElementById('tray').classList.remove('open');
   document.getElementById('tray-overlay').classList.remove('open');
+}
+
+// ============== BUILD QUEUE ==============
+let buildQueue = [];
+
+function addFrame(type, name, sub) {
+  buildQueue.push({ type, name, sub });
+  renderBuildQueue();
+}
+
+function removeFrame(idx) {
+  buildQueue.splice(idx, 1);
+  renderBuildQueue();
+}
+
+function resetBuildQueue() {
+  buildQueue = [];
+  renderBuildQueue();
+}
+
+function renderBuildQueue() {
+  const queue = document.getElementById('build-queue');
+  const empty = document.getElementById('build-queue-empty');
+  const btn = document.getElementById('build-preview-btn');
+  const clear = document.getElementById('build-clear');
+  if (!queue) return;
+  if (buildQueue.length === 0) {
+    queue.innerHTML = '<div id="build-queue-empty" style="font-size: 12px; color: #555; font-style: italic;">empty — add frames above</div>';
+    if (btn) { btn.disabled = true; btn.style.opacity = '0.4'; }
+    if (clear) clear.style.display = 'none';
+  } else {
+    queue.innerHTML = buildQueue.map((f, i) =>
+      `<div style="display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid #1a1a1a;">
+        <span class="frame-badge ${f.type}">${f.type}</span>
+        <div style="flex: 1; font-size: 12px; color: var(--text-2);">${f.name}</div>
+        <button onclick="removeFrame(${i})" style="background: transparent; border: none; color: var(--text-4); font-size: 14px; cursor: pointer; padding: 0 4px;">×</button>
+      </div>`
+    ).join('');
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+    if (clear) clear.style.display = 'block';
+  }
+}
+
+// ============== TX PREVIEW MODAL ==============
+
+const txPreviewData = {
+  rebalance: {
+    title: 'authorize lp rebalancer',
+    desc: 'grant a scoped session key to the lp rebalancer agent. agent can call rebalance() and collectFees() on your uniswap v3 position — nothing else.',
+    frames: [
+      { type: 'verify', name: 'passkey signature', sub: 'p-256 · your device' },
+      { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster pays' },
+      { type: 'default', name: 'add session key', sub: 'scope: rebalance() · collectFees()' }
+    ],
+    details: [
+      ['session limit', '$500 / 30 days'],
+      ['agent', 'lp rebalancer · ...9d8f'],
+      ['network', 'etherex devnet'],
+      ['gas', '0 ETH · sponsored']
+    ],
+    onConfirm: () => { closeTxPreview(); go('rebalance-authorize'); setTimeout(() => grantRebalance(), 100); }
+  },
+  sponsor: {
+    title: 'sponsor bob\'s transaction',
+    desc: 'you pay gas for bob.eth. he still has to sign whatever action he takes — you just cover the fees.',
+    frames: [
+      { type: 'verify', name: 'your passkey', sub: 'p-256 · authorizes the sponsor approval' },
+      { type: 'approve', name: 'pay bob\'s gas', sub: 'up to 0.005 ETH' }
+    ],
+    details: [
+      ['recipient', 'bob.eth · ...7e3a'],
+      ['max gas', '0.005 ETH'],
+      ['network', 'etherex devnet']
+    ],
+    onConfirm: () => { closeTxPreview(); go('profile'); }
+  },
+  build: {
+    title: 'custom transaction',
+    desc: 'your frame queue executes atomically on etherex devnet. if any frame fails, the whole batch reverts.',
+    frames: [],
+    details: [
+      ['network', 'etherex devnet'],
+      ['gas', '0 ETH · sponsored']
+    ],
+    onConfirm: () => { closeTxPreview(); resetBuildQueue(); go('profile'); }
+  }
+};
+
+let currentTxPreview = null;
+
+function openTxPreview(key) {
+  const data = txPreviewData[key];
+  if (!data) return;
+  currentTxPreview = key;
+  document.getElementById('tx-preview-title').textContent = data.title;
+  document.getElementById('tx-preview-desc').textContent = data.desc;
+
+  // for build, use the live queue
+  const frames = key === 'build' ? buildQueue : data.frames;
+
+  document.getElementById('tx-preview-frames').innerHTML = frames.map(f =>
+    `<div style="display: flex; align-items: center; gap: 10px; padding: 8px 0;">
+      <span class="frame-badge ${f.type}">${f.type}</span>
+      <div style="flex: 1; text-align: right;">
+        <div style="font-size: 12px; color: var(--text-2); font-weight: 500;">${f.name}</div>
+        <div style="font-size: 10px; color: var(--text-4); margin-top: 2px;">${f.sub}</div>
+      </div>
+    </div>`
+  ).join('');
+
+  document.getElementById('tx-preview-details').innerHTML = data.details.map(([k, v]) =>
+    `<div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+      <span style="color: var(--text-4);">${k}</span>
+      <span style="color: var(--text-2);">${v}</span>
+    </div>`
+  ).join('');
+
+  document.getElementById('tx-preview').classList.add('open');
+  document.getElementById('tx-preview-overlay').classList.add('open');
+}
+
+function closeTxPreview() {
+  document.getElementById('tx-preview').classList.remove('open');
+  document.getElementById('tx-preview-overlay').classList.remove('open');
+}
+
+function confirmTxPreview() {
+  const data = txPreviewData[currentTxPreview];
+  if (data && data.onConfirm) {
+    data.onConfirm();
+  }
 }
 
 function togglePastSessions() {
