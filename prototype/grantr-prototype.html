@@ -358,6 +358,21 @@ body {
 .dev-btn:hover { background: #141414; color: #fff; }
 .dev-btn.j-built { border-color: #1f3a26; color: #22c55e; }
 .dev-btn.j-built:hover { background: #0a1f12; color: #4ade80; }
+
+.tour-overlay { position: absolute; bottom: 0; left: 0; right: 0; z-index: 50; padding: 16px; display: none; pointer-events: none; }
+.tour-overlay.open { display: block; }
+.tour-card { background: rgba(10,10,10,0.95); backdrop-filter: blur(12px); border: 1px solid #2a2a2a; border-radius: 16px; padding: 14px 16px; pointer-events: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.tour-progress { display: flex; gap: 4px; margin-bottom: 10px; }
+.tour-progress-dot { flex: 1; height: 3px; border-radius: 2px; background: #2a2a2a; transition: background 0.2s; }
+.tour-progress-dot.done { background: #22c55e; }
+.tour-progress-dot.active { background: #c4b5fd; }
+.tour-title { font-size: 13px; color: var(--text-1); font-weight: 500; margin-bottom: 4px; }
+.tour-body { font-size: 12px; color: var(--text-3); line-height: 1.5; margin-bottom: 12px; }
+.tour-actions { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.tour-end { background: transparent; border: none; color: var(--text-4); font-size: 11px; font-family: inherit; cursor: pointer; padding: 4px 0; }
+.tour-end:hover { color: var(--text-2); }
+.tour-next { background: #c4b5fd; color: #2a1b5c; border: none; border-radius: 999px; padding: 8px 18px; font-size: 12px; font-weight: 500; font-family: inherit; cursor: pointer; }
+.tour-next:hover { background: #a78bfa; }
 @media (max-width: 640px) {
   .devtools { top: 8px; left: 8px; font-size: 11px; }
 }
@@ -368,6 +383,9 @@ body {
 <!-- devtools panel: 11 demo journeys from the spec -->
 <div id="devtools" class="devtools">
   <button class="devtools-toggle" onclick="toggleDevtools()" title="toggle devtools" aria-label="toggle devtools"><span id="devtools-toggle-icon">×</span></button>
+  <div class="devtools-label">tour</div>
+  <button class="dev-btn j-built" onclick="startTour()" style="color: #c4b5fd; border-color: #3a3066;">▶ start tour</button>
+
   <div class="devtools-label">journeys</div>
   <button class="dev-btn j-built" onclick="journeyAccountCreation()">1 · account creation</button>
   <button class="dev-btn j-built" onclick="journeyEmailRecovery()">2 · email recovery</button>
@@ -2524,6 +2542,19 @@ body {
     </div>
   </div>
 
+  <!-- ============== GUIDED TOUR OVERLAY ============== -->
+  <div id="tour-overlay" class="tour-overlay">
+    <div class="tour-card">
+      <div class="tour-progress" id="tour-progress"></div>
+      <div class="tour-title" id="tour-title">—</div>
+      <div class="tour-body" id="tour-body">—</div>
+      <div class="tour-actions">
+        <button class="tour-end" onclick="endTour()">end tour</button>
+        <button class="tour-next" id="tour-next-btn" onclick="tourNext()">next</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -3373,6 +3404,80 @@ function journeyAgentActs() {
   go('sessions');
   // open the simulation modal for the lp rebalancer session after the sessions tab renders
   setTimeout(() => { openAgentSimulation('lp-rebalancer'); }, 400);
+}
+
+// ============== GUIDED TOUR ==============
+const tourSteps = [
+  {
+    title: 'welcome to grantr',
+    body: 'a frames-native smart account. every action is a chain of frames — verify, approve, sender, default. the chain enforces the rules, not the app.',
+    enter: () => { closeAction(); closeTray(); go('profile'); }
+  },
+  {
+    title: 'send a tx',
+    body: 'here\'s what an action looks like. your passkey signs, grantr pays gas, and the sender frame moves the tokens. 3 frames, atomic on-chain.',
+    enter: () => { sendState.amount = 100; sendState.recipient = 'bob'; go('send'); }
+  },
+  {
+    title: 'grant a session',
+    body: 'delegate to an agent — with a scope. they can only call the selectors you allowed, within a spending limit and time window.',
+    enter: () => { journeyGrantDelegation(); setTimeout(() => pickDelegateAgent('lp-rebalancer'), 200); }
+  },
+  {
+    title: 'the chain enforces',
+    body: 'if the agent tries something out of scope, the verify frame says no. no app approval, no trusted agent code — the chain just refuses.',
+    enter: () => { closeAction(); go('sessions'); setTimeout(() => openAgentSimulation('lp-rebalancer'), 300); setTimeout(() => playAgentSimulation(), 900); }
+  },
+  {
+    title: 'recovery works',
+    body: 'lost your device? email gets you back in, or your guardians can co-sign a key rotation. your address stays the same.',
+    enter: () => { closeAgentSimulation(); go('recover-path'); }
+  },
+  {
+    title: 'that\'s grantr',
+    body: 'open source, documented, and built as a reference for eip-8141. explore from here.',
+    enter: () => { go('profile'); }
+  }
+];
+let tourIndex = 0;
+let tourActive = false;
+
+function startTour() {
+  tourIndex = 0;
+  tourActive = true;
+  document.getElementById('tour-overlay').classList.add('open');
+  renderTourStep();
+}
+
+function renderTourStep() {
+  const step = tourSteps[tourIndex];
+  if (!step) return;
+  step.enter();
+  document.getElementById('tour-title').textContent = step.title;
+  document.getElementById('tour-body').textContent = step.body;
+  const progress = document.getElementById('tour-progress');
+  progress.innerHTML = tourSteps.map((_, i) => {
+    const cls = i < tourIndex ? 'done' : (i === tourIndex ? 'active' : '');
+    return `<div class="tour-progress-dot ${cls}"></div>`;
+  }).join('');
+  const nextBtn = document.getElementById('tour-next-btn');
+  nextBtn.textContent = (tourIndex === tourSteps.length - 1) ? 'done' : 'next';
+}
+
+function tourNext() {
+  if (tourIndex >= tourSteps.length - 1) { endTour(); return; }
+  tourIndex++;
+  renderTourStep();
+}
+
+function endTour() {
+  tourActive = false;
+  tourIndex = 0;
+  document.getElementById('tour-overlay').classList.remove('open');
+  closeAgentSimulation();
+  closeAction();
+  closeTray();
+  closeTxPreview();
 }
 
 // ============== AGENT SIMULATION (#8) ==============
