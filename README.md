@@ -4,6 +4,8 @@ grantr | frames-native smart account · eip-8141 reference implementation
 
 ![Status: work in progress](https://img.shields.io/badge/status-work%20in%20progress-orange)
 
+# grantr
+
 ## 1. summary
 
 grantr is a frames-native account, with an app built to manage it. as a reference implementation for eip-8141, it covers account creation, recovery, delegation, and multi-device — not swaps, bridging, or the rest of a full financial product. no seed phrase, no lost accounts, no blanket approvals. your passkey signs, your address is permanent, and every permission you grant is enforced by the chain — not by an app asking nicely. open source, documented, and intended as a guide for developers and designers building on frames.
@@ -71,9 +73,9 @@ the prototype is a single html file with a dev tools panel on the left and a mob
 
 - **tour** — a 6-step narrated walkthrough that threads through the whole product. start here if you've never seen grantr before.
 - **journeys** — every one of the 11 journeys above wired as a single click.
-- **actions** — deep-links to send / rebalance / build / sponsor.
+- **actions** — deep-links to rebalance / build / send.
 - **tabs** — home / sessions / activity.
-- **pages** — account, addresses, policies.
+- **pages** — account, addresses, sponsor gas, policies.
 
 **app structure:**
 
