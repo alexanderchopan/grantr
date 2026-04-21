@@ -4,6 +4,7 @@ grantr | frames-native smart account · eip-8141 reference implementation
 
 ![Status: work in progress](https://img.shields.io/badge/status-work%20in%20progress-orange)
 
+# grantr
 
 ## 1. summary
 
@@ -72,17 +73,17 @@ the prototype is a single html file with a dev tools panel on the left and a mob
 
 - **tour** — a 6-step narrated walkthrough that threads through the whole product. start here if you've never seen grantr before.
 - **journeys** — every one of the 11 journeys above wired as a single click.
-- **actions** — deep-links to send / rebalance / build / sponsor / verify screens.
+- **actions** — deep-links to send / rebalance / build / sponsor.
 - **tabs** — home / sessions / activity.
-- **pages** — account, addresses.
+- **pages** — account, addresses, policies.
 
 **app structure:**
 
 - **home** tells two short stories: `what's running` (agent executions this week + the latest session events) and `what happened` (balance trend + the latest transactions). each section is a stat tile + chart tile + a feed of the three most recent rows, with `see all ›` routing to the full tab.
 - **sessions** is the full list of delegations — active, blocked, revoked, expired. every card shows its frame policy inline.
 - **activity** is the full transaction history. every entry expands to show its frame chain, including blocked attempts with the failing frame marked.
-- **action** is the ⊕ button in the tab bar. it opens a sheet with send / rebalance / build / sponsor.
-- **account** lives a tap away behind your pfp on home. it groups the `identity` settings (security, signing, account details), your `contacts` (addresses), and `learn` (the see-it-in-action replay, a link to the eip-8141 spec).
+- **action** is the ⊕ button in the tab bar. tapping it morphs the tab bar itself into the action set — send / rebalance / build — with the ⊕ rotating to an × to close. no overlay, no sheet, just the tab bar swapping modes.
+- **account** lives a tap away behind your pfp on home. three sections: `identity` (recovery, keys, policies), `contacts` (addresses, sponsor), and `learn` (the see-it-in-action replay, a link to the eip-8141 spec).
 
 **frames are the thesis. the prototype makes them visible wherever a transaction touches the ui:**
 
