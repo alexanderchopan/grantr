@@ -133,7 +133,6 @@ body {
 .guardian-status { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; transition: background 0.3s; }
 .guardian-status.pending { background: #333; }
 .guardian-status.approved { background: #22c55e; }
-.guardian-status.not-needed { background: #333; opacity: 0.4; }
 .auth-pill { background: transparent; border: 1px solid #2a2a2a; color: var(--text-3); padding: 8px 0; font-size: 12px; font-family: inherit; border-radius: 8px; cursor: pointer; transition: all 0.15s; }
 .auth-pill:hover { border-color: #3a3a3a; color: var(--text-2); }
 .auth-pill.active { background: #fff; border-color: #fff; color: #000; font-weight: 500; }
@@ -159,31 +158,11 @@ body {
 .identity-meta { display: flex; align-items: center; gap: 8px; }
 .identity-name { font-size: 12px; color: var(--text-2); }
 .identity-addr { font-size: 11px; color: var(--text-4); font-family: 'DM Mono', monospace; }
-.view-toggle { display: flex; gap: 2px; }
-.toggle-btn { width: 28px; height: 22px; background: transparent; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.toggle-btn:first-child { border-radius: 6px 0 0 6px; }
-.toggle-btn:last-child { border-radius: 0 6px 6px 0; }
-.toggle-btn.active { background: var(--border); }
 .avatar { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; background: var(--green); color: #000; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
 .avatar svg { display: block; }
 
 /* sessions tab: activity bars hero */
-.activity-hero { padding: 12px 24px 18px; flex-shrink: 0; }
-.activity-hero-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-.activity-hero-label { font-size: 10px; color: var(--text-4); text-transform: lowercase; letter-spacing: 0.5px; margin-bottom: 2px; }
-.activity-hero-stat { font-size: 22px; color: var(--text-1); font-weight: 600; line-height: 1; }
-.activity-hero-meta { font-size: 10px; color: var(--text-4); text-align: right; line-height: 1.4; }
-.activity-bars { display: flex; gap: 6px; height: 36px; align-items: flex-end; }
-.activity-bar { flex: 1; height: 100%; display: flex; align-items: flex-end; }
-.activity-bar-fill { width: 100%; height: var(--h, 0%); background: var(--green); border-radius: 2px; min-height: 2px; }
-.activity-bar-fill.muted { background: #222; }
-.activity-days { display: flex; gap: 6px; margin-top: 6px; font-size: 9px; color: #444; text-transform: uppercase; letter-spacing: 0.5px; }
-.activity-days span { flex: 1; text-align: center; }
-
 /* home screen: sparkline */
-.sparkline-hero { padding: 8px 24px 4px; flex-shrink: 0; }
-.sparkline-meta { display: flex; justify-content: space-between; margin-top: 4px; font-size: 10px; color: var(--text-4); }
-
 /* home screen: section labels + tight rows + feed rows */
 .home-section-label { font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 1px; padding: 12px 20px 6px; display: flex; justify-content: space-between; align-items: baseline; }
 .home-section-label span.see-all { color: var(--text-3); font-size: 10px; text-transform: none; letter-spacing: 0.3px; cursor: pointer; }
@@ -192,7 +171,6 @@ body {
 /* stat tile + chart tile paired row */
 .home-pair { margin: 0 16px 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: stretch; }
 .home-stat-tile { background: var(--card); border: 0.5px solid #1a1a1a; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: center; }
-.home-stat-label { font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; }
 .home-stat-big { font-size: 22px; color: var(--text-1); font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
 .home-stat-sub { font-size: 10px; color: var(--green); margin-top: 3px; }
 .home-chart-tile { background: var(--card); border: 0.5px solid #1a1a1a; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
@@ -247,15 +225,7 @@ body {
 .home-feed-empty-cta { background: none; border: none; color: var(--green); font-size: 12px; font-family: inherit; cursor: pointer; padding: 0; font-weight: 500; }
 .home-feed-empty-cta:hover { color: #4ade80; }
 
-.home-wide-tile { background: var(--card); border: 0.5px solid #1a1a1a; border-radius: 12px; padding: 12px 14px; margin: 0 16px 4px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.15s; }
-.home-wide-tile:hover { background: #141414; }
-.home-wide-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.home-wide-body { flex: 1; }
-.home-wide-name { font-size: 12px; color: var(--text-1); font-weight: 500; }
-.home-wide-sub { font-size: 10px; color: var(--text-4); margin-top: 2px; }
-
 /* sessions feed */
-.summary { padding: 0 24px 10px; font-size: 13px; color: var(--text-2); font-weight: 500; flex-shrink: 0; }
 .feed { flex: 1; overflow-y: auto; padding: 4px 14px 12px; display: flex; flex-direction: column; gap: 0; }
 .section-label { font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 1px; padding: 14px 4px 8px; }
 .past-sessions-link { background: transparent; border: none; font-family: inherit; color: var(--text-3); font-size: 12px; padding: 14px 6px 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; width: 100%; text-align: left; }
@@ -276,7 +246,6 @@ body {
 .usage-bar { margin-top: 8px; height: 3px; background: #141414; border-radius: 2px; overflow: hidden; }
 .usage-bar-fill { height: 100%; background: var(--blue); border-radius: 2px; }
 .usage-bar-fill.muted { background: var(--text-4); }
-.usage-bar-fill.danger { background: var(--amber); }
 .frame-section { border-top: 1px solid var(--divider); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
 .frame-row { display: flex; align-items: center; gap: 8px; padding-left: 18px; }
 .frames .frame-row { padding-left: 0; }
@@ -355,7 +324,6 @@ body {
 .tray-handle { width: 36px; height: 4px; background: #333; border-radius: 2px; align-self: center; margin: 12px 0 8px; flex-shrink: 0; cursor: pointer; }
 .tray-header { display: flex; justify-content: space-between; align-items: center; padding: 0 24px 12px; flex-shrink: 0; }
 .tray-title { font-size: 14px; color: var(--text-1); font-weight: 500; }
-.tray-badge { font-size: 10px; padding: 3px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px; }
 .tray-list { padding: 0 24px; }
 .tray-row { padding: 10px 0; border-bottom: 1px solid var(--divider); display: flex; justify-content: space-between; align-items: center; }
 .tray-row:last-child { border-bottom: none; }
@@ -431,16 +399,9 @@ body {
 .action-sheet { position: absolute; bottom: 0; left: 0; right: 0; background: var(--card); border-top-left-radius: 20px; border-top-right-radius: 20px; border-top: 1px solid var(--border); display: none; flex-direction: column; z-index: 6; max-height: 85%; overflow-y: auto; }
 .action-sheet.open { display: flex; }
 .action-sheet-handle { width: 36px; height: 4px; background: #333; border-radius: 2px; align-self: center; margin: 12px 0 4px; flex-shrink: 0; cursor: pointer; }
-.action-sheet-label { font-size: 10px; color: var(--text-3); padding: 8px 24px 4px; }
 .action-sheet-spacer { height: 32px; }
 
 /* rebalance flow specific */
-.scope-card { background: var(--card-dark); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
-.scope-row { display: flex; justify-content: space-between; align-items: center; }
-.scope-label { font-size: 11px; color: var(--text-4); }
-.scope-val { font-size: 12px; color: var(--text-1); font-weight: 500; font-family: 'DM Mono', monospace; }
-.scope-val.green { color: var(--green); font-family: 'DM Sans', sans-serif; }
-
 /* reusable frames-toggle — "simple first, technical on tap" */
 .frames-toggle { border-top: 0.5px solid #1a1a1a; padding-top: 14px; margin-top: 8px; }
 .frames-toggle-head { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; padding: 2px 0; }
@@ -4317,10 +4278,10 @@ function selectVerifyPolicy(type) {
         <div style="margin-bottom: 14px;">
           <div style="font-size: 11px; color: var(--text-4); margin-bottom: 8px;">delay duration</div>
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
-            <button class="auth-pill">1h</button>
-            <button class="auth-pill active">24h</button>
-            <button class="auth-pill">48h</button>
-            <button class="auth-pill">7d</button>
+            <button class="auth-pill" data-timelock="1h" onclick="setTimelockDelay('1h')">1h</button>
+            <button class="auth-pill active" data-timelock="24h" onclick="setTimelockDelay('24h')">24h</button>
+            <button class="auth-pill" data-timelock="48h" onclick="setTimelockDelay('48h')">48h</button>
+            <button class="auth-pill" data-timelock="7d" onclick="setTimelockDelay('7d')">7d</button>
           </div>
         </div>
         <div>
@@ -4358,7 +4319,7 @@ function selectVerifyPolicy(type) {
     <div style="padding: 0 24px 16px; font-size: 11px; color: var(--text-4); line-height: 1.5;">${cfg.desc}</div>
     <div style="padding: 0 24px 16px;">${cfg.inputs}</div>
     <div style="padding: 0 24px 20px;">
-      <button class="btn btn-primary" style="${cfg.disabled ? 'opacity: 0.4;' : ''}" ${cfg.disabled ? 'disabled' : 'onclick="closeVerifyConfig(); go(\'profile\')"'}>${cfg.cta}</button>
+      <button class="btn btn-primary" style="${cfg.disabled ? 'opacity: 0.4;' : ''}" ${cfg.disabled ? 'disabled' : 'onclick="closeVerifyConfig(); go(\'account\')"'}>${cfg.cta}</button>
     </div>
   `;
   document.getElementById('verify-config').classList.add('open');
@@ -4368,6 +4329,14 @@ function selectVerifyPolicy(type) {
 function closeVerifyConfig() {
   document.getElementById('verify-config').classList.remove('open');
   document.getElementById('verify-config-overlay').classList.remove('open');
+}
+
+let timelockDelay = '24h';
+function setTimelockDelay(val) {
+  timelockDelay = val;
+  document.querySelectorAll('[data-timelock]').forEach(b => {
+    b.classList.toggle('active', b.dataset.timelock === val);
+  });
 }
 
 function addFrame(type, name, sub) {
