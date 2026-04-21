@@ -106,6 +106,13 @@ body {
 .guardian-status.pending { background: #333; }
 .guardian-status.approved { background: #22c55e; }
 .guardian-status.not-needed { background: #333; opacity: 0.4; }
+.auth-pill { background: transparent; border: 1px solid #2a2a2a; color: var(--text-3); padding: 8px 0; font-size: 12px; font-family: inherit; border-radius: 8px; cursor: pointer; transition: all 0.15s; }
+.auth-pill:hover { border-color: #3a3a3a; color: var(--text-2); }
+.auth-pill.active { background: #fff; border-color: #fff; color: #000; font-weight: 500; }
+.auth-toggle { width: 40px; height: 22px; border-radius: 22px; background: #2a2a2a; position: relative; cursor: pointer; transition: background 0.15s; flex-shrink: 0; }
+.auth-toggle.on { background: #22c55e; }
+.auth-toggle-knob { width: 16px; height: 16px; border-radius: 50%; background: #fff; position: absolute; top: 3px; left: 3px; transition: transform 0.15s; }
+.auth-toggle.on .auth-toggle-knob { transform: translateX(18px); }
 @keyframes spin { to { transform: rotate(360deg); } }
 .stage-label { flex: 1; font-size: 13px; color: var(--text-1); }
 .stage.pending .stage-label { color: var(--text-3); }
@@ -685,31 +692,41 @@ body {
     </div>
     <div class="main">
       <div class="headline">pick three<br>guardians.</div>
-      <div class="sub">invite by ens or email. they'll create a passkey that can only co-sign your key rotation.</div>
-      <div style="background: var(--card); border-radius: 14px; padding: 8px 0; margin-top: 12px;">
-        <div style="padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider);">
-          <div class="addr-avatar" id="gpick-bob"></div>
-          <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">bob.eth</div><div style="font-size:11px;color:var(--text-4);">invited · ens</div></div>
-          <div style="width:16px;height:16px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-size:10px;font-weight:700;">✓</div>
-        </div>
-        <div style="padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider);">
-          <div class="addr-avatar" id="gpick-carol"></div>
-          <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">carol.eth</div><div style="font-size:11px;color:var(--text-4);">invited · ens</div></div>
-          <div style="width:16px;height:16px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-size:10px;font-weight:700;">✓</div>
-        </div>
-        <div style="padding: 10px 16px; display: flex; align-items: center; gap: 12px;">
-          <div class="addr-avatar" id="gpick-dan"></div>
-          <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">dan.eth</div><div style="font-size:11px;color:var(--text-4);">invited · ens</div></div>
-          <div style="width:16px;height:16px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-size:10px;font-weight:700;">✓</div>
-        </div>
-      </div>
+      <div class="sub">choose 3 people from your address book. they'll create a passkey that can only co-sign your key rotation.</div>
+      <div class="addr-search" style="padding: 12px 0 8px;"><input type="text" id="guardian-pool-search" placeholder="search contacts by name or ens" oninput="renderGuardianPool()"></div>
+      <div id="guardian-pool" style="background: var(--card); border-radius: 14px; padding: 4px 0; margin-top: 4px; max-height: 320px; overflow-y: auto;"></div>
       <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
-        <span style="color: var(--text-4);">quorum</span>
-        <span style="color: var(--text-2);">2 of 3 required</span>
+        <span style="color: var(--text-4);" id="guardian-pool-status">0 of 3 selected</span>
+        <span style="color: var(--text-2);">2-of-3 quorum</span>
       </div>
     </div>
     <div class="bottom">
-      <button class="btn btn-primary" onclick="go('guardians-confirm')">all 3 accepted · continue</button>
+      <button id="guardian-continue-btn" class="btn btn-primary" style="opacity: 0.4;" disabled onclick="confirmGuardianSelection()">continue</button>
+    </div>
+  </div>
+
+  <!-- ============== ADD GUARDIANS: INVITING ============== -->
+  <div id="screen-guardians-inviting" class="screen onboarding">
+    <div class="top">
+      <span class="back" onclick="go('guardians-pick')">←</span>
+      <div class="stepper">
+        <div class="stepper-seg done"></div>
+        <div class="stepper-seg active"></div>
+        <div class="stepper-seg"></div>
+      </div>
+      <span class="spacer"></span>
+    </div>
+    <div class="main">
+      <div class="headline">inviting<br>guardians.</div>
+      <div class="sub">sending an invite to each. they create a passkey that can co-sign your key rotation — nothing else.</div>
+      <div id="guardian-invite-list" style="background: var(--card); border-radius: 14px; padding: 4px 0; margin-top: 16px;"></div>
+      <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+        <span style="color: var(--text-4);">status</span>
+        <span style="color: var(--text-2);" id="guardian-invite-status">0 of 3 accepted</span>
+      </div>
+    </div>
+    <div class="bottom">
+      <button id="guardian-proceed-btn" class="btn btn-primary" style="opacity: 0.4;" disabled onclick="go('guardians-confirm')">all accepted · continue</button>
     </div>
   </div>
 
@@ -730,7 +747,7 @@ body {
       <div style="background: var(--card); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
         <div style="display: flex; justify-content: space-between; font-size: 11px;">
           <span style="color: var(--text-4);">guardians</span>
-          <span style="color: var(--text-2);">bob · carol · dan</span>
+          <span style="color: var(--text-2);" id="guardians-confirm-names">—</span>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 11px;">
           <span style="color: var(--text-4);">quorum</span>
@@ -885,7 +902,7 @@ body {
       </div>
     </div>
     <div class="bottom">
-      <button class="btn btn-secondary" onclick="simulateGuardianApprovals()">simulate approvals</button>
+      <button id="notify-guardians-btn" class="btn btn-primary" onclick="notifyGuardians()">notify guardians</button>
     </div>
   </div>
 
@@ -1391,14 +1408,43 @@ body {
           <span style="font-size:12px;color:#737373;">agent</span>
           <span style="font-size:11px;color:#22c55e;font-family:'DM Mono',monospace;">grantr lp rebalancer</span>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed #1f1f1f;">
-          <span style="font-size:12px;color:#737373;">can spend up to</span>
-          <span style="font-size:13px;color:#fff;font-weight:500;">$500 USDC <span style="font-size:11px;color:#555;text-decoration:underline;cursor:pointer;">edit</span></span>
+
+        <div style="padding:14px 0;border-bottom:1px dashed #1f1f1f;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:12px;color:#737373;">can spend up to</span>
+            <span style="font-size:11px;color:#555;">per action</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+            <button class="auth-pill" data-auth-limit="100" onclick="setAuthLimit(100)">$100</button>
+            <button class="auth-pill active" data-auth-limit="500" onclick="setAuthLimit(500)">$500</button>
+            <button class="auth-pill" data-auth-limit="1000" onclick="setAuthLimit(1000)">$1,000</button>
+            <button class="auth-pill" data-auth-limit="5000" onclick="setAuthLimit(5000)">$5,000</button>
+          </div>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed #1f1f1f;">
-          <span style="font-size:12px;color:#737373;">access for</span>
-          <span style="font-size:13px;color:#fff;font-weight:500;">30 days <span style="font-size:11px;color:#555;text-decoration:underline;cursor:pointer;">edit</span></span>
+
+        <div style="padding:14px 0;border-bottom:1px dashed #1f1f1f;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:12px;color:#737373;">access window</span>
+            <span style="font-size:11px;color:#555;">session expires after</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+            <button class="auth-pill" data-auth-window="1h" onclick="setAuthWindow('1h')">1h</button>
+            <button class="auth-pill" data-auth-window="6h" onclick="setAuthWindow('6h')">6h</button>
+            <button class="auth-pill" data-auth-window="24h" onclick="setAuthWindow('24h')">24h</button>
+            <button class="auth-pill active" data-auth-window="7d" onclick="setAuthWindow('7d')">7d</button>
+          </div>
         </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px dashed #1f1f1f;gap:12px;">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;color:#737373;">keep running</div>
+            <div style="font-size:10px;color:#555;margin-top:2px;">if off, agent stops after one rebalance</div>
+          </div>
+          <div class="auth-toggle" id="auth-keep-toggle" onclick="toggleAuthKeepRunning()">
+            <div class="auth-toggle-knob"></div>
+          </div>
+        </div>
+
         <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px dashed #1f1f1f;">
           <span style="font-size:12px;color:#737373;">can</span>
           <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">rebalance · collect fees</div><div style="font-size:10px;color:#555;margin-top:2px;">locked to these selectors</div></div>
@@ -1853,6 +1899,10 @@ function journeyEmailRecovery() {
 function journeyAddGuardians() {
   // setup: profile → security tile → add guardian → intro → pick → confirm → submitting → profile
   closeAction();
+  guardianSelected.clear();
+  renderGuardianPool();
+  const input = document.getElementById('guardian-pool-search');
+  if (input) input.value = '';
   go('guardians-intro');
 }
 
@@ -1896,6 +1946,29 @@ function go(id) {
     tabBar.style.display = 'none';
   }
   closeTray();
+
+  // hooks: populate dynamic content per screen
+  if (id === 'guardians-confirm') {
+    const names = Array.from(guardianSelected).map(gid => {
+      const g = guardianPool.find(x => x.id === gid);
+      return g ? g.name.replace('.eth', '') : gid;
+    });
+    const el = document.getElementById('guardians-confirm-names');
+    if (el) el.textContent = names.join(' · ') || '—';
+  }
+  if (id === 'recover-guardians-waiting') {
+    // reset to initial state so the flow works on re-runs
+    ['bob', 'carol', 'dan'].forEach(name => {
+      const dot = document.getElementById('guardian-' + name + '-dot');
+      if (dot) { dot.classList.remove('approved'); dot.classList.add('pending'); }
+      const status = document.getElementById('guardian-' + name + '-status');
+      if (status) { status.textContent = 'notified · waiting'; status.style.color = ''; }
+    });
+    const q = document.getElementById('quorum-progress');
+    if (q) { q.textContent = '0 of 2 required'; q.style.color = ''; }
+    const btn = document.getElementById('notify-guardians-btn');
+    if (btn) { btn.disabled = false; btn.textContent = 'notify guardians'; btn.style.opacity = '1'; }
+  }
 }
 
 function openAction() {
@@ -1976,26 +2049,37 @@ function startAddingGuardians() {
   }, 7200);
 }
 
-function simulateGuardianApprovals() {
-  // bob approves after 1s, carol after 2.5s, then advance
+function notifyGuardians() {
+  const btn = document.getElementById('notify-guardians-btn');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'notifying...';
+    btn.style.opacity = '0.6';
+  }
+  // brief "sending" state before bob/carol start responding
   setTimeout(() => {
+    if (btn) btn.textContent = 'waiting for approvals...';
+    // bob approves first
     document.getElementById('guardian-bob-dot').classList.remove('pending');
     document.getElementById('guardian-bob-dot').classList.add('approved');
     document.getElementById('guardian-bob-status').textContent = 'approved · just now';
     document.getElementById('guardian-bob-status').style.color = '#22c55e';
     document.getElementById('quorum-progress').textContent = '1 of 2 required';
-  }, 1000);
+  }, 1200);
+  // carol approves, quorum met
   setTimeout(() => {
     document.getElementById('guardian-carol-dot').classList.remove('pending');
     document.getElementById('guardian-carol-dot').classList.add('approved');
     document.getElementById('guardian-carol-status').textContent = 'approved · just now';
     document.getElementById('guardian-carol-status').style.color = '#22c55e';
-    document.getElementById('quorum-progress').textContent = '2 of 2 required · quorum met';
+    document.getElementById('quorum-progress').textContent = 'quorum met';
     document.getElementById('quorum-progress').style.color = '#22c55e';
-  }, 2500);
+    if (btn) btn.textContent = 'quorum reached';
+  }, 2700);
+  // auto-advance to passkey creation
   setTimeout(() => {
     go('recover-guardians-passkey');
-  }, 4000);
+  }, 4200);
 }
 
 function startRecoveringGuardians() {
@@ -2078,7 +2162,7 @@ const trayTemplates = {
       <div class="tray-section"><div class="tray-section-label">token approvals</div></div>
       <div class="tray-row" style="border-bottom: none;"><div><div class="tray-row-name" style="color: #555;">none</div></div></div>
     </div>
-    <div class="tray-action"><button class="tray-btn" onclick="closeTray(); go('guardians-intro')">add guardian</button></div>
+    <div class="tray-action"><button class="tray-btn" onclick="closeTray(); journeyAddGuardians();">add guardian</button></div>
     <div class="tray-spacer"></div>
   `,
   signing: `
@@ -2142,6 +2226,29 @@ function closeTray() {
 // ============== BUILD QUEUE ==============
 let buildQueue = [];
 
+// ============== REBALANCE AUTHORIZE POLICY ==============
+const authPolicy = { limit: 500, window: '7d', keepRunning: false };
+
+function setAuthLimit(val) {
+  authPolicy.limit = val;
+  document.querySelectorAll('[data-auth-limit]').forEach(b => {
+    b.classList.toggle('active', Number(b.dataset.authLimit) === val);
+  });
+}
+
+function setAuthWindow(val) {
+  authPolicy.window = val;
+  document.querySelectorAll('[data-auth-window]').forEach(b => {
+    b.classList.toggle('active', b.dataset.authWindow === val);
+  });
+}
+
+function toggleAuthKeepRunning() {
+  authPolicy.keepRunning = !authPolicy.keepRunning;
+  const el = document.getElementById('auth-keep-toggle');
+  if (el) el.classList.toggle('on', authPolicy.keepRunning);
+}
+
 function addFrame(type, name, sub) {
   buildQueue.push({ type, name, sub });
   renderBuildQueue();
@@ -2192,12 +2299,20 @@ const txPreviewData = {
       { type: 'default', name: 'add session key', sub: 'scope: rebalance() · collectFees()' }
     ],
     details: [
-      ['session limit', '$500 / 30 days'],
+      ['spending limit', '—'],
+      ['access window', '—'],
+      ['keep running', '—'],
       ['agent', 'lp rebalancer · ...9d8f'],
       ['network', 'etherex devnet'],
       ['gas', '0 ETH · sponsored']
     ],
-    onConfirm: () => { closeTxPreview(); go('rebalance-authorize'); setTimeout(() => grantRebalance(), 100); }
+    onConfirm: () => { closeTxPreview(); go('rebalance-authorize'); setTimeout(() => grantRebalance(), 100); },
+    onOpen: () => {
+      const d = txPreviewData.rebalance.details;
+      d[0][1] = `$${authPolicy.limit.toLocaleString()} per action`;
+      d[1][1] = authPolicy.window;
+      d[2][1] = authPolicy.keepRunning ? 'on · loops until revoked' : 'off · stops after one';
+    }
   },
   sponsor: {
     title: 'sponsor bob\'s transaction',
@@ -2225,20 +2340,28 @@ const txPreviewData = {
   },
   'add-guardians': {
     title: 'add guardian policy',
-    desc: 'install a 2-of-3 guardian policy. bob, carol, and dan will be able to co-sign key rotation — nothing else.',
+    desc: 'install a 2-of-3 guardian policy. the guardians can co-sign key rotation — nothing else.',
     frames: [
       { type: 'verify', name: 'passkey signature', sub: 'p-256 · this device' },
       { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster pays' },
-      { type: 'default', name: 'install guardian policy', sub: '2-of-3 · bob · carol · dan' }
+      { type: 'default', name: 'install guardian policy', sub: '2-of-3 quorum' }
     ],
     details: [
-      ['guardians', 'bob · carol · dan'],
+      ['guardians', '—'],
       ['quorum', '2 of 3'],
       ['authority', 'key rotation only'],
       ['network', 'etherex devnet'],
       ['gas', '0 ETH · sponsored']
     ],
-    onConfirm: () => { closeTxPreview(); startAddingGuardians(); }
+    onConfirm: () => { closeTxPreview(); startAddingGuardians(); },
+    onOpen: () => {
+      const names = Array.from(guardianSelected).map(gid => {
+        const g = guardianPool.find(x => x.id === gid);
+        return g ? g.name.replace('.eth', '') : gid;
+      }).join(' · ') || '—';
+      txPreviewData['add-guardians'].details[0][1] = names;
+      txPreviewData['add-guardians'].frames[2].sub = `2-of-3 · ${names}`;
+    }
   }
 };
 
@@ -2248,6 +2371,7 @@ function openTxPreview(key) {
   const data = txPreviewData[key];
   if (!data) return;
   currentTxPreview = key;
+  if (typeof data.onOpen === 'function') data.onOpen();
   document.getElementById('tx-preview-title').textContent = data.title;
   document.getElementById('tx-preview-desc').textContent = data.desc;
 
@@ -2439,7 +2563,116 @@ document.addEventListener('DOMContentLoaded', () => {
     const recov = document.getElementById('recov-' + id);
     if (recov) recov.innerHTML = identicon(seed, tone);
   }
+  renderGuardianPool();
 });
+
+// ============== GUARDIAN SELECTION ==============
+// candidate pool — alice's address book. bob/carol/dan are the spec guardians,
+// but you need to actually pick them (and could pick others instead).
+const guardianPool = [
+  { id: 'bob',   seed: 'bob.eth',   tone: 'amber',  name: 'bob.eth',   sub: 'frequent contact' },
+  { id: 'carol', seed: 'carol.eth', tone: 'pink',   name: 'carol.eth', sub: 'frequent contact' },
+  { id: 'dan',   seed: 'dan.eth',   tone: 'teal',   name: 'dan.eth',   sub: 'frequent contact' },
+  { id: 'eve',   seed: 'eve.eth',   tone: 'purple', name: 'eve.eth',   sub: 'sent funds 2x' },
+  { id: 'frank', seed: 'frank.eth', tone: 'blue',   name: 'frank.eth', sub: 'received funds 1x' },
+  { id: 'grace', seed: 'grace.eth', tone: 'red',    name: 'grace.eth', sub: 'ens · no activity' }
+];
+const guardianSelected = new Set();
+
+function toggleGuardian(id) {
+  if (guardianSelected.has(id)) {
+    guardianSelected.delete(id);
+  } else {
+    if (guardianSelected.size >= 3) return; // cap at 3
+    guardianSelected.add(id);
+  }
+  renderGuardianPool();
+}
+
+function renderGuardianPool() {
+  const pool = document.getElementById('guardian-pool');
+  if (!pool) return;
+  const q = (document.getElementById('guardian-pool-search')?.value || '').toLowerCase().trim();
+  const filtered = q ? guardianPool.filter(g => g.name.toLowerCase().includes(q)) : guardianPool;
+  pool.innerHTML = filtered.map(g => {
+    const selected = guardianSelected.has(g.id);
+    const disabled = !selected && guardianSelected.size >= 3;
+    return `<div onclick="toggleGuardian('${g.id}')" style="padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider); cursor: ${disabled ? 'default' : 'pointer'}; opacity: ${disabled ? '0.4' : '1'};">
+      <div class="addr-avatar">${identicon(g.seed, g.tone)}</div>
+      <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">${g.name}</div><div style="font-size:11px;color:var(--text-4);">${g.sub}</div></div>
+      <div style="width:18px;height:18px;border-radius:50%;${selected ? 'background:#22c55e;' : 'border:1px solid #333;'}display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;">${selected ? '✓' : ''}</div>
+    </div>`;
+  }).join('');
+  // strip last-child border
+  const lastRow = pool.querySelector(':scope > div:last-child');
+  if (lastRow) lastRow.style.borderBottom = 'none';
+  // status + cta
+  const status = document.getElementById('guardian-pool-status');
+  if (status) status.textContent = `${guardianSelected.size} of 3 selected`;
+  const btn = document.getElementById('guardian-continue-btn');
+  if (btn) {
+    if (guardianSelected.size === 3) {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = '0.4';
+    }
+  }
+}
+
+function confirmGuardianSelection() {
+  if (guardianSelected.size !== 3) return;
+  renderGuardianInvites();
+  go('guardians-inviting');
+  // simulate each invite being accepted at staggered intervals
+  const ids = Array.from(guardianSelected);
+  let accepted = 0;
+  ids.forEach((id, i) => {
+    setTimeout(() => {
+      markGuardianAccepted(id);
+      accepted++;
+      const status = document.getElementById('guardian-invite-status');
+      if (status) status.textContent = `${accepted} of 3 accepted`;
+      if (accepted === 3) {
+        const btn = document.getElementById('guardian-proceed-btn');
+        if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+        if (status) { status.textContent = 'all accepted'; status.style.color = '#22c55e'; }
+      }
+    }, 1200 + i * 1200);
+  });
+}
+
+function renderGuardianInvites() {
+  const list = document.getElementById('guardian-invite-list');
+  if (!list) return;
+  const ids = Array.from(guardianSelected);
+  const rows = ids.map(id => {
+    const g = guardianPool.find(x => x.id === id);
+    return `<div class="invite-row" id="invite-${id}" style="padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider);">
+      <div class="addr-avatar">${identicon(g.seed, g.tone)}</div>
+      <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">${g.name}</div><div style="font-size:11px;color:var(--text-4);" id="invite-${id}-status">sending invite...</div></div>
+      <div class="invite-spinner" id="invite-${id}-spinner" style="width:14px;height:14px;border:2px solid #333;border-top-color:var(--green);border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+    </div>`;
+  }).join('');
+  list.innerHTML = rows;
+  const lastRow = list.querySelector(':scope > div:last-child');
+  if (lastRow) lastRow.style.borderBottom = 'none';
+  // reset status
+  const status = document.getElementById('guardian-invite-status');
+  if (status) { status.textContent = '0 of 3 accepted'; status.style.color = ''; }
+  const btn = document.getElementById('guardian-proceed-btn');
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.4'; }
+}
+
+function markGuardianAccepted(id) {
+  const status = document.getElementById('invite-' + id + '-status');
+  const spinner = document.getElementById('invite-' + id + '-spinner');
+  if (status) { status.textContent = 'passkey created · accepted'; status.style.color = '#22c55e'; }
+  if (spinner) {
+    spinner.outerHTML = `<div style="width:18px;height:18px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;">✓</div>`;
+  }
+}
 </script>
 
 </body>
