@@ -148,12 +148,12 @@ body {
 
 /* tab screens (profile, sessions, activity, addresses) use balance bar + tab bar */
 .screen.tab-screen {}
-.balance-bar { padding: 4px 20px 14px; flex-shrink: 0; }
-.balance-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.balance-label { font-size: 11px; color: var(--text-4); text-transform: lowercase; letter-spacing: 1.5px; }
-.balance-amount { font-size: 48px; font-weight: 700; letter-spacing: -0.04em; line-height: 0.9; color: var(--green); }
-.identity-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
-.avatar-large { width: 20px; height: 20px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+.balance-bar { padding: 8px 20px 24px; flex-shrink: 0; }
+.balance-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.balance-label { font-size: 10px; color: var(--text-4); text-transform: lowercase; letter-spacing: 1.5px; }
+.balance-amount { font-size: 64px; font-weight: 700; letter-spacing: -0.045em; line-height: 0.9; color: var(--green); margin-bottom: 14px; }
+.identity-row { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+.avatar-large { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
 .avatar-large svg { display: block; width: 100%; height: 100%; }
 .identity-meta { display: flex; align-items: center; gap: 8px; }
 .identity-name { font-size: 12px; color: var(--text-2); }
@@ -164,7 +164,7 @@ body {
 /* sessions tab: activity bars hero */
 /* home screen: sparkline */
 /* home screen: section labels + tight rows + feed rows */
-.home-section-label { font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 1px; padding: 12px 20px 6px; display: flex; justify-content: space-between; align-items: baseline; }
+.home-section-label { font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 1px; padding: 16px 20px 8px; display: flex; justify-content: space-between; align-items: baseline; }
 .home-section-label span.see-all { color: var(--text-3); font-size: 10px; text-transform: none; letter-spacing: 0.3px; cursor: pointer; }
 .home-section-label span.see-all:hover { color: var(--text-1); }
 
@@ -181,7 +181,7 @@ body {
 .home-spark-box { height: 40px; }
 
 /* section divider between what's running and what happened */
-.home-section-divider { height: 1px; background: #1a1a1a; margin: 16px 20px 8px; }
+.home-section-divider { height: 1px; background: #1a1a1a; margin: 20px 20px 12px; }
 
 /* journey intro screens */
 .j-diagram { background: var(--card); border: 0.5px solid #1a1a1a; border-radius: 16px; padding: 28px 16px; margin: 16px 0 20px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: nowrap; }
@@ -231,11 +231,23 @@ body {
 .past-sessions-link { background: transparent; border: none; font-family: inherit; color: var(--text-3); font-size: 12px; padding: 14px 6px 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; width: 100%; text-align: left; }
 .past-sessions-link:hover { color: var(--text-2); }
 .past-sessions-group { display: flex; flex-direction: column; gap: 10px; }
-.session-card { background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; border: 0.5px solid #1a1a1a; }
+.session-card { background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; border: 0.5px solid #1a1a1a; cursor: pointer; }
 .session-card + .session-card { margin-top: 10px; }
 .session-card.expired { opacity: 0.4; }
 .session-card.revoked { border-color: #2a1414; }
 .session-card.revoked-anim { opacity: 0.5; transition: opacity 0.7s, border-color 0.7s; border-color: #2a1414; }
+.session-card.expanded { border-color: #2a2a2a; }
+
+/* collapsed by default: hide frame-section + card-footer */
+.session-card .frame-section,
+.session-card .card-footer { display: none; }
+.session-card.expanded .frame-section,
+.session-card.expanded .card-footer { display: block; }
+.session-card.expanded .card-footer { display: flex; }
+
+/* chevron indicator */
+.session-card-chev { color: #555; font-size: 16px; transition: transform 0.2s; align-self: center; flex-shrink: 0; }
+.session-card.expanded .session-card-chev { transform: rotate(90deg); color: var(--text-3); }
 .session-card-header { display: flex; align-items: flex-start; gap: 10px; padding-bottom: 10px; }
 .session-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
 .session-dot.active { background: var(--blue); }
@@ -409,7 +421,8 @@ body {
 .frames-toggle-chev { color: #555; font-size: 10px; transition: transform 0.2s; display: inline-block; }
 .frames-toggle.open .frames-toggle-chev { transform: rotate(90deg); }
 .frames-toggle-label { font-size: 10px; color: #555; font-family: 'DM Mono', monospace; letter-spacing: 0.8px; text-transform: uppercase; transition: color 0.15s; }
-.frames-toggle-eip { font-size: 10px; color: #333; margin-left: auto; font-family: 'DM Mono', monospace; }
+.frames-toggle-eip { font-size: 10px; color: #333; margin-left: auto; font-family: 'DM Mono', monospace; display: none; }
+.frames-toggle.open .frames-toggle-eip { display: inline; }
 .frames-toggle-body { display: none; padding: 10px 0 0; }
 .frames-toggle.open .frames-toggle-body { display: block; }
 .ftb-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; }
@@ -1155,7 +1168,7 @@ body {
       <div class="frames-toggle">
         <div class="frames-toggle-head" onclick="toggleFrames(this)">
           <span class="frames-toggle-chev">›</span>
-          <span class="frames-toggle-label">show frames</span>
+          <span class="frames-toggle-label">more detail</span>
           <span class="frames-toggle-eip">eip-8141</span>
         </div>
         <div class="frames-toggle-body">
@@ -1294,7 +1307,7 @@ body {
       <div class="frames-toggle">
         <div class="frames-toggle-head" onclick="toggleFrames(this)">
           <span class="frames-toggle-chev">›</span>
-          <span class="frames-toggle-label">show frames</span>
+          <span class="frames-toggle-label">more detail</span>
           <span class="frames-toggle-eip">eip-8141</span>
         </div>
         <div class="frames-toggle-body">
@@ -1470,7 +1483,7 @@ body {
       <div class="frames-toggle" id="delegate-frames-toggle">
         <div class="frames-toggle-head" onclick="toggleFrames(this)">
           <span class="frames-toggle-chev">›</span>
-          <span class="frames-toggle-label">show frames</span>
+          <span class="frames-toggle-label">more detail</span>
           <span class="frames-toggle-eip">eip-8141</span>
         </div>
         <div class="frames-toggle-body">
@@ -1790,24 +1803,6 @@ body {
           <div class="home-feed-time">2m ago</div>
         </div>
       </div>
-      <div class="home-feed-row" onclick="go('sessions')">
-        <div class="home-feed-avatar" id="home-feed-s2"></div>
-        <div class="home-feed-body">
-          <div class="home-feed-name">lp rebalancer</div>
-          <div class="home-feed-sub">attempted transfer · out of scope</div>
-        </div>
-        <div class="home-feed-right">
-          <span class="home-feed-pill blocked">blocked</span>
-          <div class="home-feed-time">5m ago</div>
-        </div>
-      </div>
-      <div class="home-feed-row" onclick="go('sessions')">
-        <div class="home-feed-avatar" id="home-feed-s3"></div>
-        <div class="home-feed-body">
-          <div class="home-feed-name">ens renewer</div>
-          <div class="home-feed-sub">idle · 345 days left</div>
-        </div>
-      </div>
     </div>
     <div class="home-feed-empty" id="home-sessions-empty" style="display:none;">
       <div class="home-feed-empty-body">nothing's running.</div>
@@ -1845,26 +1840,6 @@ body {
         <div class="home-feed-right">
           <div class="home-feed-amount red">−$100</div>
           <div class="home-feed-time">just now</div>
-        </div>
-      </div>
-      <div class="home-feed-row" onclick="go('activity')">
-        <div class="home-feed-avatar" id="home-feed-a2"></div>
-        <div class="home-feed-body">
-          <div class="home-feed-name">rebalanced position</div>
-          <div class="home-feed-sub">by lp rebalancer</div>
-        </div>
-        <div class="home-feed-right">
-          <div class="home-feed-time">2m ago</div>
-        </div>
-      </div>
-      <div class="home-feed-row" onclick="go('activity')">
-        <div class="home-feed-avatar" id="home-feed-a3"></div>
-        <div class="home-feed-body">
-          <div class="home-feed-name">granted access</div>
-          <div class="home-feed-sub">to lp rebalancer</div>
-        </div>
-        <div class="home-feed-right">
-          <div class="home-feed-time">1h ago</div>
         </div>
       </div>
     </div>
@@ -2159,7 +2134,9 @@ body {
   <!-- ============== SESSIONS TAB ============== -->
   <div id="screen-sessions" class="screen tab-screen">
     <div class="balance-bar">
-      <div class="balance-label">balance</div>
+      <div class="balance-label-row">
+        <div class="balance-label">balance</div>
+      </div>
       <div class="balance-amount">$2,847.30</div>
       <div class="identity-row">
         <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
@@ -2171,7 +2148,7 @@ body {
     </div>
     <div class="feed">
       <div class="section-label">active</div>
-      <div class="session-card">
+      <div class="session-card" onclick="toggleSessionCard(this, event)">
         <div class="session-card-header">
           <div class="session-dot active"></div>
           <div style="flex: 1;">
@@ -2179,6 +2156,7 @@ body {
             <div class="session-meta">$12.40 of $500 · 29 days left</div>
             <div class="usage-bar"><div class="usage-bar-fill" style="width: 2.5%;"></div></div>
           </div>
+          <span class="session-card-chev">›</span>
         </div>
         <div class="frame-section">
           <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · rebalance() · collectFees()</div></div>
@@ -2192,7 +2170,7 @@ body {
           </div>
         </div>
       </div>
-      <div class="session-card">
+      <div class="session-card" onclick="toggleSessionCard(this, event)">
         <div class="session-card-header">
           <div class="session-dot active"></div>
           <div style="flex: 1;">
@@ -2200,6 +2178,7 @@ body {
             <div class="session-meta">$0 of $50 · 345 days left</div>
             <div class="usage-bar"><div class="usage-bar-fill" style="width: 0%;"></div></div>
           </div>
+          <span class="session-card-chev">›</span>
         </div>
         <div class="frame-section">
           <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · renew()</div></div>
@@ -2252,7 +2231,9 @@ body {
   <!-- ============== ACTIVITY TAB ============== -->
   <div id="screen-activity" class="screen tab-screen">
     <div class="balance-bar">
-      <div class="balance-label">balance</div>
+      <div class="balance-label-row">
+        <div class="balance-label">balance</div>
+      </div>
       <div class="balance-amount">$2,847.30</div>
       <div class="identity-row">
         <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
@@ -2367,7 +2348,9 @@ body {
   <!-- ============== ADDRESSES (sub-page from profile) ============== -->
   <div id="screen-addresses" class="screen tab-screen">
     <div class="balance-bar">
-      <div class="balance-label">balance</div>
+      <div class="balance-label-row">
+        <div class="balance-label">balance</div>
+      </div>
       <div class="balance-amount">$2,847.30</div>
       <div class="identity-row">
         <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
@@ -2522,7 +2505,7 @@ body {
       <div class="frames-toggle">
         <div class="frames-toggle-head" onclick="toggleFrames(this)">
           <span class="frames-toggle-chev">›</span>
-          <span class="frames-toggle-label">show frames</span>
+          <span class="frames-toggle-label">more detail</span>
           <span class="frames-toggle-eip">eip-8141</span>
         </div>
         <div class="frames-toggle-body">
@@ -2561,7 +2544,9 @@ body {
   <!-- ============== REBALANCE: DASHBOARD (active session) ============== -->
   <div id="screen-rebalance-dashboard" class="screen tab-screen">
     <div class="balance-bar">
-      <div class="balance-label">balance</div>
+      <div class="balance-label-row">
+        <div class="balance-label">balance</div>
+      </div>
       <div class="balance-amount">$2,847.30</div>
       <div class="identity-row">
         <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
@@ -3020,7 +3005,7 @@ function toggleFrames(headEl) {
   if (!toggle) return;
   const isOpen = toggle.classList.toggle('open');
   const label = toggle.querySelector('.frames-toggle-label');
-  if (label) label.textContent = isOpen ? 'hide frames' : 'show frames';
+  if (label) label.textContent = isOpen ? 'less detail' : 'more detail';
 }
 
 function toggleHomeEmptyState() {
@@ -4047,6 +4032,12 @@ const agentSimScripts = {
 };
 let agentSimTimers = [];
 
+function toggleSessionCard(card, e) {
+  // ignore clicks on buttons inside the card
+  if (e && e.target.closest('button')) return;
+  card.classList.toggle('expanded');
+}
+
 function openAgentSimulation(agentId) {
   const script = agentSimScripts[agentId];
   if (!script) return;
@@ -4895,13 +4886,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setSlot('actx-alice', aliceInner);
   setSlot('reb-dash-act-1', pfpInner('lp-rebalancer'));
   setSlot('reb-dash-act-2', logoInner('https://assets.coingecko.com/coins/images/279/large/ethereum.png'), true);
-  // home screen feeds (3 session rows + 3 activity rows)
+  // home screen feeds (1 session row + 1 activity row)
   setSlot('home-feed-s1', pfpInner('lp-rebalancer'));
-  setSlot('home-feed-s2', pfpInner('lp-rebalancer'));
-  setSlot('home-feed-s3', pfpInner('ens-renewer'));
   setSlot('home-feed-a1', pfpInner('bob.eth'));
-  setSlot('home-feed-a2', pfpInner('lp-rebalancer'));
-  setSlot('home-feed-a3', pfpInner('lp-rebalancer'));
 });
 
 // ============== GUARDIAN SELECTION ==============
