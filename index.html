@@ -168,8 +168,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 /* ═══ BUILDER SECTION — centered product moment ═══ */
 .builder-section{padding:clamp(60px,8vw,100px) clamp(24px,5vw,80px);max-width:1100px;margin:0 auto;text-align:center}
 .builder-section .product-eyebrow{text-align:center}
-.builder-section .product-headline{text-align:center;margin-bottom:18px;max-width:720px;margin-left:auto;margin-right:auto}
-.builder-section .product-body{text-align:center;margin:0 auto 48px;max-width:560px}
+.builder-wordmark{font-size:clamp(72px,11vw,140px);font-weight:900;letter-spacing:-0.06em;line-height:0.9;margin:12px auto 18px;max-width:900px}
+.builder-wordmark .green{color:var(--green);display:inline-block;opacity:0;transform:translateY(6px);transition:opacity 0.5s ease 0.35s,transform 0.5s cubic-bezier(0.2,0.8,0.2,1) 0.35s}
+.reveal.visible .builder-wordmark .green{opacity:1;transform:translateY(0)}
+.builder-subhead{font-size:clamp(22px,3vw,32px);font-weight:900;letter-spacing:-0.03em;line-height:1.1;color:rgba(255,255,255,0.75);margin:0 auto 16px;max-width:600px}
+.builder-subhead .green{color:var(--green)}
+.builder-section .product-body{text-align:center;margin:0 auto 40px;max-width:520px}
 
 /* ═══ PROOF SECTION — one quote per block, centered, big ═══ */
 .proof-section{padding:clamp(60px,8vw,100px) clamp(24px,5vw,80px);max-width:760px;margin:0 auto;text-align:center}
@@ -323,14 +327,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
   </div>
 
   <div class="compare-punch">
-    <div class="compare-punch-today">what you can't do today.</div>
-    <div class="compare-punch-frames">what you can do with grantr.</div>
+    <div class="compare-punch-today">what you can't do today,</div>
+    <div class="compare-punch-frames">you can do with frames.</div>
   </div>
 </div>
 
 <!-- FRAMES BUILDER — centered product moment -->
 <div class="builder-section reveal" id="frames">
-  <div class="product-headline">one transaction, <span class="green">many frames.</span></div>
+  <div class="product-eyebrow">↓ enter.</div>
+  <div class="builder-wordmark">grantr<span class="green">.</span></div>
+  <div class="builder-subhead">one transaction, <span class="green">many frames.</span></div>
   <div class="product-body">build a transaction by stacking steps. each step is a frame. they all run together — if any step fails, nothing happens.</div>
   <div class="trace">
     <div class="trace-head">
