@@ -144,6 +144,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .reveal.visible .product-headline .green{opacity:1;transform:translateY(0)}
 .product-body{font-size:16px;line-height:1.6;color:var(--t2);max-width:440px}
 .product-steps{margin-top:22px;display:flex;flex-direction:column;gap:8px}
+.policy-list{margin-top:22px;display:flex;flex-direction:column;gap:12px}
+.policy-item{display:grid;grid-template-columns:120px 1fr;gap:14px;align-items:baseline;padding:10px 0;border-top:1px solid rgba(255,255,255,0.04)}
+.policy-item:first-child{border-top:none;padding-top:0}
+.policy-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.25}
+.policy-desc{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.5}
 .product-step{display:flex;gap:12px;font-size:14px;color:rgba(255,255,255,0.4);line-height:1.5}
 .product-step-n{font-family:var(--mono);color:var(--green);opacity:0.5;width:18px;flex-shrink:0}
 
@@ -236,6 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
   .compare-row-left .compare-cell-frames{order:1}
   .compare-row-left .compare-cell-today{order:0}
   .compare-punch{grid-template-columns:1fr;gap:12px}
+  .policy-item{grid-template-columns:1fr;gap:4px}
 }
 </style>
 </head>
@@ -341,7 +347,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
   <div class="trace">
     <div class="trace-head">
       <div class="trace-head-label">FRAME TYPES</div>
-      <div class="trace-head-meta">pick and stack</div>
+      <div class="trace-head-meta">build transactions with frames</div>
     </div>
 
     <div class="trace-row">
@@ -398,18 +404,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 <!-- FLOWS — unified section -->
 <div class="flows-wrapper" id="flows">
 
-<!-- FLOW 1: the basics — product moment, text left, visual right -->
+<!-- FLOW 1: the basics -->
 <div class="product reveal">
   <div class="product-inner">
     <div class="product-text">
       <div class="product-eyebrow">the basics</div>
       <div class="product-headline">no seed phrase. <span class="green">ever.</span></div>
-      <div class="product-body">create an account with a passkey. the account lives on chain. your device holds the key. your email is the recovery path.</div>
-      <div class="product-steps">
-        <div class="product-step"><span class="product-step-n">1</span>enter your email for recovery.</div>
-        <div class="product-step"><span class="product-step-n">2</span>create a passkey with face id or touch id.</div>
-        <div class="product-step"><span class="product-step-n">3</span>land on home with a deployed account.</div>
-      </div>
+      <div class="product-body">create an account with a passkey. your device holds the key. your email is the recovery path. from day one, you can send, receive, and start building transactions.</div>
     </div>
     <div class="product-visual">
       <div class="triptych tint-green">
@@ -423,19 +424,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
   </div>
 </div>
 
-<!-- FLOW 2: delegation — flipped, visual left, text right -->
+<!-- FLOW 2: delegation -->
 <div class="product reveal">
   <div class="product-inner flip">
     <div class="product-text">
       <div class="product-eyebrow">delegation</div>
       <div class="product-headline">hire an agent. <span class="green">keep the keys.</span></div>
-      <div class="product-body">grant a scoped session key to an agent. they can only do what you allow — nothing else, not even with the key.</div>
-      <div class="product-steps">
-        <div class="product-step"><span class="product-step-n">1</span>pick an agent, such as an lp rebalancer.</div>
-        <div class="product-step"><span class="product-step-n">2</span>set a spending limit and time window.</div>
-        <div class="product-step"><span class="product-step-n">3</span>sign. the session key installs on your account.</div>
-        <div class="product-step"><span class="product-step-n">4</span>agent acts — one tx passes, one reverts.</div>
-      </div>
+      <div class="product-body">grant a scoped session key to an agent — an lp rebalancer, a subscription renewer, a portfolio automator. they act within the scope you set. revoke anytime. they never hold the keys.</div>
     </div>
     <div class="product-visual">
       <div class="triptych tint-blue">
@@ -449,45 +444,51 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
   </div>
 </div>
 
-<!-- FLOW 3: co-signing — text left, visual right -->
+<!-- FLOW 3: policies -->
 <div class="product reveal">
   <div class="product-inner">
     <div class="product-text">
-      <div class="product-eyebrow">co-signing</div>
-      <div class="product-headline">big tx? <span class="green">both devices.</span></div>
-      <div class="product-body">below your threshold, one device is enough. above it, both must sign — enforced by your verify frame at the protocol level.</div>
-      <div class="product-steps">
-        <div class="product-step"><span class="product-step-n">1</span>start a $1,500 send — above your $1,000 threshold.</div>
-        <div class="product-step"><span class="product-step-n">2</span>your phone signs first.</div>
-        <div class="product-step"><span class="product-step-n">3</span>your laptop signs second.</div>
-        <div class="product-step"><span class="product-step-n">4</span>verify frame requires both signatures to pass.</div>
+      <div class="product-eyebrow">policies</div>
+      <div class="product-headline">your rules. <span class="green">enforced on-chain.</span></div>
+      <div class="product-body">add a verify frame to your account. every transaction must pass it alongside your passkey. the protocol runs the rules — the app doesn't get to decide.</div>
+      <div class="policy-list">
+        <div class="policy-item">
+          <div class="policy-name">threshold by value</div>
+          <div class="policy-desc">require a second device above $1,000.</div>
+        </div>
+        <div class="policy-item">
+          <div class="policy-name">time-locked</div>
+          <div class="policy-desc">require a 24h delay on specific actions.</div>
+        </div>
+        <div class="policy-item">
+          <div class="policy-name">guardian quorum</div>
+          <div class="policy-desc">require 2-of-3 guardians for key rotation.</div>
+        </div>
+        <div class="policy-item">
+          <div class="policy-name">custom signer</div>
+          <div class="policy-desc">paste a contract address that returns valid.</div>
+        </div>
       </div>
     </div>
     <div class="product-visual">
       <div class="triptych tint-amber">
-        <div class="tri-ico"><div class="tri-ico-box" style="background:rgba(255,159,10,0.1);color:var(--amber)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M7 12h10"/></svg></div><div class="tri-ico-label">big tx</div></div>
+        <div class="tri-ico"><div class="tri-ico-box" style="background:rgba(255,255,255,0.06);color:var(--t2)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 10h8M8 14h5"/></svg></div><div class="tri-ico-label">your tx</div></div>
         <div class="tri-arrow">→</div>
-        <div class="tri-ico"><div class="tri-ico-box" style="background:rgba(0,214,50,0.1);color:var(--green)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="8" height="14" rx="2"/><rect x="13" y="5" width="8" height="14" rx="2"/></svg></div><div class="tri-ico-label">both devices</div></div>
+        <div class="tri-ico"><div class="tri-ico-box" style="background:rgba(255,159,10,0.1);color:var(--amber)"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="tri-ico-label">verify frame</div></div>
         <div class="tri-arrow">→</div>
-        <div class="tri-ico"><div class="tri-ico-box" style="background:rgba(10,132,255,0.1);color:var(--blue)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12l3 3 5-6"/></svg></div><div class="tri-ico-label">signed</div></div>
+        <div class="tri-ico"><div class="tri-ico-box" style="background:rgba(0,214,50,0.1);color:var(--green)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12l3 3 5-6"/></svg></div><div class="tri-ico-label">enforced</div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- FLOW 4: recovery — flipped -->
+<!-- FLOW 4: recovery -->
 <div class="product reveal">
   <div class="product-inner flip">
     <div class="product-text">
       <div class="product-eyebrow">recovery</div>
-      <div class="product-headline">lose your key. <span class="green">keep your account.</span></div>
-      <div class="product-body">recover via email. the new passkey rotates onto the same account. your address stays. your history stays.</div>
-      <div class="product-steps">
-        <div class="product-step"><span class="product-step-n">1</span>start a recovery with your email.</div>
-        <div class="product-step"><span class="product-step-n">2</span>verify the email link (attestation issued by grantr).</div>
-        <div class="product-step"><span class="product-step-n">3</span>create a new passkey on your new device.</div>
-        <div class="product-step"><span class="product-step-n">4</span>the key rotates on-chain. same address, no need to move funds.</div>
-      </div>
+      <div class="product-headline">lose your key. <span class="green">keep your address.</span></div>
+      <div class="product-body">recover via email. a new passkey rotates onto the same account. no new account. no moving funds. adding a new device works the same way.</div>
     </div>
     <div class="product-visual">
       <div class="triptych tint-red">
@@ -524,7 +525,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 <!-- SPEC — minimal footer-style -->
 <div class="spec-section reveal" id="spec">
   <div class="sec-title">reference implementation.</div>
-  <div class="sec-sub">a frames-native account for developers and designers building on eip-8141. scoped to account creation, recovery, delegation, and multi-device — not a full financial product.</div>
+  <div class="sec-sub">a frames-native account scoped to onboarding, delegation, policies, and recovery. built on eip-8141 as a reference client for developers and designers.</div>
   <div class="spec-grid">
     <div>
       <div class="spec-col-head">stack</div>
