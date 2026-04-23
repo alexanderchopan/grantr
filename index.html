@@ -269,7 +269,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
   </div>
 </div>
 
-<!-- COMPARE — the bento grid -->
+<!-- COMPARE — numbered spine -->
 <div class="compare-section reveal" id="compare">
   <div class="compare-head">
     <div class="product-eyebrow">the problem · accounts haven't kept up</div>
@@ -298,7 +298,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
     </div>
     <div>
       <div class="compare-today-title">trapped in an app.</div>
-      <div class="compare-today-caption">each wallet implements recovery, passkeys, and session keys differently. they don't interoperate.</div>
+      <div class="compare-today-caption">each wallet implements accounts differently. they don't interoperate and aren't portable.</div>
       <div class="compare-mono-label frames">with frames</div>
       <div class="compare-frames-title">policy, not migration.</div>
       <div class="compare-frames-caption">all policies on a shared primitive. <strong>switching apps is just a policy update.</strong></div>
@@ -312,7 +312,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
     </div>
     <div>
       <div class="compare-today-title">the app asks nicely.</div>
-      <div class="compare-today-caption">authorizing an agent or a dapp gives it too much power. the chain doesn't enforce what you agreed to.</div>
+      <div class="compare-today-caption">authorizing an agent gives it too much power. the chain can't enforce what you agreed to.</div>
       <div class="compare-mono-label frames">with frames</div>
       <div class="compare-frames-title">the protocol runs the rules.</div>
       <div class="compare-frames-caption">scope, limit, time window — <strong>enforced at the protocol level.</strong></div>
@@ -390,7 +390,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
     <div class="product-text">
       <div class="product-eyebrow">the basics</div>
       <div class="product-headline">no seed phrase. <span class="green">ever.</span></div>
-      <div class="product-body">create an account with a passkey. your device holds the key. your email is the recovery path. from day one, you can send, receive, and start building transactions.</div>
+      <div class="product-body">create an account with a passkey. your device holds the key. your email is the recovery path.</div>
     </div>
     <div class="product-visual">
       <div class="triptych tint-green">
@@ -410,7 +410,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
     <div class="product-text">
       <div class="product-eyebrow">delegation</div>
       <div class="product-headline">hire an agent. <span class="green">keep the keys.</span></div>
-      <div class="product-body">grant a scoped session key to an agent — an lp rebalancer, a subscription renewer, a portfolio automator. they act within the scope you set. revoke anytime. they never hold the keys.</div>
+      <div class="product-body">grant a scoped session key to an agent — an lp rebalancer, a subscription renewer, a portfolio automator. revoke anytime.</div>
     </div>
     <div class="product-visual">
       <div class="triptych tint-blue">
@@ -430,7 +430,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
     <div class="product-text">
       <div class="product-eyebrow">policies</div>
       <div class="product-headline">your rules. <span class="green">enforced on-chain.</span></div>
-      <div class="product-body">add a verify frame to your account. every transaction must pass it alongside your passkey. the protocol runs the rules — the app doesn't get to decide.</div>
+      <div class="product-body">add a verify frame to your account. every transaction must pass it. the app doesn't get to decide.</div>
       <div class="policy-list">
         <div class="policy-item">
           <div class="policy-name">add a signer</div>
@@ -511,7 +511,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 <!-- SPEC — minimal footer-style -->
 <div class="spec-section reveal" id="spec">
   <div class="sec-title">reference implementation.</div>
-  <div class="sec-sub">a frames-native account scoped to onboarding, delegation, policies, and recovery. built on eip-8141 as a reference client for developers and designers.</div>
+  <div class="sec-sub">a reference implementation of eip-8141, scoped to onboarding, delegation, policies, and recovery. built for developers and designers.</div>
   <div class="spec-grid">
     <div>
       <div class="spec-col-head">stack</div>
