@@ -63,47 +63,55 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .hero-demo-dot{width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:8px;animation:pulse 1.6s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}
 
-/* ═══ COMPARE — the stack: typographic before/after pairs ═══ */
-.compare-section{padding:clamp(100px,12vw,180px) clamp(24px,5vw,80px);max-width:900px;margin:0 auto}
+/* ═══ COMPARE — the bento grid ═══ */
+.compare-section{padding:clamp(100px,12vw,180px) clamp(24px,5vw,80px);max-width:1100px;margin:0 auto}
 .compare-head{margin-bottom:clamp(48px,6vw,72px);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .compare-head-line{flex:1;height:1px;background:rgba(255,255,255,0.06);min-width:40px}
 .compare-head .product-eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:0}
 .compare-head .product-eyebrow::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--green)}
 .compare-headline{font-size:clamp(36px,5vw,56px);font-weight:900;letter-spacing:-0.04em;line-height:1;width:100%;margin-top:16px}
 .compare-headline .green{color:var(--green)}
-.compare-pair{padding:clamp(36px,5vw,56px) 0;border-top:1px solid rgba(255,255,255,0.04)}
-.compare-pair:first-of-type{border-top:none;padding-top:0}
-.compare-pair-num{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:0.1em;margin-bottom:14px;text-transform:uppercase}
-.compare-line{font-weight:900;letter-spacing:-0.04em}
-.compare-line-today{font-size:14px;color:rgba(255,255,255,0.45);line-height:1.3;margin-bottom:8px;font-weight:600;letter-spacing:0}
-.compare-line-today strong{color:rgba(255,255,255,0.75);font-weight:700}
-.compare-line-frames{font-size:clamp(40px,6vw,72px);color:var(--green);line-height:0.95;margin-top:26px;margin-bottom:12px;letter-spacing:-0.05em}
-.compare-caption{font-size:13px;color:rgba(255,255,255,0.3);line-height:1.55;max-width:520px}
-.compare-caption strong{color:rgba(255,255,255,0.65);font-weight:600}
-.compare-caption-frames{color:rgba(255,255,255,0.5)}
-.compare-caption-frames strong{color:var(--green);font-weight:600}
-.compare-punch{margin-top:clamp(60px,7vw,88px);padding-top:28px;border-top:1px solid rgba(255,255,255,0.08)}
-.compare-punch-today{font-size:14px;color:rgba(255,255,255,0.4);font-weight:600;line-height:1.3;margin-bottom:6px;letter-spacing:0}
-.compare-punch-frames{font-size:clamp(40px,6vw,72px);font-weight:900;letter-spacing:-0.05em;color:var(--green);line-height:0.95}
+.compare-row{display:grid;gap:12px;margin-bottom:12px;min-height:240px}
+.compare-row-right{grid-template-columns:1fr 2fr}
+.compare-row-left{grid-template-columns:2fr 1fr}
+.compare-cell{border-radius:8px;padding:clamp(20px,2.5vw,32px);display:flex;flex-direction:column;justify-content:space-between;gap:16px}
+.compare-cell-today{background:#0a0a0a;border:1px solid rgba(255,255,255,0.06)}
+.compare-cell-frames{background:linear-gradient(135deg,rgba(0,214,50,0.06) 0%,#0a0a0a 70%);border:1px solid rgba(0,214,50,0.15);justify-content:center}
+.compare-row-left .compare-cell-frames{order:0}
+.compare-row-left .compare-cell-today{order:1}
+.compare-cell-num{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:0.1em;text-transform:uppercase}
+.compare-cell-today-title{font-size:clamp(16px,1.8vw,20px);color:rgba(255,255,255,0.6);font-weight:700;line-height:1.2;margin-top:8px}
+.compare-cell-today-caption{font-size:12px;color:rgba(255,255,255,0.35);line-height:1.6}
+.compare-cell-today-caption strong{color:rgba(255,255,255,0.6);font-weight:600}
+.compare-cell-frames-title{font-size:clamp(36px,5vw,60px);font-weight:900;letter-spacing:-0.05em;color:var(--green);line-height:0.92;margin-bottom:14px}
+.compare-cell-frames-caption{font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;max-width:460px}
+.compare-cell-frames-caption strong{color:var(--green);font-weight:600}
+.compare-punch{margin-top:24px;padding:clamp(28px,3vw,40px) clamp(24px,3vw,36px);background:linear-gradient(135deg,#141414 0%,rgba(0,214,50,0.08) 100%);border:1px solid rgba(0,214,50,0.2);border-radius:8px;display:grid;grid-template-columns:1fr 2fr;gap:24px;align-items:center}
+.compare-punch-today{font-size:clamp(14px,1.4vw,16px);color:rgba(255,255,255,0.4);font-weight:600;line-height:1.25}
+.compare-punch-frames{font-size:clamp(32px,4vw,52px);font-weight:900;letter-spacing:-0.04em;color:var(--green);line-height:0.98}
 
-/* ═══ FRAMES BUILDER ═══ */
+/* ═══ FRAMES BUILDER — execution trace ═══ */
 .sec-title{font-size:clamp(36px,5vw,56px);font-weight:900;letter-spacing:-0.04em;line-height:0.95;margin-bottom:16px}
 .sec-sub{font-size:15px;color:var(--t3);line-height:1.6;margin-bottom:48px;max-width:540px}
-.builder{background:var(--card);border-radius:20px;padding:6px;max-width:580px;position:relative}
-.builder::before{content:'';position:absolute;top:28px;bottom:28px;left:30px;width:2px;background:linear-gradient(180deg,rgba(0,214,50,0.3) 0%,rgba(0,214,50,0.1) 100%);border-radius:1px;pointer-events:none}
-.builder-caption{margin-top:16px;font-family:var(--mono);font-size:11px;color:rgba(0,214,50,0.45);letter-spacing:0.04em;padding-left:6px}
-.fr{display:flex;align-items:center;gap:14px;padding:16px 18px;border-top:1px solid rgba(255,255,255,0.04);position:relative;transition:background 0.2s ease;border-radius:10px}
-.builder:hover .fr{background:transparent}
-.builder .fr:hover{background:rgba(0,214,50,0.04)}
-.fr:first-child{border-top:none}
-.pill{font-family:var(--mono);font-size:9px;font-weight:500;padding:4px 8px;border-radius:4px;width:68px;text-align:center;flex-shrink:0}
-.pv{background:rgba(0,214,50,0.06);color:var(--green)}
-.ps{background:rgba(255,159,10,0.06);color:var(--amber)}
-.pe{background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.25)}
-.pd{background:rgba(10,132,255,0.06);color:var(--blue)}
-.fr-info{display:flex;flex-direction:column;gap:1px}
-.fr-title{font-size:13px;font-weight:600;color:rgba(255,255,255,0.6)}
-.fr-desc{font-size:11px;color:rgba(255,255,255,0.18);font-family:var(--mono)}
+.trace{background:#0a0a0a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;max-width:560px;margin:0 auto;text-align:left;overflow:hidden}
+.trace-head{padding:14px 18px;background:rgba(255,255,255,0.02);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;font-size:11px;font-family:var(--mono)}
+.trace-head-label{color:rgba(255,255,255,0.5);letter-spacing:0.1em}
+.trace-head-meta{color:rgba(255,255,255,0.3)}
+.trace-row{padding:14px 18px;display:grid;grid-template-columns:90px 1fr;gap:16px;align-items:center;border-top:1px solid rgba(255,255,255,0.03)}
+.trace-row:first-of-type{border-top:none}
+.trace-pill{padding:4px 0;border-radius:4px;font-size:10px;font-family:var(--mono);font-weight:600;letter-spacing:0.04em;text-align:center;text-transform:uppercase}
+.trace-pill.tv{background:rgba(0,214,50,0.12);color:var(--green)}
+.trace-pill.ts{background:rgba(10,132,255,0.12);color:var(--blue)}
+.trace-pill.te{background:rgba(255,159,10,0.12);color:var(--amber)}
+.trace-pill.td{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6)}
+.trace-row-title{font-size:14px;font-weight:600;line-height:1.25}
+.trace-row-desc{font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;line-height:1.4;font-family:var(--mono)}
+.builder-caption{margin-top:20px;font-family:var(--mono);font-size:11px;color:rgba(0,214,50,0.5);letter-spacing:0.06em;text-align:center}
+@media(max-width:560px){
+  .trace-row{grid-template-columns:78px 1fr;gap:12px;padding:12px 14px}
+  .trace-row-title{font-size:13px}
+  .trace-row-desc{font-size:10px}
+}
 
 /* ═══ PRODUCT SECTIONS — cash.app style, full-width alternating ═══ */
 .product{padding:clamp(80px,10vw,140px) clamp(24px,5vw,80px);max-width:1200px;margin:0 auto}
@@ -147,9 +155,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .builder-section .product-eyebrow{text-align:center}
 .builder-section .product-headline{text-align:center;margin-bottom:18px;max-width:720px;margin-left:auto;margin-right:auto}
 .builder-section .product-body{text-align:center;margin:0 auto 48px;max-width:560px}
-.builder{background:var(--card);border-radius:24px;padding:10px;max-width:620px;margin:0 auto;position:relative;text-align:left}
-.builder::before{content:'';position:absolute;top:30px;bottom:30px;left:34px;width:2px;background:linear-gradient(180deg,rgba(0,214,50,0.3) 0%,rgba(0,214,50,0.08) 100%);border-radius:1px;pointer-events:none}
-.builder-footer{margin-top:24px;font-family:var(--mono);font-size:11px;color:rgba(0,214,50,0.4);letter-spacing:0.06em;text-align:center}
 
 /* ═══ PROOF SECTION — one quote per block, centered, big ═══ */
 .proof-section{padding:clamp(100px,12vw,180px) clamp(24px,5vw,80px);max-width:900px;margin:0 auto;text-align:center}
@@ -203,6 +208,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
   .tri-ico-box{width:52px;height:52px}
   .tri-ico-box svg{width:22px;height:22px}
   .spec-grid{grid-template-columns:1fr;gap:24px}
+  .compare-row,.compare-row-right,.compare-row-left{grid-template-columns:1fr;min-height:0}
+  .compare-row-left .compare-cell-frames{order:0}
+  .compare-row-left .compare-cell-today{order:1}
+  .compare-punch{grid-template-columns:1fr;gap:12px}
 }
 </style>
 </head>
@@ -246,7 +255,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
   </div>
 </div>
 
-<!-- COMPARE — the stack: typographic before/after pairs -->
+<!-- COMPARE — the bento grid -->
 <div class="compare-section reveal">
   <div class="compare-head">
     <div class="product-eyebrow">the problem</div>
@@ -254,33 +263,51 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
     <div class="compare-headline">accounts haven't kept up.<br><span class="green">frames fix that.</span></div>
   </div>
 
-  <div class="compare-pair">
-    <div class="compare-pair-num">01 · eoas</div>
-    <div class="compare-line compare-line-today">today: <strong>one keypair, forever.</strong></div>
-    <div class="compare-caption">you have a single keypair forever. <strong>your address is bound to that keypair</strong> — lose the seed phrase, lose everything.</div>
-    <div class="compare-line compare-line-frames">with frames: a list of typed steps.</div>
-    <div class="compare-caption compare-caption-frames">a transaction is a list of typed steps — verify, execute, deploy — that the protocol runs in order. <strong>no bundler, no entrypoint.</strong> eoas get passkeys, batching, and gas sponsorship without deploying anything.</div>
+  <div class="compare-row compare-row-right">
+    <div class="compare-cell compare-cell-today">
+      <div class="compare-cell-num">01 · eoas</div>
+      <div>
+        <div class="compare-cell-today-title">today: one keypair, forever.</div>
+        <div class="compare-cell-today-caption" style="margin-top:8px">you have a single keypair forever. <strong>your address is bound to that keypair</strong> — lose the seed phrase, lose everything.</div>
+      </div>
+    </div>
+    <div class="compare-cell compare-cell-frames">
+      <div class="compare-cell-frames-title">a list of typed steps.</div>
+      <div class="compare-cell-frames-caption">a transaction is a list of typed steps — verify, execute, deploy — that the protocol runs in order. <strong>no bundler, no entrypoint.</strong> eoas get passkeys, batching, and gas sponsorship without deploying anything.</div>
+    </div>
   </div>
 
-  <div class="compare-pair">
-    <div class="compare-pair-num">02 · smart wallets</div>
-    <div class="compare-line compare-line-today">today: <strong>trapped in an app.</strong></div>
-    <div class="compare-caption">each wallet implements recovery, passkeys, and session keys differently. they don't interoperate. <strong>your account is trapped in an app.</strong></div>
-    <div class="compare-line compare-line-frames">with frames: policy, not migration.</div>
-    <div class="compare-caption compare-caption-frames">recovery, session keys, device thresholds — frame policies on a shared primitive. <strong>switching apps is a policy update</strong>, not a migration.</div>
+  <div class="compare-row compare-row-left">
+    <div class="compare-cell compare-cell-frames">
+      <div class="compare-cell-frames-title">policy, not migration.</div>
+      <div class="compare-cell-frames-caption">recovery, session keys, device thresholds — frame policies on a shared primitive. <strong>switching apps is a policy update</strong>, not a migration.</div>
+    </div>
+    <div class="compare-cell compare-cell-today">
+      <div class="compare-cell-num">02 · smart wallets</div>
+      <div>
+        <div class="compare-cell-today-title">today: trapped in an app.</div>
+        <div class="compare-cell-today-caption" style="margin-top:8px">each wallet implements recovery, passkeys, and session keys differently. they don't interoperate. <strong>your account is trapped in an app.</strong></div>
+      </div>
+    </div>
   </div>
 
-  <div class="compare-pair">
-    <div class="compare-pair-num">03 · agents + dapps</div>
-    <div class="compare-line compare-line-today">today: <strong>the app asks nicely.</strong></div>
-    <div class="compare-caption">authorizing an agent or a dapp gives it too much power. <strong>the app can only ask nicely</strong> — the chain doesn't enforce what you actually agreed to.</div>
-    <div class="compare-line compare-line-frames">with frames: the protocol runs the rules.</div>
-    <div class="compare-caption compare-caption-frames">scope, limit, time window. <strong>the protocol runs the rules.</strong> the app doesn't get to decide.</div>
+  <div class="compare-row compare-row-right">
+    <div class="compare-cell compare-cell-today">
+      <div class="compare-cell-num">03 · agents + dapps</div>
+      <div>
+        <div class="compare-cell-today-title">today: the app asks nicely.</div>
+        <div class="compare-cell-today-caption" style="margin-top:8px">authorizing an agent or a dapp gives it too much power. <strong>the app can only ask nicely</strong> — the chain doesn't enforce what you actually agreed to.</div>
+      </div>
+    </div>
+    <div class="compare-cell compare-cell-frames">
+      <div class="compare-cell-frames-title">the protocol runs the rules.</div>
+      <div class="compare-cell-frames-caption">scope, limit, time window. <strong>the protocol runs the rules.</strong> the app doesn't get to decide.</div>
+    </div>
   </div>
 
   <div class="compare-punch">
-    <div class="compare-punch-line compare-punch-today">what you can't do today.</div>
-    <div class="compare-punch-line compare-punch-frames">what you can do with grantr.</div>
+    <div class="compare-punch-today">what you can't do today.</div>
+    <div class="compare-punch-frames">what you can do with grantr.</div>
   </div>
 </div>
 
@@ -288,16 +315,62 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 <div class="builder-section reveal" id="frames">
   <div class="product-eyebrow">meet grantr</div>
   <div class="product-headline">one tx, <span class="green">many steps.</span></div>
-  <div class="product-body">stack frames to compose a transaction. each has a role. they all run together — if any step fails, nothing happens.</div>
-  <div class="builder">
-    <div class="fr"><span class="pill pv">verify</span><div class="fr-info"><span class="fr-title">prove it's you</span><span class="fr-desc">passkey · p-256 · this device</span></div></div>
-    <div class="fr"><span class="pill pv">verify</span><div class="fr-info"><span class="fr-title">verify an agent's session key</span><span class="fr-desc">scoped to specific actions, limits, and windows</span></div></div>
-    <div class="fr"><span class="pill ps">sponsor</span><div class="fr-info"><span class="fr-title">pay with grantr gas</span><span class="fr-desc">paymaster sponsorship · no eth required</span></div></div>
-    <div class="fr"><span class="pill pe">sender</span><div class="fr-info"><span class="fr-title">send tokens</span><span class="fr-desc">transfer erc-20 or native eth</span></div></div>
-    <div class="fr"><span class="pill pe">sender</span><div class="fr-info"><span class="fr-title">call a contract</span><span class="fr-desc">any address + calldata · read or write</span></div></div>
-    <div class="fr"><span class="pill pd">default</span><div class="fr-info"><span class="fr-title">change your account rules</span><span class="fr-desc">rotate key · add guardian · update session</span></div></div>
+  <div class="product-body">build a transaction by stacking steps. each step is a frame. they all run together — if any step fails, nothing happens.</div>
+  <div class="trace">
+    <div class="trace-head">
+      <div class="trace-head-label">FRAME TYPES</div>
+      <div class="trace-head-meta">pick and stack</div>
+    </div>
+
+    <div class="trace-row">
+      <div class="trace-pill tv">verify</div>
+      <div>
+        <div class="trace-row-title">prove it's you</div>
+        <div class="trace-row-desc">passkey · p-256 · this device</div>
+      </div>
+    </div>
+
+    <div class="trace-row">
+      <div class="trace-pill tv">verify</div>
+      <div>
+        <div class="trace-row-title">verify an agent's session key</div>
+        <div class="trace-row-desc">scoped to specific actions, limits, and windows</div>
+      </div>
+    </div>
+
+    <div class="trace-row">
+      <div class="trace-pill ts">sponsor</div>
+      <div>
+        <div class="trace-row-title">pay with grantr gas</div>
+        <div class="trace-row-desc">paymaster sponsorship · no eth required</div>
+      </div>
+    </div>
+
+    <div class="trace-row">
+      <div class="trace-pill te">sender</div>
+      <div>
+        <div class="trace-row-title">send tokens</div>
+        <div class="trace-row-desc">transfer erc-20 or native eth</div>
+      </div>
+    </div>
+
+    <div class="trace-row">
+      <div class="trace-pill te">sender</div>
+      <div>
+        <div class="trace-row-title">call a contract</div>
+        <div class="trace-row-desc">any address + calldata · read or write</div>
+      </div>
+    </div>
+
+    <div class="trace-row">
+      <div class="trace-pill td">default</div>
+      <div>
+        <div class="trace-row-title">change your account rules</div>
+        <div class="trace-row-desc">rotate key · add guardian · update session</div>
+      </div>
+    </div>
   </div>
-  <div class="builder-footer">your intent, all-or-nothing.</div>
+  <div class="builder-caption">your intent, all-or-nothing.</div>
 </div>
 
 <!-- FLOW 1: the basics — product moment, text left, visual right -->
@@ -485,23 +558,24 @@ window.addEventListener('keydown',e=>{
   if(e.target.matches('input,textarea'))return;
   keys=(keys+e.key.toLowerCase()).slice(-target.length);
   if(keys===target){
-    const rows=document.querySelectorAll('.builder .fr');
+    const rows=document.querySelectorAll('.trace .trace-row');
     rows.forEach((r,i)=>{
       setTimeout(()=>{
         r.style.transition='background 0.4s ease, transform 0.4s ease';
-        r.style.background='rgba(0,214,50,0.18)';
+        r.style.background='rgba(0,214,50,0.12)';
         r.style.transform='translateX(4px)';
         setTimeout(()=>{r.style.background='';r.style.transform=''},600);
       },i*120);
     });
     // show hidden frame
-    const builder=document.querySelector('.builder');
-    if(builder && !builder.querySelector('.fr-hidden')){
+    const trace=document.querySelector('.trace');
+    const foot=trace?.querySelector('.trace-foot');
+    if(trace && foot && !trace.querySelector('.trace-hidden')){
       const hidden=document.createElement('div');
-      hidden.className='fr fr-hidden';
-      hidden.style.cssText='background:rgba(0,214,50,0.1);border-top-color:rgba(0,214,50,0.25);animation:none;opacity:0;transition:opacity 0.6s ease';
-      hidden.innerHTML='<span class="pill" style="background:rgba(0,214,50,0.2);color:var(--green)">frame 7</span><div class="fr-info"><span class="fr-title" style="color:var(--green)">you found the hidden frame</span><span class="fr-desc">built with care · san diego · 2026</span></div>';
-      builder.appendChild(hidden);
+      hidden.className='trace-row trace-hidden';
+      hidden.style.cssText='background:rgba(0,214,50,0.08);opacity:0;transition:opacity 0.6s ease';
+      hidden.innerHTML='<div class="trace-row-n" style="color:rgba(0,214,50,0.6)">[07]</div><div class="trace-row-type" style="color:var(--green)">hidden</div><div class="trace-row-desc" style="color:var(--green)">you found the hidden frame <span class="trace-row-desc-meta">· san diego · 2026</span></div><div class="trace-row-status">ok</div>';
+      trace.insertBefore(hidden,foot);
       setTimeout(()=>{hidden.style.opacity='1'},rows.length*120+200);
     }
     keys='';
