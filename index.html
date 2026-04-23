@@ -3,7 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>grantr</title>
+<title>grantr · a controller for agents, a smart account for sessions</title>
+<meta name="description" content="grantr is a controller for agents, a smart account for sessions, and a reference implementation for eip-8141 frames. let agents work for you — in control, forever.">
+<meta property="og:title" content="grantr · let agents work for you">
+<meta property="og:description" content="a controller for agents, a smart account for sessions, and a reference implementation for eip-8141 frames.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://alexanderchopan.github.io/grantr/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="grantr · let agents work for you">
+<meta name="twitter:description" content="a controller for agents, a smart account for sessions, and a reference implementation for eip-8141 frames.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e0e0e'/%3E%3Ctext x='16' y='22' font-family='system-ui,sans-serif' font-weight='900' font-size='16' text-anchor='middle' fill='%2300d632'%3Eg%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -58,8 +67,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .btn-wire:hover{border-color:rgba(255,255,255,0.35)}
 .hero-demo{width:100%;max-width:700px;height:min(80vh,740px);border-radius:20px;overflow:hidden;background:#000;border:1px solid var(--border);box-shadow:0 32px 100px rgba(0,0,0,0.6);position:relative}
 .hero-demo iframe{width:133%;height:133%;border:none;display:block;transform:scale(0.75);transform-origin:0 0}
-.hero-demo-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--t3);font-size:12px;pointer-events:none;transition:opacity 0.4s}
+.hero-demo-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--t3);font-size:12px;pointer-events:none;transition:opacity 0.4s;flex-direction:column;gap:12px;padding:20px;text-align:center}
 .hero-demo.loaded .hero-demo-loading{opacity:0}
+.hero-demo-fallback-link{display:inline-block;margin-top:8px;padding:8px 14px;border:1px solid rgba(0,214,50,0.3);color:var(--green);border-radius:40px;font-size:11px;text-decoration:none;pointer-events:auto;transition:background 0.2s}
+.hero-demo-fallback-link:hover{background:rgba(0,214,50,0.08)}
 .hero-demo-dot{width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:8px;animation:pulse 1.6s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}
 
@@ -176,6 +187,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .spec-section .sec-title{font-size:clamp(28px,3vw,36px);font-weight:900;letter-spacing:-0.03em;margin-bottom:12px}
 .spec-section .sec-sub{font-size:14px;color:var(--t3);line-height:1.6;margin-bottom:40px;max-width:560px}
 .spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.spec-col-head{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.12em;text-transform:uppercase;padding-bottom:8px;margin-bottom:4px;border-bottom:1px solid rgba(255,255,255,0.08)}
 .spec-row{display:flex;gap:14px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:12px;align-items:baseline}
 .spec-key{font-family:var(--mono);color:var(--t3);width:80px;flex-shrink:0;font-size:11px;display:flex;align-items:center;gap:6px}
 .spec-key::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);opacity:0.5;flex-shrink:0}
@@ -213,8 +225,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
   .tri-ico-box svg{width:22px;height:22px}
   .spec-grid{grid-template-columns:1fr;gap:24px}
   .compare-row,.compare-row-right,.compare-row-left{grid-template-columns:1fr;min-height:0}
-  .compare-row-left .compare-cell-frames{order:0}
-  .compare-row-left .compare-cell-today{order:1}
+  .compare-row-left .compare-cell-frames{order:1}
+  .compare-row-left .compare-cell-today{order:0}
   .compare-punch{grid-template-columns:1fr;gap:12px}
 }
 </style>
@@ -224,9 +236,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 <nav class="nav">
   <a href="#" class="nav-mark">grantr</a>
   <div class="nav-links">
-    <a href="#frames">frames</a>
+    <a href="#compare">compare</a>
+    <a href="#frames">grantr</a>
     <a href="#flows">flows</a>
-    <a href="#build">build</a>
+    <a href="#spec">spec</a>
   </div>
 </nav>
 
@@ -253,14 +266,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
   </div>
   <div class="hero-right">
     <div class="hero-demo" id="heroDemo">
-      <div class="hero-demo-loading"><span class="hero-demo-dot"></span>loading prototype</div>
+      <div class="hero-demo-loading"><span class="hero-demo-dot"></span><span id="heroDemoText">loading prototype</span></div>
       <iframe src="./prototype/grantr-prototype.html" loading="eager" allow="clipboard-read; clipboard-write" onload="document.getElementById('heroDemo').classList.add('loaded')"></iframe>
     </div>
   </div>
 </div>
 
 <!-- COMPARE — the bento grid -->
-<div class="compare-section reveal">
+<div class="compare-section reveal" id="compare">
   <div class="compare-head">
     <div class="product-eyebrow">the problem</div>
     <div class="compare-head-line"></div>
@@ -378,10 +391,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 </div>
 
 <!-- FLOWS — unified section -->
-<div class="flows-wrapper">
+<div class="flows-wrapper" id="flows">
 
 <!-- FLOW 1: the basics — product moment, text left, visual right -->
-<div class="product reveal" id="flows">
+<div class="product reveal">
   <div class="product-inner">
     <div class="product-text">
       <div class="product-eyebrow">the basics</div>
@@ -504,17 +517,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 </div>
 
 <!-- SPEC — minimal footer-style -->
-<div class="spec-section reveal" id="build">
+<div class="spec-section reveal" id="spec">
   <div class="sec-title">reference implementation.</div>
   <div class="sec-sub">a frames-native account for developers and designers building on eip-8141. scoped to account creation, recovery, delegation, and multi-device — not a full financial product.</div>
   <div class="spec-grid">
     <div>
+      <div class="spec-col-head">stack</div>
       <div class="spec-row"><span class="spec-key">chain</span><span class="spec-val">etherex devnet · 1729</span></div>
       <div class="spec-row"><span class="spec-key">auth</span><span class="spec-val">webauthn passkeys (p256)</span></div>
       <div class="spec-row"><span class="spec-key">frame-tx</span><span class="spec-val">pure ts · 57 tests</span></div>
       <div class="spec-row pending"><span class="spec-key">recovery</span><span class="spec-val">guardian scaffold · on-chain next</span></div>
     </div>
     <div>
+      <div class="spec-col-head">status</div>
       <div class="spec-row pending"><span class="spec-key">stage</span><span class="spec-val">prototype · backend in progress</span></div>
       <div class="spec-row next"><span class="spec-key">spec</span><span class="spec-val">eip-8141 · targeting a future fork</span></div>
       <div class="spec-row"><span class="spec-key">public</span><span class="spec-val"><a href="https://github.com/alexanderchopan/grantr">github.com/alexanderchopan/grantr</a></span></div>
@@ -541,6 +556,17 @@ document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 const glow=document.getElementById('glow');
 const glowObs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){setTimeout(()=>glow.classList.add('lit'),300)}})},{threshold:0.5});
 glowObs.observe(document.querySelector('.hero'));
+
+// iframe slow-load fallback
+setTimeout(()=>{
+  const demo=document.getElementById('heroDemo');
+  if(demo && !demo.classList.contains('loaded')){
+    const txt=document.getElementById('heroDemoText');
+    if(txt){
+      txt.innerHTML='prototype loading slowly<br><a class="hero-demo-fallback-link" href="./prototype/grantr-prototype.html" target="_blank" rel="noopener">open in new tab ↗</a>';
+    }
+  }
+},5000);
 
 // scroll-spy for nav
 const navLinks=document.querySelectorAll('.nav-links a');
