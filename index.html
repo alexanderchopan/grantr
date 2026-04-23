@@ -22,7 +22,9 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;text-transform:lowercase;overflow-x:hidden}
 
 /* ═══ NAV ═══ */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;mix-blend-mode:difference}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;transition:all 0.3s ease;border-bottom:1px solid transparent}
+.nav.scrolled{background:rgba(14,14,14,0.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:14px 32px;border-bottom-color:rgba(255,255,255,0.04)}
+.nav.scrolled{mix-blend-mode:normal;background:rgba(14,14,14,0.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:14px 32px;border-bottom:1px solid rgba(255,255,255,0.04)}
 .nav-mark{font-size:16px;font-weight:900;color:#fff;text-decoration:none;letter-spacing:-0.02em}
 .nav-links{display:flex;gap:24px}
 .nav-links a{font-size:12px;font-weight:500;color:rgba(255,255,255,0.5);text-decoration:none;transition:color 0.2s}
@@ -45,10 +47,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .hero-sq-claim.green{color:var(--green)}
 .hero-sq-body{font-size:13px;color:var(--t2);line-height:1.55}
 .hero-ctas{display:flex;gap:12px;margin-top:32px}
-.hero-note{margin-top:20px;font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.25);letter-spacing:0.04em}
+.hero-note{margin-top:20px;font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.25);letter-spacing:0.04em;display:inline-flex;align-items:center;gap:8px}
+.hero-note::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);opacity:0.6;animation:dot-pulse 2.4s ease-in-out infinite}
+@keyframes dot-pulse{0%,100%{opacity:0.35;transform:scale(0.9)}50%{opacity:0.9;transform:scale(1.1)}}
 .btn{font-family:var(--sans);font-size:15px;font-weight:700;padding:16px 32px;border-radius:100px;text-decoration:none;transition:all 0.2s}
-.btn-green{background:var(--green);color:#000;box-shadow:0 4px 32px rgba(0,214,50,0.25)}
-.btn-green:hover{box-shadow:0 4px 48px rgba(0,214,50,0.4);transform:translateY(-2px)}
+.btn-green{background:var(--green);color:#000;box-shadow:0 4px 32px rgba(0,214,50,0.25);animation:btn-breathe 3.5s ease-in-out infinite;transition:all 0.3s ease}
+.btn-green:hover{box-shadow:0 6px 60px rgba(0,214,50,0.55),0 0 0 6px rgba(0,214,50,0.08);transform:translateY(-2px);animation:none}
+@keyframes btn-breathe{0%,100%{box-shadow:0 4px 32px rgba(0,214,50,0.22)}50%{box-shadow:0 6px 48px rgba(0,214,50,0.38)}}
 .btn-wire{background:transparent;color:var(--text);border:2px solid rgba(255,255,255,0.15)}
 .btn-wire:hover{border-color:rgba(255,255,255,0.35)}
 .hero-demo{width:100%;max-width:700px;height:min(80vh,740px);border-radius:20px;overflow:hidden;background:#000;border:1px solid var(--border);box-shadow:0 32px 100px rgba(0,0,0,0.6);position:relative}
@@ -62,9 +67,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .ruled{display:grid;grid-template-columns:var(--gw) 1fr;max-width:1100px;margin:0 auto}
 .gutter{position:relative;border-right:1px solid rgba(255,255,255,0.03)}
 .gutter::after{content:'';position:absolute;top:0;right:-1px;width:1px;height:100%;background:linear-gradient(180deg,transparent 0%,rgba(0,214,50,0.15) 30%,rgba(0,214,50,0.15) 70%,transparent 100%)}
+.gutter::before{content:'';position:absolute;right:-2px;top:0;width:3px;height:48px;background:linear-gradient(180deg,transparent 0%,var(--green) 50%,transparent 100%);border-radius:2px;box-shadow:0 0 16px rgba(0,214,50,0.5);transform:translateY(var(--scroll-y,0px));opacity:0;transition:opacity 0.3s ease;z-index:2;pointer-events:none}
+.ruled.in-view .gutter::before{opacity:1}
 .gutter-label{position:sticky;top:48px;font-size:clamp(24px,3vw,36px);font-weight:900;letter-spacing:-0.03em;color:rgba(255,255,255,0.18);padding:8px 16px 8px 0;text-align:right;line-height:1}
 .gutter-label.green{color:rgba(0,214,50,0.28)}
-.gutter-label.sm{font-size:14px;font-weight:700;letter-spacing:0}
+.gutter-pip{position:fixed;left:0;top:0;width:var(--gw);height:0;pointer-events:none;z-index:2;opacity:0;transition:opacity 0.3s ease}
+.gutter-pip::after{content:'';position:absolute;right:-3.5px;top:0;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 16px rgba(0,214,50,0.8),0 0 4px rgba(0,214,50,1)}
+.gutter-pip.active{opacity:1}
 .content{padding:120px clamp(24px,4vw,56px)}
 .ruled-frames{background:rgba(0,214,50,0.025)}
 .ruled-frames .content{border-top:1px solid rgba(0,214,50,0.1)}
@@ -85,7 +94,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .builder{background:var(--card);border-radius:20px;padding:6px;max-width:580px;position:relative}
 .builder::before{content:'';position:absolute;top:28px;bottom:28px;left:30px;width:2px;background:linear-gradient(180deg,rgba(0,214,50,0.3) 0%,rgba(0,214,50,0.1) 100%);border-radius:1px;pointer-events:none}
 .builder-caption{margin-top:16px;font-family:var(--mono);font-size:11px;color:rgba(0,214,50,0.45);letter-spacing:0.04em;padding-left:6px}
-.fr{display:flex;align-items:center;gap:14px;padding:16px 18px;border-top:1px solid rgba(255,255,255,0.04)}
+.fr{display:flex;align-items:center;gap:14px;padding:16px 18px;border-top:1px solid rgba(255,255,255,0.04);position:relative;transition:background 0.2s ease;border-radius:10px}
+.builder:hover .fr{background:transparent}
+.builder .fr:hover{background:rgba(0,214,50,0.04)}
 .fr:first-child{border-top:none}
 .pill{font-family:var(--mono);font-size:9px;font-weight:500;padding:4px 8px;border-radius:4px;width:68px;text-align:center;flex-shrink:0}
 .pv{background:rgba(0,214,50,0.06);color:var(--green)}
@@ -104,7 +115,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .product-text{max-width:520px}
 .product-eyebrow{font-family:var(--mono);font-size:12px;color:var(--green);letter-spacing:0.06em;margin-bottom:16px}
 .product-headline{font-size:clamp(32px,4vw,48px);font-weight:900;line-height:1.05;letter-spacing:-0.04em;margin-bottom:18px}
-.product-headline .green{color:var(--green)}
+.product-headline .green{color:var(--green);opacity:0;display:inline-block;transform:translateY(6px);transition:opacity 0.5s ease 0.35s,transform 0.5s cubic-bezier(0.2,0.8,0.2,1) 0.35s}
+.reveal.visible .product-headline .green{opacity:1;transform:translateY(0)}
 .product-body{font-size:16px;line-height:1.6;color:var(--t2);max-width:440px}
 .product-steps{margin-top:22px;display:flex;flex-direction:column;gap:8px}
 .product-step{display:flex;gap:12px;font-size:14px;color:rgba(255,255,255,0.4);line-height:1.5}
@@ -112,12 +124,25 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 
 /* visual — the triptych */
 .product-visual{width:100%}
-.triptych{background:var(--card);border-radius:24px;padding:clamp(24px,3vw,40px);display:flex;align-items:center;justify-content:center;gap:clamp(10px,1.5vw,20px);min-height:280px}
-.tri-ico{display:flex;flex-direction:column;align-items:center;gap:10px;flex:0 0 auto}
+.triptych{background:var(--card);border-radius:24px;padding:clamp(24px,3vw,40px);display:flex;align-items:center;justify-content:center;gap:clamp(10px,1.5vw,20px);min-height:280px;position:relative;overflow:hidden}
+.triptych::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,var(--tint,rgba(0,214,50,0.05)) 0%,transparent 60%);pointer-events:none}
+.triptych.tint-green{--tint:rgba(0,214,50,0.08)}
+.triptych.tint-blue{--tint:rgba(10,132,255,0.07)}
+.triptych.tint-amber{--tint:rgba(255,159,10,0.07)}
+.triptych.tint-red{--tint:rgba(255,59,48,0.06)}
+.triptych > *{position:relative;z-index:1}
+.tri-ico{display:flex;flex-direction:column;align-items:center;gap:10px;flex:0 0 auto;opacity:0;transform:translateY(8px);transition:opacity 0.5s ease,transform 0.5s ease}
 .tri-ico-box{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center}
 .tri-ico-box svg{width:28px;height:28px;stroke-width:2;fill:none;stroke:currentColor}
 .tri-ico-label{font-size:11px;color:rgba(255,255,255,0.3);font-family:var(--mono)}
-.tri-arrow{color:rgba(255,255,255,0.15);font-size:18px;padding-bottom:24px}
+.tri-arrow{color:rgba(255,255,255,0.15);font-size:18px;padding-bottom:24px;opacity:0;transform:translateX(-6px);transition:opacity 0.4s ease,transform 0.4s ease}
+.reveal.visible .tri-ico{opacity:1;transform:translateY(0)}
+.reveal.visible .tri-ico:nth-child(1){transition-delay:0.1s}
+.reveal.visible .tri-ico:nth-child(3){transition-delay:0.3s}
+.reveal.visible .tri-ico:nth-child(5){transition-delay:0.5s}
+.reveal.visible .tri-arrow{opacity:1;transform:translateX(0)}
+.reveal.visible .tri-arrow:nth-child(2){transition-delay:0.25s}
+.reveal.visible .tri-arrow:nth-child(4){transition-delay:0.45s}
 
 /* ═══ BUILDER SECTION — centered product moment ═══ */
 .builder-section{padding:clamp(80px,10vw,140px) clamp(24px,5vw,80px);max-width:1100px;margin:0 auto;text-align:center}
@@ -126,12 +151,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .builder-section .product-body{text-align:center;margin:0 auto 48px;max-width:560px}
 .builder{background:var(--card);border-radius:24px;padding:10px;max-width:620px;margin:0 auto;position:relative;text-align:left}
 .builder::before{content:'';position:absolute;top:30px;bottom:30px;left:34px;width:2px;background:linear-gradient(180deg,rgba(0,214,50,0.3) 0%,rgba(0,214,50,0.08) 100%);border-radius:1px;pointer-events:none}
+.builder-footer{margin-top:24px;font-family:var(--mono);font-size:11px;color:rgba(0,214,50,0.4);letter-spacing:0.06em;text-align:center}
 
 /* ═══ PROOF SECTION — one quote per block, centered, big ═══ */
 .proof-section{padding:clamp(100px,12vw,180px) clamp(24px,5vw,80px);max-width:900px;margin:0 auto;text-align:center}
 .proof-section + .proof-section{padding-top:0}
 .proof-q{font-size:clamp(22px,2.8vw,34px);font-weight:500;line-height:1.35;color:var(--text);margin-bottom:32px;letter-spacing:-0.01em}
-.proof-q-mark{font-family:Georgia,serif;font-size:64px;color:rgba(0,214,50,0.2);line-height:0;vertical-align:-20px;margin-right:4px}
+.proof-q-mark{font-family:Georgia,serif;font-size:64px;color:rgba(0,214,50,0.2);line-height:0;vertical-align:-20px;margin-right:4px;animation:qmark-breathe 5s ease-in-out infinite}
+@keyframes qmark-breathe{0%,100%{opacity:0.7}50%{opacity:1.1}}
 .proof-who{display:inline-flex;align-items:center;gap:14px}
 .proof-ava{width:44px;height:44px;border-radius:50%;object-fit:cover}
 .proof-meta{font-size:13px;color:var(--t3);text-align:left}
@@ -156,7 +183,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .foot-links{display:flex;gap:32px;justify-content:center;font-size:12px;color:rgba(255,255,255,0.15);margin-bottom:56px}
 .foot-links a{color:inherit;text-decoration:none;transition:color 0.2s}
 .foot-links a:hover{color:var(--text)}
-.foot-mark{font-size:clamp(100px,18vw,240px);font-weight:900;color:rgba(0,214,50,0.04);letter-spacing:-0.06em;line-height:0.8}
+.foot-mark{font-size:clamp(100px,18vw,240px);font-weight:900;color:rgba(0,214,50,0.04);letter-spacing:-0.06em;line-height:0.8;opacity:0;transform:scale(0.96);transition:opacity 1s ease 0.2s,transform 1.2s cubic-bezier(0.2,0.8,0.2,1) 0.2s}
+.foot.visible .foot-mark{opacity:1;transform:scale(1)}
 
 /* ═══ REVEAL ═══ */
 .reveal{opacity:0;transform:translateY(16px);transition:opacity 0.6s ease,transform 0.6s ease}
@@ -205,7 +233,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
       </div>
       <div class="hero-sq">
         <div class="hero-sq-claim">forever.</div>
-        <div class="hero-sq-body">an eip-8141 smart account. one address. rotate keys without moving funds. recover without losing your history or ens.</div>
+        <div class="hero-sq-body">an eip-8141 smart account. one address. rotate keys, recover, switch apps — without migrating.</div>
       </div>
     </div>
     <div class="hero-ctas">
@@ -255,6 +283,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
     <div class="fr"><span class="pill pe">sender</span><div class="fr-info"><span class="fr-title">call a contract</span><span class="fr-desc">any address + calldata · read or write</span></div></div>
     <div class="fr"><span class="pill pd">default</span><div class="fr-info"><span class="fr-title">change your account rules</span><span class="fr-desc">rotate key · add guardian · update session</span></div></div>
   </div>
+  <div class="builder-footer">your intent, all-or-nothing.</div>
 </div>
 
 <!-- FLOW 1: the basics — product moment, text left, visual right -->
@@ -271,7 +300,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
       </div>
     </div>
     <div class="product-visual">
-      <div class="triptych">
+      <div class="triptych tint-green">
         <div class="tri-ico"><div class="tri-ico-box" style="background:rgba(255,255,255,0.06);color:var(--t2)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div><div class="tri-ico-label">email</div></div>
         <div class="tri-arrow">→</div>
         <div class="tri-ico"><div class="tri-ico-box" style="background:rgba(0,214,50,0.1);color:var(--green)"><svg viewBox="0 0 24 24"><circle cx="9" cy="15" r="4"/><path d="M12 12l7-7"/><path d="M17 3l2 2-3 3"/></svg></div><div class="tri-ico-label">passkey</div></div>
@@ -297,7 +326,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
       </div>
     </div>
     <div class="product-visual">
-      <div class="triptych">
+      <div class="triptych tint-blue">
         <div class="tri-ico"><div class="tri-ico-box" style="background:rgba(0,214,50,0.1);color:var(--green)"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></div><div class="tri-ico-label">pick agent</div></div>
         <div class="tri-arrow">→</div>
         <div class="tri-ico"><div class="tri-ico-box" style="background:rgba(255,255,255,0.06);color:var(--t2)"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div><div class="tri-ico-label">set scope</div></div>
@@ -323,7 +352,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
       </div>
     </div>
     <div class="product-visual">
-      <div class="triptych">
+      <div class="triptych tint-amber">
         <div class="tri-ico"><div class="tri-ico-box" style="background:rgba(255,159,10,0.1);color:var(--amber)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M7 12h10"/></svg></div><div class="tri-ico-label">big tx</div></div>
         <div class="tri-arrow">→</div>
         <div class="tri-ico"><div class="tri-ico-box" style="background:rgba(0,214,50,0.1);color:var(--green)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="8" height="14" rx="2"/><rect x="13" y="5" width="8" height="14" rx="2"/></svg></div><div class="tri-ico-label">both devices</div></div>
@@ -349,7 +378,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
       </div>
     </div>
     <div class="product-visual">
-      <div class="triptych">
+      <div class="triptych tint-red">
         <div class="tri-ico"><div class="tri-ico-box" style="background:rgba(255,59,48,0.1);color:var(--red)"><svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 9l6 6M15 9l-6 6"/></svg></div><div class="tri-ico-label">lost device</div></div>
         <div class="tri-arrow">→</div>
         <div class="tri-ico"><div class="tri-ico-box" style="background:rgba(255,255,255,0.06);color:var(--t2)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div><div class="tri-ico-label">email verify</div></div>
@@ -398,7 +427,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 </div>
 
 <!-- FOOTER -->
-<div class="foot">
+<div class="foot reveal-foot">
   <div class="foot-links">
     <a href="https://eip8141.io">eip-8141</a>
     <a href="https://demo.eip-8141.ethrex.xyz:8082">etherex block explorer</a>
@@ -407,15 +436,81 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 </div>
 
 <script>
+// reveal sections on scroll
 const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){el.target.classList.add('visible');obs.unobserve(el.target)}})},{threshold:0.08});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// hero glow fires once on load
 const glow=document.getElementById('glow');
 const glowObs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){setTimeout(()=>glow.classList.add('lit'),300)}})},{threshold:0.5});
 glowObs.observe(document.querySelector('.hero'));
+
+// scroll-spy for nav
 const navLinks=document.querySelectorAll('.nav-links a');
 const sections=document.querySelectorAll('[id]');
 const spyObs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){navLinks.forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+el.target.id)});}});},{threshold:0.3,rootMargin:'-40% 0px -40% 0px'});
 sections.forEach(s=>spyObs.observe(s));
+
+// nav background appears after scrolling past hero
+const nav=document.querySelector('.nav');
+const hero=document.querySelector('.hero');
+window.addEventListener('scroll',()=>{
+  const passed=hero.getBoundingClientRect().bottom<80;
+  nav.classList.toggle('scrolled',passed);
+},{passive:true});
+
+// gutter scroll pip — tracks position within each compare block
+const gutterBlocks=document.querySelectorAll('.ruled');
+const gutterViewObs=new IntersectionObserver(e=>{e.forEach(el=>{el.target.classList.toggle('in-view',el.isIntersecting)})},{threshold:0.1});
+gutterBlocks.forEach(b=>gutterViewObs.observe(b));
+window.addEventListener('scroll',()=>{
+  gutterBlocks.forEach(block=>{
+    const gutter=block.querySelector('.gutter');
+    if(!gutter)return;
+    const rect=block.getBoundingClientRect();
+    const vh=window.innerHeight;
+    // progress = 0 when block enters view, 1 when it leaves
+    const progress=Math.max(0,Math.min(1,(vh-rect.top)/(rect.height+vh)));
+    const gutterRect=gutter.getBoundingClientRect();
+    const y=progress*gutterRect.height-24;
+    gutter.style.setProperty('--scroll-y',y+'px');
+  });
+},{passive:true});
+
+// footer reveal
+const foot=document.querySelector('.foot');
+const footObs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){el.target.classList.add('visible');footObs.unobserve(el.target)}})},{threshold:0.3});
+footObs.observe(foot);
+
+// easter egg — type "grantr" anywhere
+let keys='';
+const target='grantr';
+window.addEventListener('keydown',e=>{
+  if(e.target.matches('input,textarea'))return;
+  keys=(keys+e.key.toLowerCase()).slice(-target.length);
+  if(keys===target){
+    const rows=document.querySelectorAll('.builder .fr');
+    rows.forEach((r,i)=>{
+      setTimeout(()=>{
+        r.style.transition='background 0.4s ease, transform 0.4s ease';
+        r.style.background='rgba(0,214,50,0.18)';
+        r.style.transform='translateX(4px)';
+        setTimeout(()=>{r.style.background='';r.style.transform=''},600);
+      },i*120);
+    });
+    // show hidden frame
+    const builder=document.querySelector('.builder');
+    if(builder && !builder.querySelector('.fr-hidden')){
+      const hidden=document.createElement('div');
+      hidden.className='fr fr-hidden';
+      hidden.style.cssText='background:rgba(0,214,50,0.1);border-top-color:rgba(0,214,50,0.25);animation:none;opacity:0;transition:opacity 0.6s ease';
+      hidden.innerHTML='<span class="pill" style="background:rgba(0,214,50,0.2);color:var(--green)">frame 7</span><div class="fr-info"><span class="fr-title" style="color:var(--green)">you found the hidden frame</span><span class="fr-desc">built with care · san diego · 2026</span></div>';
+      builder.appendChild(hidden);
+      setTimeout(()=>{hidden.style.opacity='1'},rows.length*120+200);
+    }
+    keys='';
+  }
+});
 </script>
 
 </body>
