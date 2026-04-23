@@ -226,7 +226,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 <div class="ruled">
   <div class="gutter"><div class="gutter-label">today</div></div>
   <div class="content reveal">
-    <div class="cmp-row"><div class="cmp-label">eoas</div><div class="cmp-text">you have a single keypair forever. <strong>your address is your private key</strong>, and the seed phrase is its only backup. lose it, lose everything.</div></div>
+    <div class="cmp-row"><div class="cmp-label">eoas</div><div class="cmp-text">you have a single keypair forever. <strong>your address is bound to that keypair</strong> — lose the seed phrase, lose everything.</div></div>
     <div class="cmp-row"><div class="cmp-label">smart wallets</div><div class="cmp-text">each wallet implements recovery, passkeys, and session keys differently. they don't interoperate. <strong>your account is trapped in an app.</strong></div></div>
     <div class="cmp-row"><div class="cmp-label">agents + dapps</div><div class="cmp-text">authorizing an agent or a dapp gives it too much power. <strong>the app can only ask nicely</strong> — the chain doesn't enforce what you actually agreed to.</div></div>
   </div>
@@ -249,8 +249,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
   <div class="product-body">stack frames to compose a transaction. each has a role. they all run together — if any step fails, nothing happens.</div>
   <div class="builder">
     <div class="fr"><span class="pill pv">verify</span><div class="fr-info"><span class="fr-title">prove it's you</span><span class="fr-desc">passkey · p-256 · this device</span></div></div>
-    <div class="fr"><span class="pill pv">verify</span><div class="fr-info"><span class="fr-title">prove an agent is allowed</span><span class="fr-desc">session key · scoped to specific actions</span></div></div>
-    <div class="fr"><span class="pill ps">sponsor</span><div class="fr-info"><span class="fr-title">pay with grantr gas</span><span class="fr-desc">paymaster sponsorship · you hold 0 eth</span></div></div>
+    <div class="fr"><span class="pill pv">verify</span><div class="fr-info"><span class="fr-title">verify an agent's session key</span><span class="fr-desc">scoped to specific actions, limits, and windows</span></div></div>
+    <div class="fr"><span class="pill ps">sponsor</span><div class="fr-info"><span class="fr-title">pay with grantr gas</span><span class="fr-desc">paymaster sponsorship · no eth required</span></div></div>
     <div class="fr"><span class="pill pe">sender</span><div class="fr-info"><span class="fr-title">send tokens</span><span class="fr-desc">transfer erc-20 or native eth</span></div></div>
     <div class="fr"><span class="pill pe">sender</span><div class="fr-info"><span class="fr-title">call a contract</span><span class="fr-desc">any address + calldata · read or write</span></div></div>
     <div class="fr"><span class="pill pd">default</span><div class="fr-info"><span class="fr-title">change your account rules</span><span class="fr-desc">rotate key · add guardian · update session</span></div></div>
@@ -293,7 +293,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
         <div class="product-step"><span class="product-step-n">1</span>pick an agent, such as an lp rebalancer.</div>
         <div class="product-step"><span class="product-step-n">2</span>set a spending limit and time window.</div>
         <div class="product-step"><span class="product-step-n">3</span>sign. the session key installs on your account.</div>
-        <div class="product-step"><span class="product-step-n">4</span>agent acts — one tx passes, one gets blocked.</div>
+        <div class="product-step"><span class="product-step-n">4</span>agent acts — one tx passes, one reverts.</div>
       </div>
     </div>
     <div class="product-visual">
@@ -319,7 +319,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
         <div class="product-step"><span class="product-step-n">1</span>start a $1,500 send — above your $1,000 threshold.</div>
         <div class="product-step"><span class="product-step-n">2</span>your phone signs first.</div>
         <div class="product-step"><span class="product-step-n">3</span>your laptop signs second.</div>
-        <div class="product-step"><span class="product-step-n">4</span>verify frame aggregates both signatures.</div>
+        <div class="product-step"><span class="product-step-n">4</span>verify frame requires both signatures to pass.</div>
       </div>
     </div>
     <div class="product-visual">
@@ -390,7 +390,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
     </div>
     <div>
       <div class="spec-row pending"><span class="spec-key">stage</span><span class="spec-val">prototype · backend in progress</span></div>
-      <div class="spec-row next"><span class="spec-key">spec</span><span class="spec-val">eip-8141 · hegota h2 2026</span></div>
+      <div class="spec-row next"><span class="spec-key">spec</span><span class="spec-val">eip-8141 · targeting a future fork</span></div>
       <div class="spec-row"><span class="spec-key">public</span><span class="spec-val"><a href="https://github.com/alexanderchopan/grantr">github.com/alexanderchopan/grantr</a></span></div>
       <div class="spec-row"><span class="spec-key">private</span><span class="spec-val"><a href="https://github.com/Rehashed-LLC/grantr-demo">github.com/rehashed-llc/grantr-demo</a></span></div>
     </div>
