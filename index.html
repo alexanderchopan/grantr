@@ -51,7 +51,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .hero-tagline{font-size:clamp(15px,1.6vw,19px);font-weight:400;color:var(--t2);line-height:1.5;margin-top:28px}
 .hero-tagline a{color:var(--green);text-decoration:none}
 .hero-squares{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.hero-sq{aspect-ratio:1;background:var(--card);border-radius:20px;padding:24px;display:flex;flex-direction:column;justify-content:space-between}
+.hero-sq{aspect-ratio:1;background:var(--card);border-radius:20px;padding:24px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
 .hero-sq-claim{font-size:clamp(32px,3.6vw,44px);font-weight:900;letter-spacing:-0.03em;line-height:1}
 .hero-sq-claim.green{color:var(--green)}
 .hero-sq-body{font-size:13px;color:var(--t2);line-height:1.55}
@@ -265,11 +265,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
     <div class="hero-squares">
       <div class="hero-sq">
         <div class="hero-sq-claim green">in control.</div>
-        <div class="hero-sq-body">set the scope, set the limit, set the window. hire an agent to rebalance, automate, or renew.</div>
       </div>
       <div class="hero-sq">
         <div class="hero-sq-claim">forever.</div>
-        <div class="hero-sq-body">an eip-8141 smart account. one address. rotate keys, recover, switch apps — without migrating.</div>
       </div>
     </div>
   </div>
@@ -295,25 +293,25 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
       <div class="compare-cell-num">01 · eoas</div>
       <div>
         <div class="compare-cell-today-title">today: one keypair, forever.</div>
-        <div class="compare-cell-today-caption" style="margin-top:8px">you have a single keypair forever. <strong>your address is bound to that keypair</strong> — lose the seed phrase, lose everything.</div>
+        <div class="compare-cell-today-caption" style="margin-top:8px"><strong>your address is bound to that keypair</strong> — lose the seed phrase, lose everything.</div>
       </div>
     </div>
     <div class="compare-cell compare-cell-frames">
       <div class="compare-cell-frames-title">a list of typed steps.</div>
-      <div class="compare-cell-frames-caption">a transaction is a list of typed steps — verify, execute, deploy — that the protocol runs in order. <strong>no bundler, no entrypoint.</strong> eoas get passkeys, batching, and gas sponsorship without deploying anything.</div>
+      <div class="compare-cell-frames-caption">verify, execute, deploy — the protocol runs them in order. <strong>no bundler, no entrypoint.</strong> eoas get passkeys, batching, and gas sponsorship without deploying anything.</div>
     </div>
   </div>
 
   <div class="compare-row compare-row-left">
     <div class="compare-cell compare-cell-frames">
       <div class="compare-cell-frames-title">policy, not migration.</div>
-      <div class="compare-cell-frames-caption">recovery, session keys, device thresholds — frame policies on a shared primitive. <strong>switching apps is a policy update</strong>, not a migration.</div>
+      <div class="compare-cell-frames-caption">recovery, session keys, device thresholds — all policies on a shared primitive. <strong>switching apps is just a policy update.</strong></div>
     </div>
     <div class="compare-cell compare-cell-today">
       <div class="compare-cell-num">02 · smart wallets</div>
       <div>
         <div class="compare-cell-today-title">today: trapped in an app.</div>
-        <div class="compare-cell-today-caption" style="margin-top:8px">each wallet implements recovery, passkeys, and session keys differently. they don't interoperate. <strong>your account is trapped in an app.</strong></div>
+        <div class="compare-cell-today-caption" style="margin-top:8px">each wallet implements recovery, passkeys, and session keys <strong>differently. they don't interoperate.</strong></div>
       </div>
     </div>
   </div>
@@ -323,12 +321,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
       <div class="compare-cell-num">03 · agents + dapps</div>
       <div>
         <div class="compare-cell-today-title">today: the app asks nicely.</div>
-        <div class="compare-cell-today-caption" style="margin-top:8px">authorizing an agent or a dapp gives it too much power. <strong>the app can only ask nicely</strong> — the chain doesn't enforce what you actually agreed to.</div>
+        <div class="compare-cell-today-caption" style="margin-top:8px">authorizing an agent or a dapp gives it too much power. <strong>the chain doesn't enforce what you agreed to.</strong></div>
       </div>
     </div>
     <div class="compare-cell compare-cell-frames">
       <div class="compare-cell-frames-title">the protocol runs the rules.</div>
-      <div class="compare-cell-frames-caption">scope, limit, time window. <strong>the protocol runs the rules.</strong> the app doesn't get to decide.</div>
+      <div class="compare-cell-frames-caption">scope, limit, time window — <strong>enforced at the protocol level.</strong> the app doesn't get to decide.</div>
     </div>
   </div>
 
