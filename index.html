@@ -64,7 +64,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 @keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}
 
 /* ═══ COMPARE — the bento grid ═══ */
-.compare-section{padding:clamp(100px,12vw,180px) clamp(24px,5vw,80px);max-width:1100px;margin:0 auto}
+.compare-section{padding:clamp(80px,9vw,140px) clamp(24px,5vw,80px) clamp(60px,7vw,100px);max-width:1100px;margin:0 auto}
 .compare-head{margin-bottom:clamp(48px,6vw,72px);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .compare-head-line{flex:1;height:1px;background:rgba(255,255,255,0.06);min-width:40px}
 .compare-head .product-eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:0}
@@ -114,7 +114,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 }
 
 /* ═══ PRODUCT SECTIONS — cash.app style, full-width alternating ═══ */
-.product{padding:clamp(80px,10vw,140px) clamp(24px,5vw,80px);max-width:1200px;margin:0 auto}
+.product{padding:0 clamp(24px,5vw,80px);max-width:1100px;margin:0 auto}
+.flows-wrapper{padding:clamp(60px,7vw,100px) 0}
+.flows-wrapper .product{padding:clamp(40px,5vw,70px) clamp(24px,5vw,80px)}
+.flows-wrapper .product:first-child{padding-top:0}
+.flows-wrapper .product:last-child{padding-bottom:0}
 .product-inner{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,6vw,80px);align-items:center}
 .product-inner.flip .product-text{order:2}
 .product-inner.flip .product-visual{order:1}
@@ -151,14 +155,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .reveal.visible .tri-arrow:nth-child(4){transition-delay:0.45s}
 
 /* ═══ BUILDER SECTION — centered product moment ═══ */
-.builder-section{padding:clamp(80px,10vw,140px) clamp(24px,5vw,80px);max-width:1100px;margin:0 auto;text-align:center}
+.builder-section{padding:clamp(60px,8vw,100px) clamp(24px,5vw,80px);max-width:1100px;margin:0 auto;text-align:center}
 .builder-section .product-eyebrow{text-align:center}
 .builder-section .product-headline{text-align:center;margin-bottom:18px;max-width:720px;margin-left:auto;margin-right:auto}
 .builder-section .product-body{text-align:center;margin:0 auto 48px;max-width:560px}
 
 /* ═══ PROOF SECTION — one quote per block, centered, big ═══ */
-.proof-section{padding:clamp(100px,12vw,180px) clamp(24px,5vw,80px);max-width:900px;margin:0 auto;text-align:center}
-.proof-section + .proof-section{padding-top:0}
+.proof-section{padding:clamp(60px,8vw,100px) clamp(24px,5vw,80px);max-width:760px;margin:0 auto;text-align:center}
+.proof-section + .proof-section{padding-top:clamp(32px,4vw,60px)}
 .proof-q{font-size:clamp(22px,2.8vw,34px);font-weight:500;line-height:1.35;color:var(--text);margin-bottom:32px;letter-spacing:-0.01em}
 .proof-q-mark{font-family:Georgia,serif;font-size:64px;color:rgba(0,214,50,0.2);line-height:0;vertical-align:-20px;margin-right:4px;animation:qmark-breathe 5s ease-in-out infinite}
 @keyframes qmark-breathe{0%,100%{opacity:0.7}50%{opacity:1.1}}
@@ -168,7 +172,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .proof-name{font-weight:600;color:var(--t2);margin-bottom:2px}
 
 /* ═══ SPEC SECTION — minimal footer-style ═══ */
-.spec-section{padding:100px clamp(24px,5vw,80px) 60px;max-width:900px;margin:0 auto;border-top:1px solid var(--border)}
+.spec-section{padding:80px clamp(24px,5vw,80px) 60px;max-width:900px;margin:0 auto;border-top:1px solid var(--border)}
 .spec-section .sec-title{font-size:clamp(28px,3vw,36px);font-weight:900;letter-spacing:-0.03em;margin-bottom:12px}
 .spec-section .sec-sub{font-size:14px;color:var(--t3);line-height:1.6;margin-bottom:40px;max-width:560px}
 .spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px}
@@ -182,7 +186,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .spec-val a:hover{text-decoration:underline}
 
 /* ═══ FOOTER ═══ */
-.foot{padding:160px 0 60px;text-align:center}
+.foot{padding:100px 0 60px;text-align:center}
 .foot-links{display:flex;gap:32px;justify-content:center;font-size:12px;color:rgba(255,255,255,0.15);margin-bottom:56px}
 .foot-links a{color:inherit;text-decoration:none;transition:color 0.2s}
 .foot-links a:hover{color:var(--text)}
@@ -373,6 +377,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
   <div class="builder-caption">your intent, all-or-nothing.</div>
 </div>
 
+<!-- FLOWS — unified section -->
+<div class="flows-wrapper">
+
 <!-- FLOW 1: the basics — product moment, text left, visual right -->
 <div class="product reveal" id="flows">
   <div class="product-inner">
@@ -475,6 +482,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
     </div>
   </div>
 </div>
+
+</div>
+<!-- /flows-wrapper -->
 
 <!-- PROOF — one quote per section, centered -->
 <div class="proof-section reveal">
