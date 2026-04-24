@@ -683,18 +683,65 @@ button {
 .queue-head-left .build-pane-eyebrow {
   margin-bottom: 2px;
 }
-.queue-head-tpls {
-  display: flex;
-  gap: 6px;
-  flex-wrap: nowrap;
-  flex-shrink: 0;
+
+/* ===== templates section inside queue pane (below slots) ===== */
+.queue-templates {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 0.5px solid var(--border);
 }
-.queue-head-tpls .tpl-chip {
-  aspect-ratio: auto;
-  padding: 6px 12px;
+.queue-templates-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--text-voice);
+  margin-bottom: 10px;
+}
+.queue-templates-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.tpl-tile-sq {
+  background: var(--bg);
+  border: 0.5px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  gap: 4px;
+  min-height: 88px;
+  cursor: pointer;
+  color: inherit;
+  font-family: inherit;
+  transition: border-color 0.15s, background 0.15s, transform 0.12s;
+}
+.tpl-tile-sq:hover {
+  border-color: var(--tpl-border, var(--text-4));
+  background: var(--card-hover);
+}
+.tpl-tile-sq:active {
+  transform: scale(0.98);
+}
+.tpl-tile-sq-name {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--tpl-fg, var(--text-1));
+  line-height: 1.2;
+}
+.tpl-tile-sq-desc {
   font-size: 11px;
-  border-radius: 999px;
-  min-height: 26px;
+  color: var(--text-voice);
+  font-style: italic;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .frame-group {
@@ -3748,16 +3795,19 @@ button {
           <div id="frame-library"></div>
         </div>
 
-        <!-- QUEUE (right) — slot-based composer, templates live in the header -->
+        <!-- QUEUE (right) — slot-based composer, templates live below the slots -->
         <div class="build-pane build-pane-queue">
           <div class="build-pane-head-compact queue-head">
             <div class="queue-head-left">
               <div class="build-pane-eyebrow" id="queue-eyebrow">your queue</div>
               <div class="build-pane-sub-inline" id="queue-sub-inline"></div>
             </div>
-            <div class="queue-head-tpls" id="queue-head-tpls"></div>
           </div>
           <div id="queue-container"></div>
+          <div class="queue-templates" id="queue-templates">
+            <div class="queue-templates-eyebrow">or start with</div>
+            <div class="queue-templates-grid" id="queue-templates-grid"></div>
+          </div>
           <div class="queue-actions">
             <button class="queue-btn secondary" id="btn-save-policy" disabled onclick="savePolicy()">save as template</button>
             <button class="queue-btn primary" id="btn-run" disabled onclick="runQueue()">run</button>
@@ -3827,7 +3877,7 @@ button {
             <div class="account-addr">
               <span class="tx-hash-copy" onclick="copyTxHash(this, '0x8f3ab94c7a2d1e5c8f4b7a9d3e2c1b5a4f8e7d6c')">0x8f3ab94c7a2d1e5c8f4b7a9d3e2c1b5a4f8e7d6c</span>
               <span class="account-addr-sep">·</span>
-              <a href="https://basescan.org/address/0x8f3ab94c7a2d1e5c8f4b7a9d3e2c1b5a4f8e7d6c" target="_blank" rel="noopener" class="account-addr-explorer">view on explorer ↗</a>
+              <a href="https://demo.eip-8141.ethrex.xyz:8082/address/0x8f3ab94c7a2d1e5c8f4b7a9d3e2c1b5a4f8e7d6c" target="_blank" rel="noopener" class="account-addr-explorer">view on explorer ↗</a>
             </div>
           </div>
         </div>
@@ -5219,7 +5269,7 @@ function renderSendStep() {
         <div class="preview-divider"></div>
         <div class="preview-row">
           <span class="preview-label">network</span>
-          <span class="preview-value">base mainnet</span>
+          <span class="preview-value">ethrex devnet</span>
         </div>
         <div class="preview-row">
           <span class="preview-label">gas</span>
@@ -5458,18 +5508,19 @@ function renderFrameLibrary() {
 }
 
 function renderQueueTemplatesStrip() {
-  const el = document.getElementById('queue-head-tpls');
+  const el = document.getElementById('queue-templates-grid');
   if (!el) return;
   el.innerHTML = templates.map(t => {
     const color = templateColor(t.id);
     return `
       <button
-        class="tpl-chip"
+        class="tpl-tile-sq"
         data-id="${t.id}"
         onclick="useTemplate('${t.id}')"
         title="${t.desc}"
         style="--tpl-fg:${color.fg}; --tpl-border:${color.border};">
-        <span class="tpl-chip-name">${t.name}</span>
+        <span class="tpl-tile-sq-name">${t.name}</span>
+        <span class="tpl-tile-sq-desc">${t.desc}</span>
       </button>
     `;
   }).join('');
@@ -5609,6 +5660,13 @@ function renderQueue() {
       </button>
     </div>
   `;
+
+  // show templates section only when the queue is untouched (no steps, not editing)
+  const tpls = document.getElementById('queue-templates');
+  if (tpls) {
+    const shouldShow = allEmpty && !isEditing;
+    tpls.style.display = shouldShow ? '' : 'none';
+  }
 }
 
 function slotHTML(step, idx) {
@@ -5697,7 +5755,7 @@ function renderRunStep() {
         <div class="preview-divider"></div>
         <div class="preview-row">
           <span class="preview-label">network</span>
-          <span class="preview-value">base mainnet</span>
+          <span class="preview-value">ethrex devnet</span>
         </div>
         <div class="preview-row">
           <span class="preview-label">gas</span>
@@ -6666,7 +6724,7 @@ function openAccountDetailsModal() {
       <div class="sm-kv">
         <div class="sm-kv-row"><div class="sm-kv-key">ens</div><div class="sm-kv-val">alice.eth</div></div>
         <div class="sm-kv-row"><div class="sm-kv-key">address</div><div class="sm-kv-val">0x8f3a...4c7a</div></div>
-        <div class="sm-kv-row"><div class="sm-kv-key">network</div><div class="sm-kv-val">base mainnet</div></div>
+        <div class="sm-kv-row"><div class="sm-kv-key">network</div><div class="sm-kv-val">ethrex devnet</div></div>
         <div class="sm-kv-row"><div class="sm-kv-key">deployed</div><div class="sm-kv-val">mar 12, 2026</div></div>
         <div class="sm-kv-row"><div class="sm-kv-key">nonce</div><div class="sm-kv-val">247</div></div>
         <div class="sm-kv-row"><div class="sm-kv-key">balance</div><div class="sm-kv-val">${fmtMoneyPlain(2847.30)}</div></div>
@@ -6674,7 +6732,7 @@ function openAccountDetailsModal() {
     </div>
     <div class="sm-footer">
       <button class="sm-btn" onclick="closeSmallModal()">close</button>
-      <a class="sm-btn primary" href="https://basescan.org/address/0x8f3ab94c7a" target="_blank" rel="noopener" style="text-decoration:none;">open in explorer</a>
+      <a class="sm-btn primary" href="https://demo.eip-8141.ethrex.xyz:8082/address/0x8f3ab94c7a" target="_blank" rel="noopener" style="text-decoration:none;">open in explorer</a>
     </div>
   `);
 }
@@ -7355,7 +7413,7 @@ function openShortcutHelp() {
           <button class="sm-close" onclick="closeSmallModal()">×</button>
         </div>
         <div class="sm-body">
-          <div style="font-size:13px;line-height:1.7;color:var(--text-2);">grantr is a reference implementation of <strong style="color:var(--text-1);">eip-8141 frames</strong>.<br><br>built with obsessive attention by a team that believes<br>crypto interfaces can feel like real software.<br><br><span style="color:var(--text-3);font-family:'DM Mono',monospace;font-size:11px;">v25 · base mainnet · prototype</span></div>
+          <div style="font-size:13px;line-height:1.7;color:var(--text-2);">grantr is a reference implementation of <strong style="color:var(--text-1);">eip-8141 frames</strong>.<br><br>built with obsessive attention by a team that believes<br>crypto interfaces can feel like real software.<br><br><span style="color:var(--text-3);font-family:'DM Mono',monospace;font-size:11px;">v25 · ethrex devnet · prototype</span></div>
         </div>
         <div class="sm-footer">
           <button class="sm-btn primary" onclick="closeSmallModal()">nice</button>
