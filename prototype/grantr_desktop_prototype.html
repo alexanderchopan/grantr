@@ -1492,6 +1492,112 @@ button {
 }
 .activity-export:hover { background: var(--card); color: var(--text-1); }
 
+.activity-view-toggle {
+  display: inline-flex;
+  background: var(--card);
+  border: 0.5px solid var(--border);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+.view-toggle-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--text-3);
+  padding: 6px 14px;
+  border-radius: 999px;
+  transition: background 0.15s, color 0.15s;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+.view-toggle-btn:hover { color: var(--text-1); }
+.view-toggle-btn.active {
+  background: var(--green);
+  color: #000;
+}
+
+.activity-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+  margin-bottom: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-2);
+}
+.activity-summary-meta { color: var(--text-3); }
+
+/* ===== frame-log view ===== */
+.frame-log-tx {
+  margin-bottom: 16px;
+}
+.frame-log-tx-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-4);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  flex-wrap: wrap;
+}
+.frame-log-tx-head .tx-template-chip {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  border: 0.5px solid;
+}
+.frame-log-events {
+  border-left: 0.5px solid var(--border-2);
+  padding-left: 14px;
+  margin-left: 4px;
+}
+.frame-log-row {
+  display: grid;
+  grid-template-columns: 72px 1fr 90px;
+  gap: 10px;
+  padding: 8px 0;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-radius: 6px;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+.frame-log-row:hover { background: var(--card-hover); }
+.frame-log-row-pill {
+  display: inline-flex;
+  justify-content: center;
+}
+.frame-log-row-desc {
+  font-size: 13px;
+  color: var(--text-1);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.frame-log-row-status {
+  text-align: right;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.frame-log-row-status.fail { color: var(--red); }
+
 .activity-day-label {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
@@ -2558,11 +2664,42 @@ button {
 }
 
 /* amount input */
+.token-picker-row {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0 0;
+}
+.token-picker {
+  display: inline-flex;
+  background: var(--card);
+  border: 0.5px solid var(--border);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+.token-picker-current {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-3);
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  transition: background 0.15s, color 0.15s;
+}
+.token-picker-current:hover { color: var(--text-1); }
+.token-picker-current.active {
+  background: var(--text-1);
+  color: var(--bg);
+}
 .amount-input-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 0 12px;
+  padding: 16px 0 12px;
   gap: 4px;
 }
 .amount-currency {
@@ -3102,7 +3239,7 @@ button {
         <div class="build-top-head">
           <div>
             <div class="build-top-title">start from a template</div>
-            <div class="build-top-sub">or compose your own queue below</div>
+            <div class="build-top-sub">or compose below from scratch</div>
           </div>
         </div>
         <div class="template-grid" id="templates-grid"></div>
@@ -3169,7 +3306,13 @@ button {
           <div class="activity-page-title">activity</div>
           <div class="activity-page-sub">everything that happened on your account</div>
         </div>
-        <button class="activity-export" onclick="exportActivity()">export csv</button>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div class="activity-view-toggle" role="tablist">
+            <button class="view-toggle-btn active" data-view="tx" onclick="setActivityView('tx')">by transaction</button>
+            <button class="view-toggle-btn" data-view="frame" onclick="setActivityView('frame')">by frame</button>
+          </div>
+          <button class="activity-export" onclick="exportActivity()">export csv</button>
+        </div>
       </div>
 
       <div class="tabs-filter">
@@ -3179,14 +3322,14 @@ button {
         <button class="tab-filter" data-filter="receive" onclick="filterActivity('receive')">receives</button>
       </div>
 
-      <div class="frame-filters">
+      <div class="frame-filters" id="frame-filters-row" style="display:none;">
         <span class="frame-filters-label">frames</span>
         <button class="frame-filter-pill verify" data-frame="verify" onclick="toggleFrameFilter('verify')">verify</button>
-        <button class="frame-filter-pill approve" data-frame="approve" onclick="toggleFrameFilter('approve')">approve</button>
         <button class="frame-filter-pill sender" data-frame="sender" onclick="toggleFrameFilter('sender')">sender</button>
         <button class="frame-filter-pill default" data-frame="default" onclick="toggleFrameFilter('default')">default</button>
       </div>
 
+      <div id="activity-summary" class="activity-summary" style="display:none;"></div>
       <div id="activity-full-list"></div>
     </div>
     <div id="screen-account" class="screen">
@@ -3451,8 +3594,8 @@ const sessions = [
     id: 's1', name: 'lp rebalancer', status: 'active', templateId: 't1', templateName: 'lp rebalance',
     used: 12.40, cap: 500, daysLeft: 29,
     frames: [
-      { mode: 'verify', desc: 'session key · rebalance() · collectFees()', status: 'pass' },
-      { mode: 'sender', desc: 'uniswap v3 position manager', status: 'pass' },
+      { mode: 'verify', desc: 'session key · scope: execution', status: 'pass' },
+      { mode: 'sender', desc: 'uniswap v3 position manager · rebalance(), collectFees()', status: 'pass' },
     ],
     executed: 3, blocked: 1,
   },
@@ -3460,8 +3603,8 @@ const sessions = [
     id: 's2', name: 'ens renewer', status: 'active', templateId: 't2', templateName: 'ens renew',
     used: 0, cap: 50, daysLeft: 345,
     frames: [
-      { mode: 'verify', desc: 'session key · renew()', status: 'pass' },
-      { mode: 'sender', desc: 'ens base registrar', status: 'pass' },
+      { mode: 'verify', desc: 'session key · scope: execution', status: 'pass' },
+      { mode: 'sender', desc: 'ens base registrar · renew()', status: 'pass' },
     ],
     executed: 0, blocked: 0,
   },
@@ -3469,8 +3612,8 @@ const sessions = [
     id: 's3', name: 'dca bot', status: 'warning', templateId: 't3', templateName: 'dca weekly',
     used: 220, cap: 500, daysLeft: 3,
     frames: [
-      { mode: 'verify', desc: 'session key · exactInputSingle()', status: 'pass' },
-      { mode: 'sender', desc: 'uniswap v3 router · eth → usdc', status: 'pass' },
+      { mode: 'verify', desc: 'session key · scope: execution', status: 'pass' },
+      { mode: 'sender', desc: 'uniswap v3 router · exactInputSingle() · eth → usdc', status: 'pass' },
     ],
     executed: 8, blocked: 0,
   },
@@ -3481,8 +3624,8 @@ const pastSessions = [
     id: 's4', name: 'price oracle', status: 'revoked', templateId: 't4', templateName: 'price oracle',
     used: 0, cap: 100, daysLeft: null, endedAgo: 'revoked yesterday',
     frames: [
-      { mode: 'verify', desc: 'session key · updatePrice()', status: 'pass' },
-      { mode: 'sender', desc: 'chainlink price oracle', status: 'pass' },
+      { mode: 'verify', desc: 'session key · scope: execution', status: 'pass' },
+      { mode: 'sender', desc: 'chainlink price oracle · updatePrice()', status: 'pass' },
     ],
     executed: 0, blocked: 0,
   },
@@ -3490,8 +3633,8 @@ const pastSessions = [
     id: 's5', name: 'dca bot', status: 'expired', templateId: 't3', templateName: 'dca weekly',
     used: 420, cap: 500, daysLeft: null, endedAgo: 'expired 3 days ago',
     frames: [
-      { mode: 'verify', desc: 'session key · exactInputSingle()', status: 'pass' },
-      { mode: 'sender', desc: 'uniswap v3 router · eth → usdc', status: 'pass' },
+      { mode: 'verify', desc: 'session key · scope: execution', status: 'pass' },
+      { mode: 'sender', desc: 'uniswap v3 router · exactInputSingle() · eth → usdc', status: 'pass' },
     ],
     executed: 12, blocked: 0,
   },
@@ -3502,27 +3645,27 @@ const activity = [
     id: 'a1', title: 'sent to bob.eth', sub: '$100 usdc · just now', amount: -100,
     txHash: '0x4f2a...8e91', block: 20847392, gas: '0.00042 eth', source: 'you', kind: 'send', day: 'today',
     frames: [
-      { mode: 'verify', desc: 'passkey · transfer()', status: 'pass' },
-      { mode: 'sender', desc: 'usdc contract · bob.eth', status: 'pass' },
-      { mode: 'default', desc: 'paymaster · grantr gas', status: 'pass' },
+      { mode: 'verify', desc: 'passkey · scope: execution', status: 'pass' },
+      { mode: 'sender', desc: 'usdc contract · transfer() · bob.eth', status: 'pass' },
+      { mode: 'verify', desc: 'sponsor · grantr paymaster', status: 'pass' },
     ],
   },
   {
     id: 'a2', title: 'rebalance executed', sub: 'lp rebalancer · 2m ago', amount: 14,
     txHash: '0x8a31...c4f2', block: 20847380, gas: '0.00089 eth', source: 'lp rebalancer', kind: 'agent', day: 'today',
     frames: [
-      { mode: 'verify', desc: 'session key · rebalance()', status: 'pass' },
-      { mode: 'sender', desc: 'uniswap v3 position manager', status: 'pass' },
-      { mode: 'default', desc: 'paymaster · grantr gas', status: 'pass' },
+      { mode: 'verify', desc: 'session key · scope: execution', status: 'pass' },
+      { mode: 'sender', desc: 'uniswap v3 position manager · rebalance()', status: 'pass' },
+      { mode: 'verify', desc: 'sponsor · grantr paymaster', status: 'pass' },
     ],
   },
   {
     id: 'a3', title: 'dca swap', sub: 'dca bot · 14m ago', amount: -50,
     txHash: '0x1c9b...77ad', block: 20847290, gas: '0.00064 eth', source: 'dca bot', kind: 'agent', day: 'today',
     frames: [
-      { mode: 'verify', desc: 'session key · exactInputSingle()', status: 'pass' },
-      { mode: 'sender', desc: 'uniswap v3 router · eth → usdc', status: 'pass' },
-      { mode: 'default', desc: 'paymaster · grantr gas', status: 'pass' },
+      { mode: 'verify', desc: 'session key · scope: execution', status: 'pass' },
+      { mode: 'sender', desc: 'uniswap v3 router · exactInputSingle() · eth → usdc', status: 'pass' },
+      { mode: 'verify', desc: 'sponsor · grantr paymaster', status: 'pass' },
     ],
   },
   {
@@ -3534,36 +3677,36 @@ const activity = [
     id: 'a5', title: 'rebalance executed', sub: 'lp rebalancer · 2h ago', amount: 8,
     txHash: '0x3e8c...91bd', block: 20846120, gas: '0.00081 eth', source: 'lp rebalancer', kind: 'agent', day: 'today',
     frames: [
-      { mode: 'verify', desc: 'session key · rebalance()', status: 'pass' },
-      { mode: 'sender', desc: 'uniswap v3 position manager', status: 'pass' },
-      { mode: 'default', desc: 'paymaster · grantr gas', status: 'pass' },
+      { mode: 'verify', desc: 'session key · scope: execution', status: 'pass' },
+      { mode: 'sender', desc: 'uniswap v3 position manager · rebalance()', status: 'pass' },
+      { mode: 'verify', desc: 'sponsor · grantr paymaster', status: 'pass' },
     ],
   },
   {
     id: 'a6', title: 'dca swap', sub: 'dca bot · yesterday 11pm', amount: -50,
     txHash: '0x7b4f...e22a', block: 20840210, gas: '0.00071 eth', source: 'dca bot', kind: 'agent', day: 'yesterday',
     frames: [
-      { mode: 'verify', desc: 'session key · exactInputSingle()', status: 'pass' },
-      { mode: 'sender', desc: 'uniswap v3 router · eth → usdc', status: 'pass' },
-      { mode: 'default', desc: 'paymaster · grantr gas', status: 'pass' },
+      { mode: 'verify', desc: 'session key · scope: execution', status: 'pass' },
+      { mode: 'sender', desc: 'uniswap v3 router · exactInputSingle() · eth → usdc', status: 'pass' },
+      { mode: 'verify', desc: 'sponsor · grantr paymaster', status: 'pass' },
     ],
   },
   {
     id: 'a7', title: 'ens renewed', sub: 'ens renewer · yesterday 8am', amount: -12,
     txHash: '0x44d1...0fce', block: 20830512, gas: '0.00055 eth', source: 'ens renewer', kind: 'agent', day: 'yesterday',
     frames: [
-      { mode: 'verify', desc: 'session key · renew()', status: 'pass' },
-      { mode: 'sender', desc: 'ens base registrar', status: 'pass' },
-      { mode: 'default', desc: 'paymaster · grantr gas', status: 'pass' },
+      { mode: 'verify', desc: 'session key · scope: execution', status: 'pass' },
+      { mode: 'sender', desc: 'ens base registrar · renew()', status: 'pass' },
+      { mode: 'verify', desc: 'sponsor · grantr paymaster', status: 'pass' },
     ],
   },
   {
     id: 'a8', title: 'sent to charlie.eth', sub: '$250 usdc · 3 days ago', amount: -250,
     txHash: '0xb10e...ffa1', block: 20801202, gas: '0.00049 eth', source: 'you', kind: 'send', day: 'earlier this week',
     frames: [
-      { mode: 'verify', desc: 'passkey · transfer()', status: 'pass' },
-      { mode: 'sender', desc: 'usdc contract · charlie.eth', status: 'pass' },
-      { mode: 'default', desc: 'paymaster · grantr gas', status: 'pass' },
+      { mode: 'verify', desc: 'passkey · scope: execution', status: 'pass' },
+      { mode: 'sender', desc: 'usdc contract · transfer() · charlie.eth', status: 'pass' },
+      { mode: 'verify', desc: 'sponsor · grantr paymaster', status: 'pass' },
     ],
   },
 ];
@@ -3917,16 +4060,35 @@ function seeItWork(id) {
   const executed = s.executed || 0;
   const blocked = s.blocked || 0;
 
+  // compute verdict from current session state
+  let verdictText, verdictColor;
+  if (s.status === 'revoked') {
+    verdictText = 'would block: session revoked';
+    verdictColor = 'var(--red)';
+  } else if (s.daysLeft !== null && s.daysLeft <= 0) {
+    verdictText = 'would block: session expired';
+    verdictColor = 'var(--red)';
+  } else if (s.used >= s.cap) {
+    verdictText = 'would block: cap reached';
+    verdictColor = 'var(--red)';
+  } else if (s.used >= s.cap * 0.8) {
+    verdictText = `would pass · ${fmtMoneyPlain(s.cap - s.used)} left under cap`;
+    verdictColor = 'var(--amber)';
+  } else {
+    verdictText = 'would pass';
+    verdictColor = 'var(--green)';
+  }
+
   showSmallModal(`
     <div class="sm-head">
       <div>
         <div class="sm-title">${escapeHTML(s.name)} · simulation</div>
-        <div class="sm-sub">what the agent would do right now, no gas spent</div>
+        <div class="sm-sub">what the agent would submit right now, no gas spent</div>
       </div>
       <button class="sm-close" onclick="closeSmallModal()">×</button>
     </div>
     <div class="sm-body">
-      <div class="sm-label">would execute</div>
+      <div class="sm-label">would submit a 0x06 tx with these frames</div>
       <div class="sm-row-list" style="margin-bottom: 14px;">
         ${s.frames.map(f => `
           <div class="sm-row-list-item">
@@ -3939,15 +4101,15 @@ function seeItWork(id) {
         `).join('')}
       </div>
 
-      <div class="sm-label">check against policy</div>
+      <div class="sm-label">check against session limits</div>
       <div class="sm-kv">
-        <div class="sm-kv-row"><div class="sm-kv-key">policy</div><div class="sm-kv-val" style="color:${color.fg};">${escapeHTML(s.templateName || '—')}</div></div>
+        <div class="sm-kv-row"><div class="sm-kv-key">template</div><div class="sm-kv-val" style="color:${color.fg};">${escapeHTML(s.templateName || '—')}</div></div>
         <div class="sm-kv-row"><div class="sm-kv-key">spent</div><div class="sm-kv-val">${fmtMoneyPlain(s.used)} / ${fmtMoneyPlain(s.cap)}</div></div>
-        <div class="sm-kv-row"><div class="sm-kv-key">time</div><div class="sm-kv-val">${s.daysLeft}d left</div></div>
-        <div class="sm-kv-row"><div class="sm-kv-key">verdict</div><div class="sm-kv-val" style="color: var(--green);">would pass</div></div>
+        <div class="sm-kv-row"><div class="sm-kv-key">time</div><div class="sm-kv-val">${s.daysLeft === null ? '—' : s.daysLeft + 'd left'}</div></div>
+        <div class="sm-kv-row"><div class="sm-kv-key">verdict</div><div class="sm-kv-val" style="color: ${verdictColor};">${verdictText}</div></div>
       </div>
 
-      <div class="sm-note">simulation runs this session's frames against the current policy and state. no transaction is signed or sent.</div>
+      <div class="sm-note">simulation checks session state against caps and expiry. actual inputs depend on the agent's current goal — this shows shape, not values.</div>
     </div>
     <div class="sm-footer">
       <button class="sm-btn" onclick="closeSmallModal()">close</button>
@@ -4060,6 +4222,23 @@ function renderSessionsTab() {
 let activityFilter = 'all';
 let activityFrameFilters = new Set(); // frame types to filter by
 let activitySort = { col: 'when', dir: 'desc' }; // when ↓ default
+let activityView = 'tx'; // 'tx' | 'frame'
+
+function setActivityView(view) {
+  activityView = view;
+  document.querySelectorAll('#screen-activity .view-toggle-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === view);
+  });
+  // frame filters are only meaningful in by-frame view
+  const row = document.getElementById('frame-filters-row');
+  if (row) row.style.display = (view === 'frame') ? '' : 'none';
+  // when leaving frame view, clear any active frame filters so tx view shows everything
+  if (view === 'tx') {
+    activityFrameFilters.clear();
+    document.querySelectorAll('#screen-activity .frame-filter-pill').forEach(p => p.classList.remove('active'));
+  }
+  renderActivityTab();
+}
 
 function frameCountOf(a) {
   return (a.frames && a.frames.length) || 0;
@@ -4140,14 +4319,10 @@ function activityRowGridHTML(a) {
   `;
 }
 
-function renderActivityTab() {
-  const el = document.getElementById('activity-full-list');
-
-  // filter by kind
+function getFilteredActivity() {
   let filtered = activityFilter === 'all' ? [...activity] : activity.filter(a => a.kind === activityFilter);
-
-  // filter by frame types (row must contain all selected frame types)
-  if (activityFrameFilters.size > 0) {
+  // in tx view, frame filter requires tx to contain ALL selected frame modes
+  if (activityView === 'tx' && activityFrameFilters.size > 0) {
     filtered = filtered.filter(a => {
       const modes = new Set((a.frames || []).map(f => f.mode));
       for (const f of activityFrameFilters) {
@@ -4156,6 +4331,23 @@ function renderActivityTab() {
       return true;
     });
   }
+  // in frame view, we don't pre-filter by frame here — the flat-frame pass does it
+  return filtered;
+}
+
+function renderActivityTab() {
+  const el = document.getElementById('activity-full-list');
+  const summaryEl = document.getElementById('activity-summary');
+
+  if (activityView === 'frame') {
+    renderActivityFrameView(el, summaryEl);
+    return;
+  }
+
+  // ===== by-transaction view (existing) =====
+  if (summaryEl) summaryEl.style.display = 'none';
+
+  let filtered = getFilteredActivity();
 
   // sort
   const { col, dir } = activitySort;
@@ -4208,6 +4400,98 @@ function renderActivityTab() {
       ${filtered.map(a => activityRowGridHTML(a)).join('')}
     </div>
   `;
+}
+
+// ===== by-frame view =====
+function renderActivityFrameView(el, summaryEl) {
+  const filtered = getFilteredActivity();
+
+  // build flat list of frame events, grouped by parent tx
+  const groups = filtered
+    .filter(a => a.frames && a.frames.length > 0)
+    .map(a => {
+      let events = a.frames.map((f, i) => ({ ...f, txId: a.id, idx: i }));
+      if (activityFrameFilters.size > 0) {
+        events = events.filter(f => activityFrameFilters.has(f.mode));
+      }
+      return { tx: a, events };
+    })
+    .filter(g => g.events.length > 0);
+
+  // summary
+  const totalEvents = groups.reduce((acc, g) => acc + g.events.length, 0);
+  const totalTxs = groups.length;
+  if (summaryEl) {
+    const filterText = activityFrameFilters.size === 0
+      ? 'all frame events'
+      : Array.from(activityFrameFilters).join(' + ') + ' frames';
+    summaryEl.innerHTML = `
+      <span>${totalEvents} ${filterText} across ${totalTxs} ${totalTxs === 1 ? 'transaction' : 'transactions'}</span>
+      <span class="activity-summary-meta">newest first</span>
+    `;
+    summaryEl.style.display = 'flex';
+  }
+
+  if (groups.length === 0) {
+    el.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-title">no frame events match</div>
+        <div class="empty-state-sub">try a different filter combo</div>
+      </div>`;
+    return;
+  }
+
+  el.innerHTML = groups.map(g => {
+    const a = g.tx;
+    const amtCls = a.amount > 0 ? 'positive' : (a.amount < 0 ? 'negative' : 'neutral');
+    const when = a.sub.split('·').pop().trim();
+    // template chip if this tx ran within a session (kind: agent)
+    let tplChip = '';
+    if (a.kind === 'agent') {
+      const sess = sessions.find(s => s.name === a.source) || pastSessions.find(s => s.name === a.source);
+      if (sess && sess.templateId) {
+        const c = templateColor(sess.templateId);
+        tplChip = `<span class="tx-template-chip" style="background:${c.bg}; border-color:${c.border}; color:${c.fg};">${sess.templateName}</span>`;
+      }
+    }
+    const amtText = a.amount !== 0 ? fmtMoney(a.amount) : '';
+    const headMeta = [
+      `tx ${a.id}`,
+      a.title,
+      amtText,
+      when,
+    ].filter(Boolean).join(' · ');
+
+    const eventsHTML = g.events.map(f => `
+      <div class="frame-log-row" onclick="openTxFromFrame('${a.id}')">
+        <div class="frame-log-row-pill"><div class="frame-pill ${f.mode}">${f.mode}</div></div>
+        <div class="frame-log-row-desc">${f.desc}</div>
+        <div class="frame-log-row-status ${f.status === 'pass' ? '' : 'fail'}">${f.status === 'pass' ? '✓ pass' : '✗ fail'}</div>
+      </div>
+    `).join('');
+
+    return `
+      <div class="frame-log-tx" data-id="${a.id}">
+        <div class="frame-log-tx-head">
+          <span>${headMeta}</span>
+          ${tplChip}
+        </div>
+        <div class="frame-log-events">${eventsHTML}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openTxFromFrame(txId) {
+  // switch to tx view and expand that tx
+  setActivityView('tx');
+  setTimeout(() => {
+    const row = document.querySelector(`.activity-grid-row[data-id="${txId}"]`);
+    if (row) {
+      row.classList.add('expanded');
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 50);
 }
 
 function toggleActivityGrid(id) {
@@ -4296,14 +4580,39 @@ const recipients = [
   { id: 'r4', name: 'cold wallet', addr: '0xde10...2a93', label: 'saved', initials: 'cw' },
 ];
 
+// ===== tokens for send flow =====
+const TOKENS = {
+  USDC: {
+    symbol: 'USDC',
+    balance: 2847.30,
+    decimals: 2,
+    contract: 'usdc contract',
+    prefix: '$',
+    formatBig: (v) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+    formatPlain: (v) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: v % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 }),
+    quickChips: ['25', '100', '500'],
+  },
+  ETH: {
+    symbol: 'ETH',
+    balance: 1.2450,
+    decimals: 4,
+    contract: 'eth native',
+    prefix: 'Ξ',
+    formatBig: (v) => 'Ξ' + v.toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 }),
+    formatPlain: (v) => 'Ξ' + v.toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 }),
+    quickChips: ['0.01', '0.05', '0.1'],
+  },
+};
+
 let sendState = {
   step: 'amount', // 'amount' | 'recipient' | 'preview' | 'signing' | 'done'
   amount: '',
   recipient: null,
+  token: 'USDC',
 };
 
 function openSend() {
-  sendState = { step: 'amount', amount: '', recipient: null };
+  sendState = { step: 'amount', amount: '', recipient: null, token: 'USDC' };
   document.getElementById('send-modal').classList.add('open');
   renderSendStep();
   setTimeout(() => {
@@ -4320,6 +4629,13 @@ function sendBack() {
     sendState.step = order[i - 1];
     renderSendStep();
   }
+}
+
+function setSendToken(symbol) {
+  if (!TOKENS[symbol]) return;
+  sendState.token = symbol;
+  sendState.amount = ''; // reset to avoid mixing units
+  renderSendStep();
 }
 
 function renderSendStep() {
@@ -4355,22 +4671,30 @@ function renderSendStep() {
 
   // step content
   if (sendState.step === 'amount') {
+    const tk = TOKENS[sendState.token];
+    const otherTokens = Object.keys(TOKENS).filter(s => s !== sendState.token);
+    const chipsHtml = tk.quickChips.map(v => `<button class="amount-chip" onclick="setAmount('${v}')">${tk.prefix}${v}</button>`).join('');
+    const maxChipVal = tk.balance.toFixed(tk.decimals);
     body.innerHTML = `
       <div class="send-step-title">how much?</div>
-      <div class="amount-input-wrap">
-        <span class="amount-currency">$</span>
-        <input id="amount-input" class="amount-input" type="number" placeholder="0" value="${sendState.amount}" oninput="setAmount(this.value)" />
+      <div class="token-picker-row">
+        <div class="token-picker">
+          <button class="token-picker-current ${sendState.token === 'USDC' ? 'active' : ''}" onclick="setSendToken('USDC')">usdc</button>
+          <button class="token-picker-current ${sendState.token === 'ETH' ? 'active' : ''}" onclick="setSendToken('ETH')">eth</button>
+        </div>
       </div>
-      <div class="amount-avail">available: $2,847.30</div>
+      <div class="amount-input-wrap">
+        <span class="amount-currency">${tk.prefix}</span>
+        <input id="amount-input" class="amount-input" type="number" step="any" placeholder="0" value="${sendState.amount}" oninput="setAmount(this.value)" />
+      </div>
+      <div class="amount-avail">available: ${tk.formatBig(tk.balance)}</div>
       <div class="amount-chips">
-        <button class="amount-chip" onclick="setAmount('25')">$25</button>
-        <button class="amount-chip" onclick="setAmount('100')">$100</button>
-        <button class="amount-chip" onclick="setAmount('500')">$500</button>
-        <button class="amount-chip" onclick="setAmount('2847.30')">max</button>
+        ${chipsHtml}
+        <button class="amount-chip" onclick="setAmount('${maxChipVal}')">max</button>
       </div>
     `;
     const amt = parseFloat(sendState.amount);
-    const valid = !isNaN(amt) && amt > 0 && amt <= 2847.30;
+    const valid = !isNaN(amt) && amt > 0 && amt <= tk.balance;
     footer.innerHTML = `
       <button class="send-btn secondary" onclick="closeSend()">cancel</button>
       <button class="send-btn primary" ${valid ? '' : 'disabled'} onclick="sendNext()">next</button>
@@ -4411,12 +4735,13 @@ function renderSendStep() {
 
   else if (sendState.step === 'preview') {
     const amt = parseFloat(sendState.amount);
+    const tk = TOKENS[sendState.token];
     body.innerHTML = `
       <div class="send-step-title">review</div>
       <div class="preview-summary">
         <div class="preview-row">
           <span class="preview-label">sending</span>
-          <span class="preview-value big">$${amt.toFixed(2)}</span>
+          <span class="preview-value big">${tk.formatBig(amt)}</span>
         </div>
         <div class="preview-divider"></div>
         <div class="preview-row">
@@ -4429,7 +4754,7 @@ function renderSendStep() {
         <div class="preview-divider"></div>
         <div class="preview-row">
           <span class="preview-label">network</span>
-          <span class="preview-value">ethereum</span>
+          <span class="preview-value">base mainnet</span>
         </div>
         <div class="preview-row">
           <span class="preview-label">gas</span>
@@ -4456,11 +4781,12 @@ function renderSendStep() {
 
   else if (sendState.step === 'done') {
     const amt = parseFloat(sendState.amount);
+    const tk = TOKENS[sendState.token];
     body.innerHTML = `
       <div class="send-status">
         <div class="send-status-icon done">✓</div>
         <div class="send-status-title">sent</div>
-        <div class="send-status-sub">$${amt.toFixed(2)} to ${sendState.recipient.name}<br>will appear in activity momentarily</div>
+        <div class="send-status-sub">${tk.formatBig(amt)} to ${sendState.recipient.name}<br>will appear in activity momentarily</div>
       </div>
     `;
     footer.innerHTML = `
@@ -4472,20 +4798,29 @@ function renderSendStep() {
 function renderSendFrames() {
   const el = document.getElementById('send-frames-list');
   const amt = parseFloat(sendState.amount) || 0;
+  const tk = TOKENS[sendState.token];
+  const amtText = tk.formatBig(amt);
+  const senderDesc = sendState.recipient
+    ? (sendState.token === 'ETH'
+        ? `eth native · transfer · ${sendState.recipient.name}`
+        : `usdc contract · transfer() · ${sendState.recipient.name}`)
+    : `${tk.contract} · recipient pending`;
   const frames = [
     {
       mode: 'verify',
-      desc: amt > 0 ? `passkey · transfer($${amt.toFixed(2)})` : 'passkey · amount pending',
+      desc: 'passkey · scope: execution',
       active: amt > 0,
     },
     {
       mode: 'sender',
-      desc: sendState.recipient ? `usdc contract · ${sendState.recipient.name}` : 'usdc contract · recipient pending',
+      desc: amt > 0
+        ? (sendState.recipient ? senderDesc : `${tk.contract} · recipient pending`)
+        : `${tk.contract} · amount pending`,
       active: !!sendState.recipient,
     },
     {
-      mode: 'default',
-      desc: 'paymaster · grantr gas',
+      mode: 'verify',
+      desc: 'sponsor · grantr paymaster',
       active: true,
     },
   ];
@@ -4505,8 +4840,9 @@ function setAmount(v) {
   // update next button state
   const btn = document.querySelector('#send-footer .send-btn.primary');
   if (btn) {
+    const tk = TOKENS[sendState.token];
     const amt = parseFloat(v);
-    const valid = !isNaN(amt) && amt > 0 && amt <= 2847.30;
+    const valid = !isNaN(amt) && amt > 0 && amt <= tk.balance;
     btn.disabled = !valid;
   }
 }
@@ -4564,11 +4900,17 @@ function sendSign() {
     renderSendStep();
     // add to activity
     const amt = parseFloat(sendState.amount);
+    const tk = TOKENS[sendState.token];
+    const senderDesc = sendState.token === 'ETH'
+      ? `eth native · transfer · ${sendState.recipient.name}`
+      : `usdc contract · transfer(${tk.formatBig(amt)}) · ${sendState.recipient.name}`;
+    // amount in activity is negative for outflow; USD-ish for usdc, eth for eth
+    const activityAmount = sendState.token === 'USDC' ? -amt : 0; // eth outflows shown separately
     activity.unshift({
       id: 'a' + Date.now(),
       title: `sent to ${sendState.recipient.name}`,
-      sub: `$${amt.toFixed(2)} usdc · just now`,
-      amount: -amt,
+      sub: `${tk.formatBig(amt)} ${sendState.token === 'USDC' ? 'usdc' : 'eth'} · just now`,
+      amount: activityAmount,
       txHash: '0x' + Math.random().toString(16).slice(2, 6) + '...' + Math.random().toString(16).slice(2, 6),
       block: 20847392,
       gas: '0.00042 eth',
@@ -4576,9 +4918,9 @@ function sendSign() {
       kind: 'send',
       day: 'today',
       frames: [
-        { mode: 'verify', desc: `passkey · transfer($${amt.toFixed(2)})`, status: 'pass' },
-        { mode: 'sender', desc: `usdc contract · ${sendState.recipient.name}`, status: 'pass' },
-        { mode: 'default', desc: 'paymaster · grantr gas', status: 'pass' },
+        { mode: 'verify', desc: 'passkey · scope: execution', status: 'pass' },
+        { mode: 'sender', desc: senderDesc, status: 'pass' },
+        { mode: 'verify', desc: 'sponsor · grantr paymaster', status: 'pass' },
       ],
     });
     renderHomeActivity();
@@ -4597,12 +4939,7 @@ const frameLibrary = [
     items: [
       { id: 'verify-passkey', name: "prove it's you", desc: 'passkey · this device', mode: 'verify' },
       { id: 'verify-session', name: 'prove an agent is allowed', desc: 'session key · scoped actions', mode: 'verify' },
-    ],
-  },
-  {
-    group: 'approve',
-    items: [
-      { id: 'approve-paymaster', name: 'pay with grantr gas', desc: 'paymaster sponsorship', mode: 'approve' },
+      { id: 'verify-paymaster', name: 'have grantr pay gas', desc: 'sponsor · grantr paymaster', mode: 'verify' },
     ],
   },
   {
@@ -4610,12 +4947,15 @@ const frameLibrary = [
     items: [
       { id: 'sender-tokens', name: 'send tokens', desc: 'transfer erc-20 or eth', mode: 'sender' },
       { id: 'sender-contract', name: 'call a contract', desc: 'any address + calldata', mode: 'sender' },
+      { id: 'sender-approve', name: 'approve token spending', desc: 'erc-20 · approve()', mode: 'sender' },
+      { id: 'sender-account', name: 'change account rules', desc: 'rotate key · add guardian', mode: 'sender' },
     ],
   },
   {
     group: 'default',
     items: [
-      { id: 'default-account', name: 'change account rules', desc: 'rotate key · add guardian', mode: 'default' },
+      { id: 'default-deploy', name: 'deploy account', desc: 'first-time account setup', mode: 'default' },
+      { id: 'default-refund', name: 'gas refund hook', desc: 'refund sponsor overcharge', mode: 'default' },
     ],
   },
 ];
@@ -4748,7 +5088,7 @@ function renderRunStep() {
         <div class="preview-divider"></div>
         <div class="preview-row">
           <span class="preview-label">network</span>
-          <span class="preview-value">ethereum</span>
+          <span class="preview-value">base mainnet</span>
         </div>
         <div class="preview-row">
           <span class="preview-label">gas</span>
@@ -4871,9 +5211,9 @@ const templates = [
     desc: 'keep uniswap v3 positions in range',
     activeSessions: 1,
     frames: [
-      { mode: 'verify', desc: 'session key · rebalance() · collectFees()' },
-      { mode: 'sender', desc: 'uniswap v3 position manager' },
-      { mode: 'default', desc: 'paymaster · grantr gas' },
+      { mode: 'verify', desc: 'session key · scope: execution' },
+      { mode: 'sender', desc: 'uniswap v3 position manager · rebalance(), collectFees()' },
+      { mode: 'verify', desc: 'sponsor · grantr paymaster' },
     ],
   },
   {
@@ -4881,19 +5221,18 @@ const templates = [
     desc: 'auto-renew expiring ens names',
     activeSessions: 1,
     frames: [
-      { mode: 'verify', desc: 'session key · renew()' },
-      { mode: 'sender', desc: 'ens base registrar' },
+      { mode: 'verify', desc: 'session key · scope: execution' },
+      { mode: 'sender', desc: 'ens base registrar · renew()' },
     ],
   },
   {
     id: 't3', name: 'dca weekly', starter: false,
-    desc: 'swap eth → usdc weekly, capped',
+    desc: 'swap eth → usdc weekly, within agent caps',
     activeSessions: 1,
     frames: [
-      { mode: 'verify', desc: 'session key · exactInputSingle()' },
-      { mode: 'approve', desc: 'paymaster sponsorship' },
-      { mode: 'sender', desc: 'uniswap v3 router · eth → usdc' },
-      { mode: 'default', desc: 'paymaster · grantr gas' },
+      { mode: 'verify', desc: 'session key · scope: execution' },
+      { mode: 'sender', desc: 'uniswap v3 router · exactInputSingle() · eth → usdc' },
+      { mode: 'verify', desc: 'sponsor · grantr paymaster' },
     ],
   },
   {
@@ -4901,8 +5240,8 @@ const templates = [
     desc: 'update a chainlink price feed',
     activeSessions: 0,
     frames: [
-      { mode: 'verify', desc: 'session key · updatePrice()' },
-      { mode: 'sender', desc: 'chainlink price oracle' },
+      { mode: 'verify', desc: 'session key · scope: execution' },
+      { mode: 'sender', desc: 'chainlink price oracle · updatePrice()' },
     ],
   },
 ];
@@ -6499,7 +6838,7 @@ function getSmartSuggestions() {
     ],
     'screen-build': [
       { label: 'add verify frame',    run: () => { closeSearch(); if (typeof frameLibrary !== 'undefined') { const it = frameLibrary[0] && frameLibrary[0].items[0]; if (it) addFrame(it.id); } } },
-      { label: 'add paymaster',       run: () => { closeSearch(); if (typeof frameLibrary !== 'undefined') { const g = frameLibrary.find(g => g.group === 'default'); const it = g && g.items[0]; if (it) addFrame(it.id); } } },
+      { label: 'add paymaster',       run: () => { closeSearch(); if (typeof frameLibrary !== 'undefined') { const it = frameLibrary.flatMap(g => g.items).find(i => i.id === 'verify-paymaster'); if (it) addFrame(it.id); } } },
       { label: 'save as policy',      run: () => { closeSearch(); const b = document.getElementById('btn-save-policy'); if (b && !b.disabled) b.click(); } },
       { label: 'clear queue',         run: () => { closeSearch(); if (typeof queue !== 'undefined' && queue.length) { queue = []; renderQueue(); } } },
     ],
