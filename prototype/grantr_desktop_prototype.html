@@ -6052,12 +6052,31 @@ document.getElementById('search-input').addEventListener('focus', () => {
   document.getElementById('search-kbd').textContent = 'esc';
 });
 document.getElementById('search-input').addEventListener('blur', () => {
-  // small timeout so click on a result still registers
+  // small timeout so click on a result/chip still registers
   setTimeout(() => {
-    if (document.getElementById('search-input').value === '') {
+    const input = document.getElementById('search-input');
+    const active = document.activeElement;
+    const panel = document.getElementById('search-results');
+    if (active === input) return;
+    if (panel && panel.contains(active)) return;
+    if (input.value === '') {
       document.getElementById('search-kbd').textContent = '\u2318k';
+      if (panel) panel.style.display = 'none';
     }
-  }, 120);
+  }, 140);
+});
+
+// dismiss suggestions panel on click outside the search bar area
+document.addEventListener('click', (e) => {
+  const bar = document.querySelector('.search-bar');
+  if (!bar) return;
+  if (bar.contains(e.target)) return;
+  const panel = document.getElementById('search-results');
+  const input = document.getElementById('search-input');
+  if (panel && panel.style.display !== 'none' && input.value === '') {
+    panel.style.display = 'none';
+    document.getElementById('search-kbd').textContent = '\u2318k';
+  }
 });
 
 document.addEventListener('keydown', (e) => {
