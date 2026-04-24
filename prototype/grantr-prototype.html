@@ -2087,18 +2087,11 @@ body {
 
       <div class="italic-voice" style="font-size: 13px; line-height: 1.5; padding-bottom: 14px;">stack frames to build any action. they all run together — if any frame fails, nothing happens.</div>
 
-      <!-- FRAMES QUEUE (slots) -->
-      <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px;">
-        <div style="font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1.2px;">frames</div>
-        <div id="build-queue-sub" class="italic-voice" style="font-size: 11px;">3 empty slots</div>
-      </div>
-      <div id="build-queue" class="slot-list"></div>
-      <button class="slot-add" onclick="addSlot()" style="margin-top: 8px;">+ add another</button>
-
       <!-- TEMPLATES (shown only when queue untouched) -->
-      <div id="build-templates-block" style="padding-top: 18px;">
-        <div class="italic-voice" style="font-size: 12px; padding-bottom: 8px;">or start with</div>
+      <div id="build-templates-block">
+        <div class="italic-voice" style="font-size: 12px; padding-bottom: 8px;">start with</div>
         <div id="build-templates" class="tpl-grid"></div>
+        <div class="italic-voice" style="font-size: 12px; padding: 14px 0 0; text-align: center;">or compose your own, below</div>
       </div>
 
       <!-- STEPS LIBRARY -->
@@ -2135,6 +2128,16 @@ body {
           <div class="frame-detail-footnote">all frames execute atomically. one fails, none apply.</div>
         </div>
       </details>
+
+      <!-- FRAMES QUEUE (slots) — at bottom, anchored to preview button -->
+      <div style="padding-top: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px;">
+          <div style="font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1.2px;">frames</div>
+          <div id="build-queue-sub" class="italic-voice" style="font-size: 11px;">3 empty slots</div>
+        </div>
+        <div id="build-queue" class="slot-list"></div>
+        <button class="slot-add" onclick="addSlot()" style="margin-top: 8px;">+ add another</button>
+      </div>
 
     </div>
     <div class="bottom" style="padding-top: 0;">
@@ -4415,9 +4418,18 @@ function addFrame(typeOrId, legacyName, legacySub) {
   }
   // fill first empty slot; if none, append
   const firstEmpty = queue.findIndex(q => q == null);
+  const filledIdx = firstEmpty >= 0 ? firstEmpty : queue.length;
   if (firstEmpty >= 0) queue[firstEmpty] = step;
   else queue.push(step);
   renderBuildQueue();
+  // nudge the newly-filled slot into view so user gets visual confirmation
+  requestAnimationFrame(() => {
+    const slots = document.querySelectorAll('#build-queue .slot');
+    const slot = slots[filledIdx];
+    if (slot && typeof slot.scrollIntoView === 'function') {
+      slot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
 }
 
 function clearSlot(idx) {
