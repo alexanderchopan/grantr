@@ -35,8 +35,8 @@ body {
 /* tour banner — visible only while a journey is active */
 .tour-banner {
   display: none;
-  background: rgba(34,197,94,0.10);
-  border-bottom: 0.5px solid rgba(34,197,94,0.25);
+  background: rgba(0,214,50,0.10);
+  border-bottom: 0.5px solid rgba(0,214,50,0.25);
   padding: 8px 16px 8px 20px;
   flex-shrink: 0;
   align-items: center;
@@ -133,26 +133,26 @@ body {
 .guardian-row:last-child { border-bottom: none; }
 .guardian-status { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; transition: background 0.3s; }
 .guardian-status.pending { background: #333; }
-.guardian-status.approved { background: #22c55e; }
+.guardian-status.approved { background: #00d632; }
 .auth-pill { background: transparent; border: 1px solid #2a2a2a; color: var(--text-3); padding: 8px 0; font-size: 12px; font-family: inherit; border-radius: 8px; cursor: pointer; transition: all 0.15s; }
 .auth-pill:hover { border-color: #3a3a3a; color: var(--text-2); }
 .auth-pill.active { background: #fff; border-color: #fff; color: #000; font-weight: 500; }
 .auth-toggle { width: 40px; height: 22px; border-radius: 22px; background: #2a2a2a; position: relative; cursor: pointer; transition: background 0.15s; flex-shrink: 0; }
-.auth-toggle.on { background: #22c55e; }
+.auth-toggle.on { background: #00d632; }
 .auth-toggle-knob { width: 16px; height: 16px; border-radius: 50%; background: #fff; position: absolute; top: 3px; left: 3px; transition: transform 0.15s; }
 .auth-toggle.on .auth-toggle-knob { transform: translateX(18px); }
 @keyframes spin { to { transform: rotate(360deg); } }
-@keyframes hp { 0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } 50% { box-shadow: 0 0 0 3px rgba(34,197,94,0.35); } }
+@keyframes hp { 0%, 100% { box-shadow: 0 0 0 0 rgba(0,214,50,0); } 50% { box-shadow: 0 0 0 3px rgba(0,214,50,0.35); } }
 .highlight-pulse { animation: hp 1.2s ease-in-out 2; }
 .stage-label { flex: 1; font-size: 13px; color: var(--text-1); }
 .stage.pending .stage-label { color: var(--text-3); }
 
 /* tab screens (profile, sessions, activity, addresses) use balance bar + tab bar */
 .screen.tab-screen {}
-.balance-bar { padding: 8px 20px 24px; flex-shrink: 0; }
+.balance-bar { padding: 8px 20px 18px; flex-shrink: 0; }
 .balance-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.balance-label { font-size: 10px; color: var(--text-4); text-transform: lowercase; letter-spacing: 1.5px; }
-.balance-amount { font-size: 64px; font-weight: 700; letter-spacing: -0.045em; line-height: 0.9; color: var(--text-1); margin-bottom: 14px; }
+.balance-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-4); letter-spacing: 1.2px; text-transform: uppercase; }
+.balance-amount { font-size: 64px; font-weight: 700; letter-spacing: -0.045em; line-height: 0.9; color: var(--text-1); margin-bottom: 0; }
 .italic-voice { font-family: 'DM Sans', sans-serif; font-style: italic; color: var(--text-voice); font-weight: 400; }
 .identity-row { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
 .avatar-large { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
@@ -268,12 +268,15 @@ body {
 .tick.success { background: var(--green); }
 .tick.blocked { background: var(--red); }
 
-/* privacy mode: hide balance amounts */
-.privacy-on .balance-amount,
-.privacy-on .hide-on-privacy { color: transparent !important; text-shadow: 0 0 12px rgba(255,255,255,0.35); user-select: none; }
+/* privacy mode: fully obscure balances with dots (not blur) */
+.privacy-on .balance-amount { color: transparent !important; position: relative; user-select: none; }
+.privacy-on .balance-amount::after { content: '••••••'; position: absolute; left: 0; top: 0; color: var(--text-1); letter-spacing: 0.04em; }
+.privacy-on .hide-on-privacy { color: transparent !important; position: relative; user-select: none; }
+.privacy-on .hide-on-privacy::after { content: '••••'; position: absolute; left: 0; top: 0; right: 0; color: inherit; color: var(--text-3); letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; }
+.privacy-on .entry-amount.hide-on-privacy::after { text-align: right; left: auto; right: 0; color: var(--text-2); }
 .privacy-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-4); display: flex; align-items: center; justify-content: center; }
 .privacy-toggle:hover { color: var(--text-2); }
-.balance-label-row { display: flex; align-items: center; justify-content: space-between; }
+.privacy-on .privacy-toggle { color: var(--text-2); }
 
 /* tx hash copy */
 .tx-hash-copy { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-3); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; background: transparent; border: none; padding: 0; }
@@ -412,11 +415,11 @@ body {
   background: var(--green); border: none; padding: 0;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; font-family: inherit;
-  box-shadow: 0 2px 10px rgba(34,197,94,0.3), 0 1px 3px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 10px rgba(0,214,50,0.3), 0 1px 3px rgba(0,0,0,0.3);
   transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
 }
 .fab:hover { transform: translateY(-1px); }
-.fab:active { transform: translateY(0); box-shadow: 0 1px 4px rgba(34,197,94,0.3); }
+.fab:active { transform: translateY(0); box-shadow: 0 1px 4px rgba(0,214,50,0.3); }
 .tab-action-icon { width: 22px; height: 22px; position: relative; transition: transform 0.28s cubic-bezier(.4,0,.2,1); }
 .tab-action-line { position: absolute; background: #000; border-radius: 2px; transition: background 0.2s ease; }
 .tab-action-line-v { left: 50%; top: 1px; width: 2.5px; height: 20px; transform: translateX(-50%); }
@@ -533,7 +536,7 @@ body {
 .devtools-label { font-size: 9px; color: #555; text-transform: uppercase; letter-spacing: 1px; padding: 4px 6px 0; }
 .dev-btn { background: transparent; border: 1px solid #333; color: #aaa; padding: 4px 8px; font-size: 10px; font-family: inherit; border-radius: 4px; cursor: pointer; text-align: left; white-space: nowrap; }
 .dev-btn:hover { background: #141414; color: #fff; }
-.dev-btn.j-built { border-color: #1f3a26; color: #22c55e; }
+.dev-btn.j-built { border-color: #1f3a26; color: #00d632; }
 .dev-btn.j-built:hover { background: #0a1f12; color: #4ade80; }
 
 .tour-overlay { position: absolute; bottom: 0; left: 0; right: 0; z-index: 50; padding: 16px; display: none; pointer-events: none; }
@@ -541,7 +544,7 @@ body {
 .tour-card { background: rgba(10,10,10,0.95); backdrop-filter: blur(12px); border: 1px solid #2a2a2a; border-radius: 16px; padding: 14px 16px; pointer-events: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 .tour-progress { display: flex; gap: 4px; margin-bottom: 10px; }
 .tour-progress-dot { flex: 1; height: 3px; border-radius: 2px; background: #2a2a2a; transition: background 0.2s; }
-.tour-progress-dot.done { background: #22c55e; }
+.tour-progress-dot.done { background: #00d632; }
 .tour-progress-dot.active { background: #c4b5fd; }
 .tour-title { font-size: 13px; color: var(--text-1); font-weight: 500; margin-bottom: 4px; }
 .tour-body { font-size: 12px; color: var(--text-3); line-height: 1.5; margin-bottom: 12px; }
@@ -557,7 +560,7 @@ body {
 </head>
 <body>
 
-<!-- devtools panel: 11 demo journeys from the spec -->
+<!-- devtools panel: demo journeys + quick nav -->
 <div id="devtools" class="devtools">
   <button class="devtools-toggle" onclick="toggleDevtools()" title="toggle devtools" aria-label="toggle devtools"><span id="devtools-toggle-icon">×</span></button>
   <div class="devtools-label">tour</div>
@@ -573,29 +576,37 @@ body {
   <button class="dev-btn j-built" onclick="journeyGrantDelegation()">7 · grant delegation</button>
   <button class="dev-btn j-built" onclick="journeyAgentActs()">8 · agent acts / blocked</button>
   <button class="dev-btn j-built" onclick="journeyRevokeDelegation()">9 · revoke delegation</button>
-  <button class="dev-btn j-built" onclick="journeyRebalance()">10 · rebalance portfolio</button>
+  <button class="dev-btn j-built" onclick="journeyRebalance()">10 · rebalance (t1 template)</button>
   <button class="dev-btn j-built" onclick="journeyBuild()">11 · build transaction</button>
-
-  <div class="devtools-label">actions</div>
-  <button class="dev-btn" onclick="closeAction(); go('rebalance')">rebalance</button>
-  <button class="dev-btn" onclick="closeAction(); go('build')">build</button>
-  <button class="dev-btn" onclick="closeAction(); go('send')">send</button>
 
   <div class="devtools-label">tabs</div>
   <button class="dev-btn" onclick="go('home')">home</button>
   <button class="dev-btn" onclick="go('sessions')">sessions</button>
   <button class="dev-btn" onclick="go('activity')">activity</button>
 
-  <div class="devtools-label">pages</div>
-  <button class="dev-btn" onclick="go('account')">account</button>
+  <div class="devtools-label">fab actions</div>
+  <button class="dev-btn" onclick="closeAction(); go('account')">account</button>
+  <button class="dev-btn" onclick="closeAction(); go('build')">build</button>
+  <button class="dev-btn" onclick="closeAction(); go('send')">send</button>
+
+  <div class="devtools-label">template-live</div>
+  <button class="dev-btn" onclick="openTemplateLive('lp-rebalancer')">lp rebalancer</button>
+  <button class="dev-btn" onclick="openTemplateLive('ens-renewer')">ens renewer</button>
+  <button class="dev-btn" onclick="openTemplateLive('dca-bot')">dca bot (past)</button>
+
+  <div class="devtools-label">sub-pages</div>
   <button class="dev-btn" onclick="go('addresses')">addresses</button>
   <button class="dev-btn" onclick="go('sponsor')">sponsor gas</button>
   <button class="dev-btn" onclick="go('verify-policy')">policies</button>
 
-  <div class="devtools-label">trays</div>
-  <button class="dev-btn" onclick="go('account'); setTimeout(() => openTray('security'), 100);">recovery</button>
-  <button class="dev-btn" onclick="go('account'); setTimeout(() => openTray('signing'), 100);">keys</button>
-  <button class="dev-btn" onclick="go('account'); setTimeout(() => openTray('account'), 100);">account details</button>
+  <div class="devtools-label">account trays</div>
+  <button class="dev-btn" onclick="go('account'); setTimeout(() => openTray('security'), 100);">recovery tray</button>
+  <button class="dev-btn" onclick="go('account'); setTimeout(() => openTray('signing'), 100);">keys tray</button>
+  <button class="dev-btn" onclick="go('account'); setTimeout(() => openTray('account'), 100);">details tray</button>
+
+  <div class="devtools-label">utilities</div>
+  <button class="dev-btn" onclick="togglePrivacy()">toggle privacy</button>
+  <button class="dev-btn" onclick="resetBuildQueue(); go('build')">reset build queue</button>
 </div>
 
 <div class="phone">
@@ -733,27 +744,7 @@ body {
       <details class="frame-detail">
         <summary>frame detail</summary>
         <div class="frame-detail-body">
-          <div class="frame-detail-row">
-            <span class="frame-badge verify">verify</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">passkey signature</div>
-              <div class="frame-detail-sub">p-256 · this device</div>
-            </div>
-          </div>
-          <div class="frame-detail-row">
-            <span class="frame-badge verify">verify</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">gas sponsored</div>
-              <div class="frame-detail-sub">grantr paymaster</div>
-            </div>
-          </div>
-          <div class="frame-detail-row">
-            <span class="frame-badge default">default</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">deploy account · set email recovery</div>
-              <div class="frame-detail-sub">post-op installs initial policy</div>
-            </div>
-          </div>
+          <div class="frame-pipeline"><div class="fp-track"><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">scope 1 · account</div></div><div class="fp-arrow">→</div><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">scope 2 · sponsor</div></div><div class="fp-arrow">→</div><div class="fp-node fp-default"><div class="fp-node-mode">default</div><div class="fp-node-meta">CREATE2</div></div></div></div>
         </div>
       </details>
     </div>
@@ -870,27 +861,7 @@ body {
       <details class="frame-detail">
         <summary>frame detail</summary>
         <div class="frame-detail-body">
-          <div class="frame-detail-row">
-            <span class="frame-badge verify">verify</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">email attestation</div>
-              <div class="frame-detail-sub">grantr service · signed over new passkey</div>
-            </div>
-          </div>
-          <div class="frame-detail-row">
-            <span class="frame-badge verify">verify</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">gas sponsored</div>
-              <div class="frame-detail-sub">grantr paymaster</div>
-            </div>
-          </div>
-          <div class="frame-detail-row">
-            <span class="frame-badge default">default</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">rotate passkey</div>
-              <div class="frame-detail-sub">swap old key for new · post-op</div>
-            </div>
-          </div>
+          <div class="frame-pipeline"><div class="fp-track"><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">email attestation</div></div><div class="fp-arrow">→</div><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">scope 2 · sponsor</div></div><div class="fp-arrow">→</div><div class="fp-node fp-default"><div class="fp-node-mode">default</div><div class="fp-node-meta">rotate passkey</div></div></div></div>
           <div class="frame-detail-footnote">all three frames execute atomically. if any fails, no changes apply.</div>
         </div>
       </details>
@@ -913,9 +884,9 @@ body {
       <div class="headline">add<br>guardians.</div>
       <div class="sub">guardians can help you recover if you lose your device. they can only co-sign a key rotation — they can't sign transactions or see your activity.</div>
       <div style="background: var(--card); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; margin-top: 16px;">
-        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">you pick 3 trusted people</div></div>
-        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">2 of 3 must approve recovery</div></div>
-        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">they can't access your funds</div></div>
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#ff9f0a;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">you pick 3 trusted people</div></div>
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#ff9f0a;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">2 of 3 must approve recovery</div></div>
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#ff9f0a;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">they can't access your funds</div></div>
       </div>
     </div>
     <div class="bottom">
@@ -1003,7 +974,7 @@ body {
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 11px;">
           <span style="color: var(--text-4);">gas</span>
-          <span style="color: #22c55e;">sponsored by grantr</span>
+          <span style="color: #00d632;">sponsored by grantr</span>
         </div>
       </div>
     </div>
@@ -1048,27 +1019,7 @@ body {
       <details class="frame-detail">
         <summary>frame detail</summary>
         <div class="frame-detail-body">
-          <div class="frame-detail-row">
-            <span class="frame-badge verify">verify</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">passkey signature</div>
-              <div class="frame-detail-sub">p-256 · this device</div>
-            </div>
-          </div>
-          <div class="frame-detail-row">
-            <span class="frame-badge verify">verify</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">gas sponsored</div>
-              <div class="frame-detail-sub">grantr paymaster</div>
-            </div>
-          </div>
-          <div class="frame-detail-row">
-            <span class="frame-badge default">default</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">install guardian policy</div>
-              <div class="frame-detail-sub">2-of-3 · bob · carol · dan</div>
-            </div>
-          </div>
+          <div class="frame-pipeline"><div class="fp-track"><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">scope 1 · account</div></div><div class="fp-arrow">→</div><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">scope 2 · sponsor</div></div><div class="fp-arrow">→</div><div class="fp-node fp-default"><div class="fp-node-mode">default</div><div class="fp-node-meta">install policy</div></div></div></div>
         </div>
       </details>
     </div>
@@ -1091,9 +1042,9 @@ body {
       <div class="headline">add a<br>second device.</div>
       <div class="sub">register your laptop or another phone as a second signer. above a threshold you pick, both devices have to sign.</div>
       <div style="background: var(--card); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; margin-top: 16px;">
-        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">each device has its own passkey</div></div>
-        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">small txs: one device signs</div></div>
-        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">above threshold: both devices required</div></div>
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#0a84ff;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">each device has its own passkey</div></div>
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#0a84ff;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">small txs: one device signs</div></div>
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width:6px;height:6px;border-radius:50%;background:#0a84ff;flex-shrink:0;"></div><div style="font-size:12px;color:var(--text-2);">above threshold: both devices required</div></div>
       </div>
     </div>
     <div class="bottom">
@@ -1165,17 +1116,17 @@ body {
             <div style="font-size: 12px; color: var(--text-1); font-weight: 500;">iphone 15</div>
             <div style="font-size: 10px; color: var(--text-4); margin-top: 2px;">passkey · 2 days ago</div>
           </div>
-          <div style="font-size: 9px; color: #22c55e; background: #141414; padding: 3px 8px; border-radius: 999px;">this device</div>
+          <div style="font-size: 9px; color: #00d632; background: #141414; padding: 3px 8px; border-radius: 999px;">this device</div>
         </div>
-        <div style="background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 1px solid #3b82f6;">
+        <div style="background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 1px solid #0a84ff;">
           <div style="width: 32px; height: 32px; border-radius: 8px; background: #141414; display: flex; align-items: center; justify-content: center;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="12" rx="1.5" stroke="#3b82f6" stroke-width="1.5" fill="none"/><line x1="2" y1="19" x2="22" y2="19" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="12" rx="1.5" stroke="#0a84ff" stroke-width="1.5" fill="none"/><line x1="2" y1="19" x2="22" y2="19" stroke="#0a84ff" stroke-width="1.5" stroke-linecap="round"/></svg>
           </div>
           <div style="text-align: center;">
             <div style="font-size: 12px; color: var(--text-1); font-weight: 500;">macbook air</div>
             <div style="font-size: 10px; color: var(--text-4); margin-top: 2px;">new passkey · just now</div>
           </div>
-          <div style="font-size: 9px; color: #3b82f6; background: #141414; padding: 3px 8px; border-radius: 999px;">adding</div>
+          <div style="font-size: 9px; color: #0a84ff; background: #141414; padding: 3px 8px; border-radius: 999px;">adding</div>
         </div>
       </div>
 
@@ -1230,37 +1181,13 @@ body {
         </div>
       </div>
 
-      <div class="frames-toggle">
-        <div class="frames-toggle-head" onclick="toggleFrames(this)">
-          <span class="frames-toggle-chev">›</span>
-          <span class="frames-toggle-label">more detail</span>
-          <span class="frames-toggle-eip">eip-8141</span>
+      <details class="frame-detail">
+        <summary>frame detail</summary>
+        <div class="frame-detail-body">
+          <div class="frame-pipeline"><div class="fp-track"><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">scope 1 · account</div></div><div class="fp-arrow">→</div><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">scope 2 · sponsor</div></div><div class="fp-arrow">→</div><div class="fp-node fp-default"><div class="fp-node-mode">default</div><div class="fp-node-meta" id="device-frame-threshold">2-of-2 above threshold</div></div></div></div>
+          <div class="frame-detail-footnote">once installed, transactions at or above the threshold need both devices. below it, either alone works. the chain enforces both.</div>
         </div>
-        <div class="frames-toggle-body">
-          <div class="ftb-row">
-            <span class="ftb-badge verify">verify</span>
-            <div class="ftb-info">
-              <div class="ftb-name">your phone passkey signs</div>
-              <div class="ftb-sub">p-256 on this device</div>
-            </div>
-          </div>
-          <div class="ftb-row">
-            <span class="ftb-badge verify">verify</span>
-            <div class="ftb-info">
-              <div class="ftb-name">grantr pays gas</div>
-              <div class="ftb-sub">sponsored paymaster</div>
-            </div>
-          </div>
-          <div class="ftb-row">
-            <span class="ftb-badge default">default</span>
-            <div class="ftb-info">
-              <div class="ftb-name">install threshold policy</div>
-              <div class="ftb-sub" id="device-frame-threshold">2-of-2 verify above the configured amount</div>
-            </div>
-          </div>
-          <div class="ftb-footnote">once installed, transactions at or above the threshold need both devices. below it, either alone works. the chain enforces both.</div>
-        </div>
-      </div>
+      </details>
     </div>
     <div class="bottom">
       <button class="btn btn-primary" onclick="openTxPreview('add-device')">add device</button>
@@ -1304,27 +1231,7 @@ body {
       <details class="frame-detail">
         <summary>frame detail</summary>
         <div class="frame-detail-body">
-          <div class="frame-detail-row">
-            <span class="frame-badge verify">verify</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">phone passkey signature</div>
-              <div class="frame-detail-sub">p-256 · authorizes the device addition</div>
-            </div>
-          </div>
-          <div class="frame-detail-row">
-            <span class="frame-badge verify">verify</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">gas sponsored</div>
-              <div class="frame-detail-sub">grantr paymaster</div>
-            </div>
-          </div>
-          <div class="frame-detail-row">
-            <span class="frame-badge default">default</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">add laptop key · set threshold</div>
-              <div class="frame-detail-sub">verify frame now accepts either passkey below threshold, requires both above</div>
-            </div>
-          </div>
+          <div class="frame-pipeline"><div class="fp-track"><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">scope 1 · account</div></div><div class="fp-arrow">→</div><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">scope 2 · sponsor</div></div><div class="fp-arrow">→</div><div class="fp-node fp-default"><div class="fp-node-mode">default</div><div class="fp-node-meta">add key + threshold</div></div></div></div>
           <div class="frame-detail-footnote">both devices show your account immediately. either can sign below threshold. both required above.</div>
         </div>
       </details>
@@ -1405,50 +1312,30 @@ body {
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px;">
         <div style="background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
           <div style="width: 32px; height: 32px; border-radius: 8px; background: #141414; display: flex; align-items: center; justify-content: center;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="14" height="18" rx="2" stroke="#22c55e" stroke-width="1.5" fill="none"/><line x1="11" y1="18" x2="13" y2="18" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="14" height="18" rx="2" stroke="#00d632" stroke-width="1.5" fill="none"/><line x1="11" y1="18" x2="13" y2="18" stroke="#00d632" stroke-width="1.5" stroke-linecap="round"/></svg>
           </div>
           <div style="text-align: center;">
             <div style="font-size: 12px; color: var(--text-1); font-weight: 500;">iphone 15</div>
             <div style="font-size: 10px; color: var(--text-4); margin-top: 2px;">signed · just now</div>
           </div>
-          <div style="font-size: 9px; color: #22c55e; background: #141414; padding: 3px 8px; border-radius: 999px;">✓ signed</div>
+          <div style="font-size: 9px; color: #00d632; background: #141414; padding: 3px 8px; border-radius: 999px;">✓ signed</div>
         </div>
-        <div id="cosign-laptop-card" style="background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 1px solid #3b82f6;">
+        <div id="cosign-laptop-card" style="background: var(--card); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 1px solid #0a84ff;">
           <div style="width: 32px; height: 32px; border-radius: 8px; background: #141414; display: flex; align-items: center; justify-content: center;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="12" rx="1.5" stroke="#3b82f6" stroke-width="1.5" fill="none"/><line x1="2" y1="19" x2="22" y2="19" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="12" rx="1.5" stroke="#0a84ff" stroke-width="1.5" fill="none"/><line x1="2" y1="19" x2="22" y2="19" stroke="#0a84ff" stroke-width="1.5" stroke-linecap="round"/></svg>
           </div>
           <div style="text-align: center;">
             <div style="font-size: 12px; color: var(--text-1); font-weight: 500;">macbook air</div>
             <div style="font-size: 10px; color: var(--text-4); margin-top: 2px;" id="cosign-laptop-status">awaiting your signature</div>
           </div>
-          <div style="font-size: 9px; color: #3b82f6; background: #141414; padding: 3px 8px; border-radius: 999px;" id="cosign-laptop-pill"><div class="spinner" style="width:10px;height:10px;border:1.5px solid #3b82f6;border-top-color:transparent;border-radius:50%;display:inline-block;vertical-align:middle;animation:spin 0.8s linear infinite;"></div> waiting</div>
+          <div style="font-size: 9px; color: #0a84ff; background: #141414; padding: 3px 8px; border-radius: 999px;" id="cosign-laptop-pill"><div class="spinner" style="width:10px;height:10px;border:1.5px solid #0a84ff;border-top-color:transparent;border-radius:50%;display:inline-block;vertical-align:middle;animation:spin 0.8s linear infinite;"></div> waiting</div>
         </div>
       </div>
 
       <details class="frame-detail">
         <summary>frame detail</summary>
         <div class="frame-detail-body">
-          <div class="frame-detail-row">
-            <span class="frame-badge verify">verify</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">both passkeys</div>
-              <div class="frame-detail-sub">2-of-2 · iphone + macbook</div>
-            </div>
-          </div>
-          <div class="frame-detail-row">
-            <span class="frame-badge verify">verify</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">gas sponsored</div>
-              <div class="frame-detail-sub">grantr paymaster</div>
-            </div>
-          </div>
-          <div class="frame-detail-row">
-            <span class="frame-badge sender">sender</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name" id="cosign-sender-name">—</div>
-              <div class="frame-detail-sub" id="cosign-sender-sub">—</div>
-            </div>
-          </div>
+          <div class="frame-pipeline"><div class="fp-track"><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">2-of-2 · both passkeys</div></div><div class="fp-arrow">→</div><div class="fp-node fp-sender"><div class="fp-node-mode">sender</div><div class="fp-node-meta" id="cosign-sender-name">—</div></div><div class="fp-arrow">→</div><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">scope 2 · sponsor</div></div></div></div>
           <div class="frame-detail-footnote">verify requires both signatures because the amount is above your threshold. tx doesn't submit until both sign.</div>
         </div>
       </details>
@@ -1520,37 +1407,13 @@ body {
         </div>
       </div>
 
-      <div class="frames-toggle" id="delegate-frames-toggle">
-        <div class="frames-toggle-head" onclick="toggleFrames(this)">
-          <span class="frames-toggle-chev">›</span>
-          <span class="frames-toggle-label">more detail</span>
-          <span class="frames-toggle-eip">eip-8141</span>
+      <details class="frame-detail" id="delegate-frames-toggle">
+        <summary>frame detail</summary>
+        <div class="frame-detail-body">
+          <div class="frame-pipeline"><div class="fp-track"><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">scope 1 · account</div></div><div class="fp-arrow">→</div><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">scope 2 · sponsor</div></div><div class="fp-arrow">→</div><div class="fp-node fp-default"><div class="fp-node-mode">default</div><div class="fp-node-meta" id="delegate-frame-scope-v2">install session key</div></div></div></div>
+          <div class="frame-detail-footnote">any call outside the scope fails at the verify frame. no app approval, no agent code — the chain refuses.</div>
         </div>
-        <div class="frames-toggle-body">
-          <div class="ftb-row">
-            <span class="ftb-badge verify">verify</span>
-            <div class="ftb-info">
-              <div class="ftb-name">your passkey signs</div>
-              <div class="ftb-sub">p-256 on this device</div>
-            </div>
-          </div>
-          <div class="ftb-row">
-            <span class="ftb-badge verify">verify</span>
-            <div class="ftb-info">
-              <div class="ftb-name">grantr pays gas</div>
-              <div class="ftb-sub">sponsored paymaster</div>
-            </div>
-          </div>
-          <div class="ftb-row">
-            <span class="ftb-badge default">default</span>
-            <div class="ftb-info">
-              <div class="ftb-name">install session key</div>
-              <div class="ftb-sub" id="delegate-frame-scope-v2">scoped to the agent's advertised actions</div>
-            </div>
-          </div>
-          <div class="ftb-footnote">any call outside the scope fails at the verify frame. no app approval, no agent code — the chain refuses.</div>
-        </div>
-      </div>
+      </details>
     </div>
     <div class="bottom" style="padding-top:12px;">
       <button class="btn btn-primary" onclick="openTxPreview('grant-delegation')">grant access</button>
@@ -1593,27 +1456,7 @@ body {
       <details class="frame-detail">
         <summary>frame detail</summary>
         <div class="frame-detail-body">
-          <div class="frame-detail-row">
-            <span class="frame-badge verify">verify</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">passkey signature</div>
-              <div class="frame-detail-sub">p-256 · this device</div>
-            </div>
-          </div>
-          <div class="frame-detail-row">
-            <span class="frame-badge verify">verify</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">gas sponsored</div>
-              <div class="frame-detail-sub">grantr paymaster</div>
-            </div>
-          </div>
-          <div class="frame-detail-row">
-            <span class="frame-badge default">default</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">install session key</div>
-              <div class="frame-detail-sub" id="delegate-frame-scope">—</div>
-            </div>
-          </div>
+          <div class="frame-pipeline"><div class="fp-track"><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">scope 1 · account</div></div><div class="fp-arrow">→</div><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">scope 2 · sponsor</div></div><div class="fp-arrow">→</div><div class="fp-node fp-default"><div class="fp-node-mode">default</div><div class="fp-node-meta" id="delegate-frame-scope">—</div></div></div></div>
           <div class="frame-detail-footnote">the session key can only call the advertised selectors. any other call fails at the verify frame.</div>
         </div>
       </details>
@@ -1713,7 +1556,7 @@ body {
       <div style="background: var(--card); border-radius: 14px; padding: 12px 16px; margin-top: 16px; display: flex; flex-direction: column; gap: 6px;">
         <div style="display: flex; justify-content: space-between; font-size: 11px;">
           <span style="color: var(--text-4);">approved by</span>
-          <span style="color: #22c55e;">bob.eth · carol.eth</span>
+          <span style="color: #00d632;">bob.eth · carol.eth</span>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 11px;">
           <span style="color: var(--text-4);">not required</span>
@@ -1762,27 +1605,7 @@ body {
       <details class="frame-detail">
         <summary>frame detail</summary>
         <div class="frame-detail-body">
-          <div class="frame-detail-row">
-            <span class="frame-badge verify">verify</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">guardian quorum</div>
-              <div class="frame-detail-sub">bob · carol signatures · 2-of-3</div>
-            </div>
-          </div>
-          <div class="frame-detail-row">
-            <span class="frame-badge verify">verify</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">gas sponsored</div>
-              <div class="frame-detail-sub">grantr paymaster</div>
-            </div>
-          </div>
-          <div class="frame-detail-row">
-            <span class="frame-badge default">default</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">rotate passkey</div>
-              <div class="frame-detail-sub">swap old key for new · post-op</div>
-            </div>
-          </div>
+          <div class="frame-pipeline"><div class="fp-track"><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">2-of-3 guardians</div></div><div class="fp-arrow">→</div><div class="fp-node fp-verify"><div class="fp-node-mode">verify</div><div class="fp-node-meta">scope 2 · sponsor</div></div><div class="fp-arrow">→</div><div class="fp-node fp-default"><div class="fp-node-mode">default</div><div class="fp-node-meta">rotate passkey</div></div></div></div>
           <div class="frame-detail-footnote">all frames execute atomically. guardians never hold funds or signing authority — they can only co-sign key rotation.</div>
         </div>
       </details>
@@ -1799,15 +1622,8 @@ body {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12 S4 5 12 5 23 12 23 12 20 19 12 19 1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></svg>
         </button>
       </div>
-      <div class="balance-amount">$2,847.30</div>
-      <button type="button" class="identity-row" onclick="go('account')" style="cursor:pointer; width:100%; background:none; border:none; text-align:left; padding:0; font-family:inherit;">
-        <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
-        <div class="identity-meta">
-          <span class="identity-name">alice.eth</span>
-          <span class="identity-addr">...4c7a</span>
-        </div>
-        <span class="home-row-chev" style="margin-left:auto; font-size:14px; color:#666;">›</span>
-      </button>
+      <div class="balance-amount hide-on-privacy balance-readout">$2,847.30</div>
+
     </div>
 
     <!-- WHAT'S RUNNING SECTION (stat tile + bar chart tile + sessions feed) -->
@@ -1815,19 +1631,13 @@ body {
     <div class="home-pair">
       <div class="home-stat-tile">
         <div>
-          <div class="home-stat-big">9</div>
-          <div class="home-stat-sub">+3 vs last week</div>
+          <div class="home-stat-big" id="home-stat-runs">—</div>
+          <div class="home-stat-sub" id="home-stat-runs-sub">—</div>
         </div>
       </div>
       <div class="home-chart-tile">
-        <div class="home-chart-bars">
-          <div class="home-chart-bar muted" style="height: 33%;"></div>
-          <div class="home-chart-bar" style="height: 67%;"></div>
-          <div class="home-chart-bar" style="height: 50%;"></div>
-          <div class="home-chart-bar muted" style="height: 17%;"></div>
-          <div class="home-chart-bar" style="height: 83%;"></div>
-          <div class="home-chart-bar" style="height: 58%;"></div>
-          <div class="home-chart-bar" style="height: 42%;"></div>
+        <div class="home-chart-bars" id="home-chart-bars">
+          <!-- populated by renderHome() -->
         </div>
         <div class="home-chart-days">
           <span>m</span><span>t</span><span>w</span><span>t</span><span>f</span><span>s</span><span>s</span>
@@ -1835,17 +1645,7 @@ body {
       </div>
     </div>
     <div class="home-feed" id="home-sessions-feed">
-      <div class="home-feed-row" onclick="go('sessions')">
-        <div class="home-feed-avatar" id="home-feed-s1"></div>
-        <div class="home-feed-body">
-          <div class="home-feed-name">lp rebalancer</div>
-          <div class="home-feed-sub">rebalanced $412 position</div>
-        </div>
-        <div class="home-feed-right">
-          <span class="home-feed-pill live">live</span>
-          <div class="home-feed-time">2m ago</div>
-        </div>
-      </div>
+      <!-- populated by renderHome() -->
     </div>
     <div class="home-feed-empty" id="home-sessions-empty" style="display:none;">
       <div class="home-feed-empty-body">nothing's running.</div>
@@ -1859,8 +1659,8 @@ body {
     <div class="home-pair">
       <div class="home-stat-tile">
         <div>
-          <div class="home-stat-big">+2.4%</div>
-          <div class="home-stat-sub">$67 this week</div>
+          <div class="home-stat-big hide-on-privacy" id="home-stat-txs">—</div>
+          <div class="home-stat-sub hide-on-privacy" id="home-stat-txs-sub">—</div>
         </div>
       </div>
       <div class="home-chart-tile">
@@ -1873,18 +1673,8 @@ body {
         </div>
       </div>
     </div>
-    <div class="home-feed">
-      <div class="home-feed-row" onclick="go('activity')">
-        <div class="home-feed-avatar" id="home-feed-a1"></div>
-        <div class="home-feed-body">
-          <div class="home-feed-name">sent to bob.eth</div>
-          <div class="home-feed-sub">$100 usdc</div>
-        </div>
-        <div class="home-feed-right">
-          <div class="home-feed-amount red">−$100</div>
-          <div class="home-feed-time">just now</div>
-        </div>
-      </div>
+    <div class="home-feed" id="home-activity-feed">
+      <!-- populated by renderHome() -->
     </div>
 
   </div>
@@ -1913,7 +1703,7 @@ body {
         <div class="home-row" onclick="openTray('security')">
           <div class="home-row-left">
             <div class="home-row-icon" style="background:#0a1428;">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 3 L20 7 V12 C20 17 16 20 12 21 C8 20 4 17 4 12 V7 Z" stroke="#3b82f6" stroke-width="1.5" fill="none"/></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 3 L20 7 V12 C20 17 16 20 12 21 C8 20 4 17 4 12 V7 Z" stroke="#0a84ff" stroke-width="1.5" fill="none"/></svg>
             </div>
             <span class="home-row-name">recovery</span>
           </div>
@@ -1922,7 +1712,7 @@ body {
         <div class="home-row" onclick="openTray('signing')">
           <div class="home-row-left">
             <div class="home-row-icon" style="background:#0a1f12;">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="15" r="4" stroke="#22c55e" stroke-width="1.5" fill="none"/><path d="M11 12 L20 3 M16 7 L19 10" stroke="#22c55e" stroke-width="1.5"/></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="15" r="4" stroke="#00d632" stroke-width="1.5" fill="none"/><path d="M11 12 L20 3 M16 7 L19 10" stroke="#00d632" stroke-width="1.5"/></svg>
             </div>
             <span class="home-row-name">keys</span>
           </div>
@@ -1931,20 +1721,11 @@ body {
         <div class="home-row" onclick="go('verify-policy')">
           <div class="home-row-left">
             <div class="home-row-icon" style="background:#0a1428;">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 12 L11 14 L15 10" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="#3b82f6" stroke-width="1.5" fill="none"/></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 12 L11 14 L15 10" stroke="#0a84ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="#0a84ff" stroke-width="1.5" fill="none"/></svg>
             </div>
             <span class="home-row-name">policies</span>
           </div>
-          <div class="home-row-right">none set <span class="home-row-chev">›</span></div>
-        </div>
-        <div class="home-row" onclick="openTray('account')">
-          <div class="home-row-left">
-            <div class="home-row-icon" style="background:#1a1a1a;">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#fff" stroke-width="1.5" fill="none"/></svg>
-            </div>
-            <span class="home-row-name">account details</span>
-          </div>
-          <div class="home-row-right" style="font-family:'DM Mono',monospace;">...4c7a <span class="home-row-chev">›</span></div>
+          <div class="home-row-right" id="account-policies-count">— <span class="home-row-chev">›</span></div>
         </div>
       </div>
 
@@ -1962,7 +1743,7 @@ body {
         <div class="home-row" onclick="go('sponsor')">
           <div class="home-row-left">
             <div class="home-row-icon" style="background:#1f1708;">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M4 8 L12 4 L20 8 L20 16 L12 20 L4 16 Z" stroke="#f59e0b" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M12 4 L12 20" stroke="#f59e0b" stroke-width="1.5"/><path d="M4 8 L20 8" stroke="#f59e0b" stroke-width="1.5"/><path d="M4 16 L20 16" stroke="#f59e0b" stroke-width="1.5"/></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M4 8 L12 4 L20 8 L20 16 L12 20 L4 16 Z" stroke="#ff9f0a" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M12 4 L12 20" stroke="#ff9f0a" stroke-width="1.5"/><path d="M4 8 L20 8" stroke="#ff9f0a" stroke-width="1.5"/><path d="M4 16 L20 16" stroke="#ff9f0a" stroke-width="1.5"/></svg>
             </div>
             <span class="home-row-name">sponsor</span>
           </div>
@@ -1975,7 +1756,7 @@ body {
         <div class="home-row" onclick="openTray('tour')">
           <div class="home-row-left">
             <div class="home-row-icon" style="background:#0a1428;">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M8 5 L19 12 L8 19 Z" fill="#3b82f6"/></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M8 5 L19 12 L8 19 Z" fill="#0a84ff"/></svg>
             </div>
             <span class="home-row-name">try a flow</span>
           </div>
@@ -2013,14 +1794,14 @@ body {
         <span class="j-arrow">→</span>
         <div class="j-step">
           <div class="j-step-icon" style="background:#0a1f12;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="15" r="4" stroke="#22c55e" stroke-width="1.5" fill="none"/><path d="M11 12 L20 3 M16 7 L19 10" stroke="#22c55e" stroke-width="1.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="15" r="4" stroke="#00d632" stroke-width="1.5" fill="none"/><path d="M11 12 L20 3 M16 7 L19 10" stroke="#00d632" stroke-width="1.5"/></svg>
           </div>
           <span class="j-step-label">passkey</span>
         </div>
         <span class="j-arrow">→</span>
         <div class="j-step">
           <div class="j-step-icon" style="background:#0a1428;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 11 L12 3 L21 11 V20 C21 20.5 20.5 21 20 21 H15 V14 H9 V21 H4 C3.5 21 3 20.5 3 20 Z" stroke="#3b82f6" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 11 L12 3 L21 11 V20 C21 20.5 20.5 21 20 21 H15 V14 H9 V21 H4 C3.5 21 3 20.5 3 20 Z" stroke="#0a84ff" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>
           </div>
           <span class="j-step-label">home</span>
         </div>
@@ -2057,14 +1838,14 @@ body {
         <span class="j-arrow">→</span>
         <div class="j-step">
           <div class="j-step-icon" style="background:#1a1a1a;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="2" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M3 8 L12 14 L21 8" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M9 17 L11 19 L15 15" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="2" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M3 8 L12 14 L21 8" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M9 17 L11 19 L15 15" stroke="#00d632" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
           <span class="j-step-label">email verify</span>
         </div>
         <span class="j-arrow">→</span>
         <div class="j-step">
           <div class="j-step-icon" style="background:#0a1f12;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="15" r="4" stroke="#22c55e" stroke-width="1.5" fill="none"/><path d="M11 12 L20 3 M16 7 L19 10" stroke="#22c55e" stroke-width="1.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="15" r="4" stroke="#00d632" stroke-width="1.5" fill="none"/><path d="M11 12 L20 3 M16 7 L19 10" stroke="#00d632" stroke-width="1.5"/></svg>
           </div>
           <span class="j-step-label">new passkey</span>
         </div>
@@ -2095,7 +1876,7 @@ body {
       <div class="j-diagram">
         <div class="j-step">
           <div class="j-step-icon" style="background:#0a1f12;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#22c55e" stroke-width="1.5" fill="none"/><path d="M5 20 Q 5 14 12 14 Q 19 14 19 20" stroke="#22c55e" stroke-width="1.5" fill="none"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#00d632" stroke-width="1.5" fill="none"/><path d="M5 20 Q 5 14 12 14 Q 19 14 19 20" stroke="#00d632" stroke-width="1.5" fill="none"/></svg>
           </div>
           <span class="j-step-label">pick agent</span>
         </div>
@@ -2109,7 +1890,7 @@ body {
         <span class="j-arrow">→</span>
         <div class="j-step">
           <div class="j-step-icon" style="background:#0a1428;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 12 L11 14 L15 10" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="#3b82f6" stroke-width="1.5" fill="none"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 12 L11 14 L15 10" stroke="#0a84ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="#0a84ff" stroke-width="1.5" fill="none"/></svg>
           </div>
           <span class="j-step-label">chain enforces</span>
         </div>
@@ -2140,21 +1921,21 @@ body {
       <div class="j-diagram">
         <div class="j-step">
           <div class="j-step-icon" style="background:#1f1708;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#f59e0b" stroke-width="1.5" fill="none"/><path d="M12 7 V17 M9 10 H15 M9 14 H15" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#ff9f0a" stroke-width="1.5" fill="none"/><path d="M12 7 V17 M9 10 H15 M9 14 H15" stroke="#ff9f0a" stroke-width="1.5" stroke-linecap="round"/></svg>
           </div>
           <span class="j-step-label">big tx</span>
         </div>
         <span class="j-arrow">→</span>
         <div class="j-step">
           <div class="j-step-icon" style="background:#0a1f12;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="8" height="14" rx="1.5" stroke="#22c55e" stroke-width="1.5" fill="none"/><rect x="13" y="5" width="8" height="14" rx="1.5" stroke="#22c55e" stroke-width="1.5" fill="none"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="8" height="14" rx="1.5" stroke="#00d632" stroke-width="1.5" fill="none"/><rect x="13" y="5" width="8" height="14" rx="1.5" stroke="#00d632" stroke-width="1.5" fill="none"/></svg>
           </div>
           <span class="j-step-label">both devices</span>
         </div>
         <span class="j-arrow">→</span>
         <div class="j-step">
           <div class="j-step-icon" style="background:#0a1428;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 12 L11 14 L15 10" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="#3b82f6" stroke-width="1.5" fill="none"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 12 L11 14 L15 10" stroke="#0a84ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="#0a84ff" stroke-width="1.5" fill="none"/></svg>
           </div>
           <span class="j-step-label">sign together</span>
         </div>
@@ -2183,14 +1964,8 @@ body {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12 S4 5 12 5 23 12 23 12 20 19 12 19 1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></svg>
         </button>
       </div>
-      <div class="balance-amount">$2,847.30</div>
-      <div class="identity-row">
-        <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
-        <div class="identity-meta">
-          <span class="identity-name">alice.eth</span>
-          <span class="identity-addr">...4c7a</span>
-        </div>
-      </div>
+      <div class="balance-amount hide-on-privacy balance-readout">$2,847.30</div>
+
     </div>
     <div class="feed" id="sessions-feed">
       <!-- populated by renderSessions() -->
@@ -2206,14 +1981,8 @@ body {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12 S4 5 12 5 23 12 23 12 20 19 12 19 1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></svg>
         </button>
       </div>
-      <div class="balance-amount">$2,847.30</div>
-      <div class="identity-row">
-        <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
-        <div class="identity-meta">
-          <span class="identity-name">alice.eth</span>
-          <span class="identity-addr">...4c7a</span>
-        </div>
-      </div>
+      <div class="balance-amount hide-on-privacy balance-readout">$2,847.30</div>
+
     </div>
     <div class="filters">
       <button class="pill active" data-filter="all" onclick="filterActivity('all')">all</button>
@@ -2235,14 +2004,8 @@ body {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12 S4 5 12 5 23 12 23 12 20 19 12 19 1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></svg>
         </button>
       </div>
-      <div class="balance-amount">$2,847.30</div>
-      <div class="identity-row">
-        <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
-        <div class="identity-meta">
-          <span class="identity-name">alice.eth</span>
-          <span class="identity-addr">...4c7a</span>
-        </div>
-      </div>
+      <div class="balance-amount hide-on-privacy balance-readout">$2,847.30</div>
+
     </div>
     <div class="addr-search"><input type="text" id="addr-search-input" placeholder="search by name or address" oninput="searchAddresses()"></div>
     <div class="addr-filters">
@@ -2259,242 +2022,58 @@ body {
     </div>
   </div>
 
-  <!-- ============== REBALANCE: PICK POSITION ============== -->
-  <div id="screen-rebalance" class="screen onboarding">
-    <div class="top">
-      <span class="back" onclick="closeAction(); go('home')">←</span>
-      <div style="display:flex;gap:6px;flex:1;margin:0 16px;">
-        <div class="stepper-seg done"></div>
-        <div class="stepper-seg active"></div>
-        <div class="stepper-seg"></div>
-      </div>
-      <span class="spacer"></span>
-    </div>
-    <div style="flex:1;overflow-y:auto;padding-top:28px;">
-      <div class="headline" style="font-size:28px;margin-bottom:4px;">pick a position.</div>
-      <div style="font-size:13px;color:#737373;margin-bottom:20px;">one of yours stopped earning.</div>
-
-      <!-- hero: out of range -->
-      <div onclick="go('rebalance-authorize')" style="background:#ef4444;border-radius:20px;padding:20px;margin-bottom:8px;cursor:pointer;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div style="display:flex;">
-              <div style="width:28px;height:28px;border-radius:50%;background:#fff;overflow:hidden;border:2px solid #ef4444;"><img src="https://assets.coingecko.com/coins/images/7598/large/wrapped_bitcoin_wbtc.png" style="width:100%;height:100%;object-fit:cover;"></div>
-              <div style="width:28px;height:28px;border-radius:50%;background:#fff;overflow:hidden;border:2px solid #ef4444;margin-left:-10px;"><img src="https://assets.coingecko.com/coins/images/279/large/ethereum.png" style="width:100%;height:100%;object-fit:cover;"></div>
-            </div>
-            <span style="font-size:16px;font-weight:600;color:#000;">WBTC / ETH</span>
-          </div>
-          <span style="padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;background:#000;color:#ef4444;">out of range</span>
-        </div>
-        <div style="font-size:11px;color:#000;opacity:0.6;margin-bottom:2px;">range</div>
-        <div style="font-size:34px;font-weight:700;letter-spacing:-0.02em;color:#000;margin-bottom:16px;line-height:1;">14.2 – 16.8</div>
-        <div style="display:flex;justify-content:space-between;padding-top:14px;border-top:1px solid rgba(0,0,0,0.15);">
-          <div><div style="font-size:10px;color:#000;opacity:0.6;margin-bottom:3px;">liquidity</div><div style="font-size:14px;font-weight:700;color:#000;">$8,200</div></div>
-          <div><div style="font-size:10px;color:#000;opacity:0.6;margin-bottom:3px;">fees today</div><div style="font-size:14px;font-weight:700;color:#000;">$0</div></div>
-          <div><div style="font-size:10px;color:#000;opacity:0.6;margin-bottom:3px;">potential</div><div style="font-size:14px;font-weight:700;color:#000;">$14/day</div></div>
-        </div>
-      </div>
-
-      <div style="font-size:11px;color:#555;text-transform:lowercase;letter-spacing:0.5px;margin:16px 0 8px;">other positions · in range</div>
-
-      <div style="background:#0f0f0f;border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="display:flex;">
-            <div style="width:24px;height:24px;border-radius:50%;background:#fff;overflow:hidden;"><img src="https://assets.coingecko.com/coins/images/6319/large/usdc.png" style="width:100%;height:100%;object-fit:cover;"></div>
-            <div style="width:24px;height:24px;border-radius:50%;background:#fff;overflow:hidden;margin-left:-8px;"><img src="https://assets.coingecko.com/coins/images/279/large/ethereum.png" style="width:100%;height:100%;object-fit:cover;"></div>
-          </div>
-          <div><div style="font-size:13px;font-weight:500;color:#fff;">USDC / ETH</div><div style="font-size:11px;color:#555;">$12,450 · 1,850 – 2,100</div></div>
-        </div>
-        <span style="padding:3px 8px;border-radius:999px;font-size:10px;font-weight:500;background:#141414;color:#22c55e;">in range</span>
-      </div>
-
-      <div style="background:#0f0f0f;border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="display:flex;">
-            <div style="width:24px;height:24px;border-radius:50%;background:#fff;overflow:hidden;"><img src="https://assets.coingecko.com/coins/images/9956/large/Badge_Dai.png" style="width:100%;height:100%;object-fit:cover;"></div>
-            <div style="width:24px;height:24px;border-radius:50%;background:#fff;overflow:hidden;margin-left:-8px;"><img src="https://assets.coingecko.com/coins/images/6319/large/usdc.png" style="width:100%;height:100%;object-fit:cover;"></div>
-          </div>
-          <div><div style="font-size:13px;font-weight:500;color:#fff;">DAI / USDC</div><div style="font-size:11px;color:#555;">$25,000 · 0.998 – 1.002</div></div>
-        </div>
-        <span style="padding:3px 8px;border-radius:999px;font-size:10px;font-weight:500;background:#141414;color:#22c55e;">in range</span>
-      </div>
-    </div>
-    <div class="bottom" style="padding-top:0;"></div>
-  </div>
-
-  <!-- ============== REBALANCE: AUTHORIZE AGENT ============== -->
-  <div id="screen-rebalance-authorize" class="screen onboarding">
-    <div class="top">
-      <span class="back" onclick="go('rebalance')">←</span>
-      <div style="display:flex;gap:6px;flex:1;margin:0 16px;">
-        <div class="stepper-seg done"></div>
-        <div class="stepper-seg done"></div>
-        <div class="stepper-seg active"></div>
-      </div>
-      <span class="spacer"></span>
-    </div>
-
-    <!-- position bar -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid #1a1a1a;margin-bottom:20px;">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div style="display:flex;">
-          <div style="width:24px;height:24px;border-radius:50%;background:#fff;overflow:hidden;"><img src="https://assets.coingecko.com/coins/images/7598/large/wrapped_bitcoin_wbtc.png" style="width:100%;height:100%;object-fit:cover;"></div>
-          <div style="width:24px;height:24px;border-radius:50%;background:#fff;overflow:hidden;margin-left:-8px;"><img src="https://assets.coingecko.com/coins/images/279/large/ethereum.png" style="width:100%;height:100%;object-fit:cover;"></div>
-        </div>
-        <div><div style="font-size:13px;font-weight:500;color:#fff;">WBTC / ETH</div><div style="font-size:11px;color:#555;">14.2 – 16.8</div></div>
-      </div>
-      <span onclick="go('rebalance')" style="font-size:11px;color:#555;text-decoration:underline;cursor:pointer;">change</span>
-    </div>
-
-    <div class="headline" style="font-size:28px;margin-bottom:4px;">let grantr rebalance<br>your lp.</div>
-    <div style="font-size:13px;color:#737373;margin-bottom:20px;line-height:1.5;">it can rebalance this position. it can collect fees. it can't do anything else. revoke any time.</div>
-
-    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;">
-      <div class="choice-card">
-        <div class="choice-head">
-          <span class="choice-label">spend up to</span>
-          <span class="choice-value" id="auth-limit-value">$500</span>
-        </div>
-        <div class="choice-pills">
-          <button class="choice-pill" data-auth-limit="100" onclick="setAuthLimit(100)">$100</button>
-          <button class="choice-pill active" data-auth-limit="500" onclick="setAuthLimit(500)">$500</button>
-          <button class="choice-pill" data-auth-limit="1000" onclick="setAuthLimit(1000)">$1,000</button>
-          <button class="choice-pill" data-auth-limit="5000" onclick="setAuthLimit(5000)">$5,000</button>
-        </div>
-      </div>
-
-      <div class="choice-card">
-        <div class="choice-head">
-          <span class="choice-label">for</span>
-          <span class="choice-value" id="auth-window-value">7 days</span>
-        </div>
-        <div class="choice-pills">
-          <button class="choice-pill" data-auth-window="1h" onclick="setAuthWindow('1h')">1h</button>
-          <button class="choice-pill" data-auth-window="6h" onclick="setAuthWindow('6h')">6h</button>
-          <button class="choice-pill" data-auth-window="24h" onclick="setAuthWindow('24h')">24h</button>
-          <button class="choice-pill active" data-auth-window="7d" onclick="setAuthWindow('7d')">7d</button>
-        </div>
-      </div>
-
-      <div style="background:#0a0a0a;border:0.5px solid #1a1a1a;border-radius:16px;padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:12px;">
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:13px;color:var(--text-1);font-weight:500;">keep running</div>
-          <div style="font-size:11px;color:var(--text-4);margin-top:3px;">if off, agent stops after one rebalance</div>
-        </div>
-        <div class="auth-toggle" id="auth-keep-toggle" onclick="toggleAuthKeepRunning()">
-          <div class="auth-toggle-knob"></div>
-        </div>
-      </div>
-
-      <div class="frames-toggle">
-        <div class="frames-toggle-head" onclick="toggleFrames(this)">
-          <span class="frames-toggle-chev">›</span>
-          <span class="frames-toggle-label">more detail</span>
-          <span class="frames-toggle-eip">eip-8141</span>
-        </div>
-        <div class="frames-toggle-body">
-          <div class="ftb-row">
-            <span class="ftb-badge verify">verify</span>
-            <div class="ftb-info">
-              <div class="ftb-name">your passkey signs</div>
-              <div class="ftb-sub">p-256 on this device</div>
-            </div>
-          </div>
-          <div class="ftb-row">
-            <span class="ftb-badge verify">verify</span>
-            <div class="ftb-info">
-              <div class="ftb-name">grantr pays gas</div>
-              <div class="ftb-sub">sponsored paymaster</div>
-            </div>
-          </div>
-          <div class="ftb-row">
-            <span class="ftb-badge default">default</span>
-            <div class="ftb-info">
-              <div class="ftb-name">install session key</div>
-              <div class="ftb-sub">scoped to rebalance() · collectFees()</div>
-            </div>
-          </div>
-          <div class="ftb-footnote">any call outside the scope fails at the verify frame. the agent can't transfer, withdraw, or touch anything other than this position.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="bottom" style="padding-top:12px;">
-      <button class="btn btn-primary" id="auth-btn" onclick="openTxPreview('rebalance')">authorize</button>
-      <button class="btn btn-secondary" onclick="closeAction(); go('home')">cancel</button>
-    </div>
-  </div>
 
   <!-- ============== REBALANCE: DASHBOARD (active session) ============== -->
-  <div id="screen-rebalance-dashboard" class="screen tab-screen">
-    <div class="balance-bar">
-      <div class="balance-label-row">
-        <div class="balance-label">balance</div>
-        <button type="button" class="privacy-toggle" onclick="togglePrivacy()" aria-label="toggle privacy">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12 S4 5 12 5 23 12 23 12 20 19 12 19 1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></svg>
-        </button>
-      </div>
-      <div class="balance-amount">$2,847.30</div>
-      <div class="identity-row">
-        <div class="avatar-large"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>
-        <div class="identity-meta">
-          <span class="identity-name">alice.eth</span>
-          <span class="identity-addr">...4c7a</span>
+  <!-- ============== TEMPLATE LIVE: generic view for any active template session ============== -->
+  <div id="screen-template-live" class="screen tab-screen">
+    <div class="top">
+      <span class="back" onclick="closeTemplateLive()">←</span>
+      <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;" id="tlive-top-title">session</div>
+      <span class="spacer"></span>
+    </div>
+    <div style="flex:1; padding: 8px 0 16px; display: flex; flex-direction: column; overflow-y: auto;">
+
+      <!-- HERO: session name + live pill + meta -->
+      <div style="padding: 0 6px 16px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom: 6px;">
+          <div class="session-dot active" id="tlive-dot"></div>
+          <div style="font-size: 22px; color: var(--text-1); font-weight: 500; letter-spacing: -0.01em;" id="tlive-name">—</div>
         </div>
+        <div class="italic-voice" style="font-size: 13px; line-height: 1.5;" id="tlive-desc">—</div>
+      </div>
+
+      <!-- USAGE + TIMELINE TICKS -->
+      <div style="background: var(--card); border-radius: 14px; padding: 14px; margin-bottom: 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom: 8px;">
+          <div style="font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1.2px;">usage</div>
+          <div style="font-size: 11px; color: var(--text-3);" id="tlive-days">—</div>
+        </div>
+        <div style="font-size: 20px; color: var(--text-1); font-weight: 500; letter-spacing: -0.01em;" id="tlive-usage-readout"><span class="hide-on-privacy">—</span></div>
+        <div class="usage-bar" style="margin-top: 10px;"><div class="usage-bar-fill" id="tlive-usage-bar" style="width: 0%;"></div></div>
+        <div class="session-ticks" id="tlive-ticks" style="margin-top: 12px; display: none;">
+          <span class="session-ticks-label">runs</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding-top: 12px; margin-top: 12px; border-top: 0.5px solid var(--divider);">
+          <div style="font-size: 11px; color: var(--text-3);" id="tlive-counts">—</div>
+          <button onclick="simulateTemplateLiveRun()" style="font-size: 11px; color: var(--text-2); background: transparent; border: 0.5px solid rgba(255,255,255,0.12); border-radius: 999px; padding: 6px 12px; font-family: inherit; cursor: pointer;" id="tlive-sim-btn">see it work</button>
+        </div>
+      </div>
+
+      <!-- PIPELINE (what the agent can sign) -->
+      <div style="padding: 0 6px 16px;">
+        <div style="font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1.2px; padding-bottom: 8px;">what the agent can sign</div>
+        <div id="tlive-pipeline"></div>
+      </div>
+
+      <!-- RECENT ACTIVITY (filtered to this session) -->
+      <div class="section-label" style="padding: 8px 6px 6px;">recent activity</div>
+      <div class="feed" id="tlive-activity" style="padding: 0 6px;">
+        <div class="italic-voice" style="font-size: 12px; padding: 16px 0; text-align: center;">no runs yet. tap "see it work" to simulate.</div>
       </div>
     </div>
-
-    <!-- active session banner -->
-    <div style="margin:0 18px 8px;background:#0a0a0a;border:1px solid rgba(34,197,94,0.2);border-radius:14px;padding:14px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="width:8px;height:8px;border-radius:50%;background:#3b82f6;"></div>
-          <span style="font-size:13px;color:#fff;font-weight:500;">lp rebalancer · active</span>
-        </div>
-        <button onclick="journeyRevokeDelegation()" style="font-size:11px;color:#ef4444;background:none;border:none;font-family:inherit;cursor:pointer;">revoke</button>
-      </div>
-      <div class="frame-row" style="padding-left:0;margin-bottom:4px;"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · rebalance() · collectFees()</div></div>
-      <div class="frame-row" style="padding-left:0;"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">rebalance on uniswap v3</div></div>
-      <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid #1a1a1a;">
-        <span style="font-size:10px;color:#555;">$0 / $500 · 30 days left</span>
-        <span style="font-size:10px;color:#555;">0 executed</span>
-      </div>
+    <div class="bottom" style="padding-top: 0;">
+      <button class="btn btn-secondary" onclick="requestRevokeFromTemplateLive()" style="color: var(--red); border-color: rgba(239,68,68,0.3);" id="tlive-revoke-btn">revoke session</button>
     </div>
-
-    <!-- activity feed -->
-    <div class="section-label" style="padding: 0 18px 8px;">recent activity</div>
-    <div class="feed" style="padding:0 18px 12px;">
-      <div class="entry expanded" onclick="toggleEntry(this)">
-        <div class="entry-avatar" id="reb-dash-act-1"></div>
-        <div class="entry-body">
-          <div class="entry-title">granted access</div>
-          <div class="entry-sub">lp rebalancer · just now · gas by grantr</div>
-        </div>
-        <div class="entry-chevron">›</div>
-        <div class="frames">
-          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p-256</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode" style="color:#00d632;">verify</div><div class="frame-desc">gas sponsored by grantr</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode" style="color:#0a84ff;">default</div><div class="frame-desc">add session key · scoped selectors</div><div class="frame-status pass">✓</div></div>
-        </div>
-      </div>
-      <div class="entry" onclick="toggleEntry(this)">
-        <div class="entry-avatar" id="reb-dash-act-2"></div>
-        <div class="entry-body">
-          <div class="entry-title">sent ETH</div>
-          <div class="entry-sub">to ...9f2b · 2 min ago</div>
-        </div>
-        <div class="entry-right">
-          <div class="entry-amount white">−0.5</div>
-          <div class="entry-amount-sub">ETH · $1,390</div>
-        </div>
-        <div class="entry-chevron">›</div>
-        <div class="frames">
-          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p-256</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">transfer 0.5 ETH to ...9f2b</div><div class="frame-status pass">✓</div></div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <!-- ============== BUILD SCREEN ============== -->
@@ -2607,7 +2186,7 @@ body {
           </div>
           <div class="receipt-row">
             <span class="frame-badge verify">verify</span>
-            <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;" id="sponsor-frame-pay">you pay gas</div><div style="font-size:10px;color:#22c55e;margin-top:2px;" id="sponsor-frame-cap">up to 0.005 ETH</div></div>
+            <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;" id="sponsor-frame-pay">you pay gas</div><div style="font-size:10px;color:#00d632;margin-top:2px;" id="sponsor-frame-cap">up to 0.005 ETH</div></div>
           </div>
         </div>
       </div>
@@ -2630,14 +2209,19 @@ body {
   <!-- ============== VERIFY POLICY ============== -->
   <div id="screen-verify-policy" class="screen onboarding">
     <div class="top">
-      <span class="back" onclick="closeAction(); go('home')">←</span>
-      <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">add verify policy</div>
+      <span class="back" onclick="closeAction(); go('account')">←</span>
+      <div style="flex:1; text-align: center; font-size: 13px; color: var(--text-2); font-weight: 500;">policies</div>
       <span class="spacer"></span>
     </div>
     <div style="flex: 1; padding: 8px 0 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto;">
-      <div style="font-size: 11px; color: var(--text-4); line-height: 1.6;">add a custom signature check to your account. any tx must pass this verify frame alongside your passkey.</div>
+      <div class="italic-voice" style="font-size: 12px; line-height: 1.5;">account-level rules. every inbound transaction has to satisfy these, alongside your passkey.</div>
 
-      <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">policy type</div>
+      <!-- INSTALLED POLICIES -->
+      <div style="font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1.2px;">installed</div>
+      <div id="policies-installed"></div>
+
+      <!-- ADD MORE -->
+      <div style="font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1.2px; padding-top: 6px;">add policy</div>
 
       <div class="build-row" onclick="selectVerifyPolicy('guardian')">
         <span class="frame-badge verify">verify</span>
@@ -2726,7 +2310,7 @@ body {
     </div>
 
     <div style="padding: 8px 24px 0; background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; margin: 0 18px 16px; padding: 10px 14px; font-size: 11px; color: var(--text-3); line-height: 1.5;">
-      <span style="color: #22c55e;">key point.</span> the chain refused the second tx at the verify frame. no agent code had a choice, no app approval was needed.
+      <span style="color: #00d632;">key point.</span> the chain refused the second tx at the verify frame. no agent code had a choice, no app approval was needed.
     </div>
 
     <div style="padding: 0 18px 16px;">
@@ -2780,9 +2364,9 @@ body {
       </button>
 
       <!-- ACTION-MODE TABS (shown when action is open) -->
-      <button class="tab tab-action-mode" onclick="go('rebalance')">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12 C3 7 7 3 12 3 C17 3 21 7 21 12" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round"/><path d="M21 12 C21 17 17 21 12 21 C7 21 3 17 3 12" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round" stroke-dasharray="3 2"/><path d="M18 9 L21 12 L18 15" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span>rebalance</span>
+      <button class="tab tab-action-mode" onclick="go('account')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="4" stroke="#fff" stroke-width="1.75" fill="none"/><path d="M4 21 C4 16.5 7.5 14 12 14 C16.5 14 20 16.5 20 21" stroke="#fff" stroke-width="1.75" stroke-linecap="round" fill="none"/></svg>
+        <span>account</span>
       </button>
       <button class="tab tab-action-mode" onclick="go('build')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="1.5" stroke="#fff" stroke-width="1.75" fill="none"/><rect x="13" y="3" width="8" height="8" rx="1.5" stroke="#fff" stroke-width="1.75" fill="none"/><rect x="3" y="13" width="8" height="8" rx="1.5" stroke="#fff" stroke-width="1.75" fill="none"/><line x1="17" y1="13" x2="17" y2="21" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/><line x1="13" y1="17" x2="21" y2="17" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/></svg>
@@ -2819,8 +2403,8 @@ body {
 </div>
 
 <script>
-const tabScreens = ['home', 'sessions', 'activity', 'addresses', 'rebalance-dashboard'];
-const allScreens = [...tabScreens, 'welcome', 'email', 'verify', 'passkey', 'creating', 'rebalance', 'build'];
+const tabScreens = ['home', 'sessions', 'activity', 'addresses'];
+const allScreens = [...tabScreens, 'welcome', 'email', 'verify', 'passkey', 'creating', 'build', 'template-live'];
 
 // ============== JOURNEYS ==============
 // each journey sets up state and jumps to the starting screen.
@@ -2995,17 +2579,10 @@ function journeyCoSign() {
 }
 
 function journeyRebalance() {
-  // starts from profile, user taps + to see action sheet
-  // flow: profile → (action sheet) → rebalance positions → authorize → dashboard
+  // rebalance is now just the t1 lp-rebalance template. open build + apply it.
   closeAction();
-  // reset rebalance authorize state so the screen reads clean
-  authPolicy.limit = 500;
-  authPolicy.window = '7d';
-  authPolicy.keepRunning = false;
-  const kt = document.getElementById('auth-keep-toggle');
-  if (kt) kt.classList.remove('on');
-  go('home');
-  setTimeout(() => openAction(), 400);
+  go('build');
+  setTimeout(() => useTemplate('t1'), 250);
 }
 
 function journeyBuild() {
@@ -3034,6 +2611,9 @@ function go(id) {
   }
   closeTray();
   closeAction();
+
+  // update dynamic balance readouts on any nav
+  if (typeof updateBalanceReadouts === 'function') updateBalanceReadouts();
 
   // hooks: populate dynamic content per screen
   if (id === 'guardians-confirm') {
@@ -3065,8 +2645,20 @@ function go(id) {
     renderBuildTemplates();
     renderBuildQueue();
   }
+  if (id === 'home') {
+    renderHome();
+  }
+  if (id === 'account') {
+    updateAccountPoliciesCount();
+  }
+  if (id === 'verify-policy') {
+    renderAccountPolicies();
+  }
   if (id === 'sessions') {
     renderSessions();
+  }
+  if (id === 'template-live') {
+    renderTemplateLive();
   }
   if (id === 'activity') {
     renderActivity();
@@ -3089,9 +2681,9 @@ function go(id) {
     const status = document.getElementById('cosign-laptop-status');
     const card = document.getElementById('cosign-laptop-card');
     const btn = document.getElementById('cosign-simulate-btn');
-    if (pill) { pill.innerHTML = '<div class="spinner" style="width:10px;height:10px;border:1.5px solid #3b82f6;border-top-color:transparent;border-radius:50%;display:inline-block;vertical-align:middle;animation:spin 0.8s linear infinite;"></div> waiting'; pill.style.color = '#3b82f6'; }
+    if (pill) { pill.innerHTML = '<div class="spinner" style="width:10px;height:10px;border:1.5px solid #0a84ff;border-top-color:transparent;border-radius:50%;display:inline-block;vertical-align:middle;animation:spin 0.8s linear infinite;"></div> waiting'; pill.style.color = '#0a84ff'; }
     if (status) status.textContent = 'awaiting your signature';
-    if (card) card.style.borderColor = '#3b82f6';
+    if (card) card.style.borderColor = '#0a84ff';
     if (btn) { btn.disabled = false; btn.textContent = 'simulate signing on laptop'; btn.style.opacity = '1'; }
   }
   if (id === 'delegate-pick') {
@@ -3132,17 +2724,8 @@ function closeAction() {
 }
 
 function grantRebalance() {
-  const btn = document.getElementById('auth-btn');
-  btn.textContent = 'signing...';
-  btn.style.opacity = '0.7';
-  setTimeout(() => {
-    btn.textContent = 'submitting frame tx...';
-    setTimeout(() => {
-      btn.textContent = 'authorize · sign with passkey';
-      btn.style.opacity = '1';
-      go('rebalance-dashboard');
-    }, 1200);
-  }, 900);
+  // legacy entry point: land on the template-live view for lp-rebalancer
+  openTemplateLive('lp-rebalancer');
 }
 
 function startCreating() {
@@ -3213,7 +2796,7 @@ function notifyGuardians() {
     document.getElementById('guardian-bob-dot').classList.remove('pending');
     document.getElementById('guardian-bob-dot').classList.add('approved');
     document.getElementById('guardian-bob-status').textContent = 'approved · just now';
-    document.getElementById('guardian-bob-status').style.color = '#22c55e';
+    document.getElementById('guardian-bob-status').style.color = '#00d632';
     document.getElementById('quorum-progress').textContent = '1 of 2 required';
   }, 1200);
   // carol approves, quorum met
@@ -3221,9 +2804,9 @@ function notifyGuardians() {
     document.getElementById('guardian-carol-dot').classList.remove('pending');
     document.getElementById('guardian-carol-dot').classList.add('approved');
     document.getElementById('guardian-carol-status').textContent = 'approved · just now';
-    document.getElementById('guardian-carol-status').style.color = '#22c55e';
+    document.getElementById('guardian-carol-status').style.color = '#00d632';
     document.getElementById('quorum-progress').textContent = 'quorum met';
-    document.getElementById('quorum-progress').style.color = '#22c55e';
+    document.getElementById('quorum-progress').style.color = '#00d632';
     if (btn) btn.textContent = 'quorum reached';
   }, 2700);
   // auto-advance to passkey creation
@@ -3271,20 +2854,20 @@ const trayTemplates = {
     <div class="tray-list">
       <div class="tray-row">
         <div><div class="tray-row-name">email recovery</div><div class="tray-row-sub">alice@example.com</div></div>
-        <span class="tray-pill" style="color: #22c55e; background: #141414;">verified</span>
+        <span class="tray-pill" style="color: #00d632; background: #141414;">verified</span>
       </div>
       <div class="tray-section"><div class="tray-section-label">guardians · 2-of-3 quorum</div></div>
       <div class="tray-row">
         <div><div class="tray-row-name">bob.eth</div><div class="tray-row-sub">...7e3a</div></div>
-        <span class="tray-pill" style="color: #f59e0b; background: #141414;">1 of 3</span>
+        <span class="tray-pill" style="color: #ff9f0a; background: #141414;">1 of 3</span>
       </div>
       <div class="tray-row">
         <div><div class="tray-row-name">carol.eth</div><div class="tray-row-sub">...f291</div></div>
-        <span class="tray-pill" style="color: #f59e0b; background: #141414;">2 of 3</span>
+        <span class="tray-pill" style="color: #ff9f0a; background: #141414;">2 of 3</span>
       </div>
       <div class="tray-row">
         <div><div class="tray-row-name">dan.eth</div><div class="tray-row-sub">...1b4c</div></div>
-        <span class="tray-pill" style="color: #f59e0b; background: #141414;">3 of 3</span>
+        <span class="tray-pill" style="color: #ff9f0a; background: #141414;">3 of 3</span>
       </div>
       <div class="tray-section"><div class="tray-section-label">token approvals</div></div>
       <div class="tray-row" style="border-bottom: none;"><div><div class="tray-row-name" style="color: #555;">none</div></div></div>
@@ -3298,7 +2881,7 @@ const trayTemplates = {
       <div class="tray-section"><div class="tray-section-label">registered passkeys · 2</div></div>
       <div class="tray-row">
         <div><div class="tray-row-name">iphone 15</div><div class="tray-row-sub">p-256 · added 2 days ago</div></div>
-        <span class="tray-pill" style="color: #22c55e; background: #141414;">this device</span>
+        <span class="tray-pill" style="color: #00d632; background: #141414;">this device</span>
       </div>
       <div class="tray-row">
         <div><div class="tray-row-name">macbook pro</div><div class="tray-row-sub">p-256 · added yesterday</div></div>
@@ -3353,7 +2936,7 @@ const trayTemplates = {
 
       <div class="tour-row" onclick="closeTray(); go('journey-recovery');">
         <div class="tour-row-icon" style="background: #0a1428;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="#3b82f6" stroke-width="1.5" fill="none"/><path d="M3 7 L12 13 L21 7" stroke="#3b82f6" stroke-width="1.5" fill="none"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="#0a84ff" stroke-width="1.5" fill="none"/><path d="M3 7 L12 13 L21 7" stroke="#0a84ff" stroke-width="1.5" fill="none"/></svg>
         </div>
         <div style="flex: 1; min-width: 0;">
           <div class="tour-row-name">recovery</div>
@@ -3364,7 +2947,7 @@ const trayTemplates = {
 
       <div class="tour-row" onclick="closeTray(); go('journey-delegation');">
         <div class="tour-row-icon" style="background: #0a1f12;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 12 C3 7 7 3 12 3 C17 3 21 7 21 12" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/><path d="M21 12 C21 17 17 21 12 21 C7 21 3 17 3 12" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="3 2"/><path d="M18 9 L21 12 L18 15" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 12 C3 7 7 3 12 3 C17 3 21 7 21 12" stroke="#00d632" stroke-width="1.5" stroke-linecap="round"/><path d="M21 12 C21 17 17 21 12 21 C7 21 3 17 3 12" stroke="#00d632" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="3 2"/><path d="M18 9 L21 12 L18 15" stroke="#00d632" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
         <div style="flex: 1; min-width: 0;">
           <div class="tour-row-name">delegation</div>
@@ -3375,7 +2958,7 @@ const trayTemplates = {
 
       <div class="tour-row" onclick="closeTray(); go('journey-cosign');">
         <div class="tour-row-icon" style="background: #1f1708;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="14" height="18" rx="2" stroke="#f59e0b" stroke-width="1.5" fill="none"/><rect x="3" y="5" width="18" height="12" rx="1.5" stroke="#f59e0b" stroke-width="1.5" fill="none" transform="translate(4 3)"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="14" height="18" rx="2" stroke="#ff9f0a" stroke-width="1.5" fill="none"/><rect x="3" y="5" width="18" height="12" rx="1.5" stroke="#ff9f0a" stroke-width="1.5" fill="none" transform="translate(4 3)"/></svg>
         </div>
         <div style="flex: 1; min-width: 0;">
           <div class="tour-row-name">co-signing</div>
@@ -3475,6 +3058,62 @@ const buildTemplates = [
 ];
 
 // ---- sessions data (agent-signed subset only: verify + sender, no paymaster) ----
+// ---- account policies (installed, enforced on every inbound tx) ----
+let accountPolicies = [
+  {
+    id: 'ap1', type: 'verify', kind: 'guardian',
+    name: 'guardian quorum',
+    desc: 'require 2-of-3 guardians for key rotation',
+    status: 'active',
+    config: { quorum: '2 of 3', guardians: ['bob.eth', 'carol.eth', 'dan.eth'] },
+  },
+  {
+    id: 'ap2', type: 'verify', kind: 'threshold',
+    name: 'threshold by value',
+    desc: 'require second device above $1,000',
+    status: 'active',
+    config: { threshold: '$1,000', 'second device': 'macbook air' },
+  },
+];
+
+function renderAccountPolicies() {
+  const el = document.getElementById('policies-installed');
+  if (!el) return;
+  if (accountPolicies.length === 0) {
+    el.innerHTML = `<div class="italic-voice" style="font-size: 12px; padding: 12px 0;">none installed. add one below.</div>`;
+    return;
+  }
+  el.innerHTML = accountPolicies.map(p => {
+    const cfgRows = Object.entries(p.config).map(([k, v]) => {
+      const val = Array.isArray(v) ? v.join(' · ') : v;
+      return `<div style="display:flex; justify-content:space-between; padding: 4px 0; font-size: 11px;"><span style="color: var(--text-4); font-family: 'DM Mono', monospace; letter-spacing: 0.4px;">${k}</span><span style="color: var(--text-2);">${val}</span></div>`;
+    }).join('');
+    return `
+      <div style="background: var(--card); border-radius: 12px; padding: 14px; margin-bottom: 8px;">
+        <div style="display:flex; align-items:center; gap: 10px; padding-bottom: 8px;">
+          <span class="frame-badge ${p.type}">${p.type}</span>
+          <div style="flex:1;">
+            <div style="font-size: 13px; color: var(--text-1); font-weight: 500;">${p.name}</div>
+            <div style="font-size: 11px; color: var(--text-3);">${p.desc}</div>
+          </div>
+          <div style="display:flex; align-items:center; gap: 5px; font-size: 10px; color: var(--green);">
+            <span style="width:5px; height:5px; border-radius:50%; background: var(--green); display:inline-block;"></span>active
+          </div>
+        </div>
+        <div style="border-top: 0.5px solid var(--divider); padding-top: 8px;">${cfgRows}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateAccountPoliciesCount() {
+  const el = document.getElementById('account-policies-count');
+  if (!el) return;
+  const count = accountPolicies.length;
+  el.innerHTML = `${count} installed <span class="home-row-chev">›</span>`;
+}
+
+
 let sessionsData = [
   {
     id: 'lp-rebalancer', name: 'lp rebalancer', status: 'active', templateId: 't1',
@@ -3522,6 +3161,123 @@ let sessionsData = [
   },
 ];
 
+// ============== TEMPLATE LIVE (generic session detail view) ==============
+let templateLiveContext = { sessionId: null };
+
+function openTemplateLive(sessionId) {
+  templateLiveContext.sessionId = sessionId;
+  // track where we came from so back button returns there
+  const active = document.querySelector('.screen.active');
+  if (active) {
+    const fromId = active.id.replace('screen-', '');
+    if (fromId !== 'template-live') templateLiveContext._from = fromId;
+  }
+  go('template-live');
+}
+
+function closeTemplateLive() {
+  const from = templateLiveContext._from || 'sessions';
+  templateLiveContext.sessionId = null;
+  go(from);
+}
+
+function renderTemplateLive() {
+  const s = sessionsData.find(x => x.id === templateLiveContext.sessionId);
+  if (!s) return;
+  const tpl = buildTemplates.find(t => t.id === s.templateId);
+
+  // top title
+  const topTitle = document.getElementById('tlive-top-title');
+  if (topTitle) topTitle.textContent = 'session';
+
+  // hero
+  const nameEl = document.getElementById('tlive-name');
+  if (nameEl) nameEl.textContent = s.name;
+  const descEl = document.getElementById('tlive-desc');
+  if (descEl) descEl.textContent = tpl ? tpl.desc : 'active session.';
+  const dotEl = document.getElementById('tlive-dot');
+  if (dotEl) dotEl.className = 'session-dot ' + (s.status === 'active' ? 'active' : s.status === 'revoked' ? 'revoked' : 'expired');
+
+  // usage
+  const usedPct = s.cap ? Math.min(100, (s.used / s.cap) * 100) : 0;
+  const usageBar = document.getElementById('tlive-usage-bar');
+  if (usageBar) usageBar.style.width = `${usedPct}%`;
+  const readout = document.getElementById('tlive-usage-readout');
+  if (readout) readout.innerHTML = `<span class="hide-on-privacy">$${s.used.toFixed(2)} of $${s.cap}</span>`;
+  const daysEl = document.getElementById('tlive-days');
+  if (daysEl) daysEl.textContent = s.daysLeft != null ? `${s.daysLeft} days left` : (s.endedAgo || '');
+
+  // ticks
+  const ticksEl = document.getElementById('tlive-ticks');
+  if (ticksEl) {
+    if (s.ticks && s.ticks.length) {
+      ticksEl.style.display = '';
+      const label = s.status === 'active' ? 'runs' : 'history';
+      ticksEl.innerHTML = `<span class="session-ticks-label">${label}</span>` +
+        s.ticks.map((t, i) => `<span class="tick ${t}" title="${t === 'success' ? `successful run #${i+1}` : `blocked attempt #${i+1}`}"></span>`).join('');
+    } else {
+      ticksEl.style.display = 'none';
+    }
+  }
+
+  // counts
+  const countsEl = document.getElementById('tlive-counts');
+  if (countsEl) countsEl.textContent = sessionMetaLine(s);
+
+  // pipeline (agent-signed subset — 2 frames)
+  const pipeEl = document.getElementById('tlive-pipeline');
+  if (pipeEl) pipeEl.innerHTML = framePipelineHTML(s.frames, { eyebrow: false });
+
+  // recent activity (filter activityData by related agent name)
+  const activityMount = document.getElementById('tlive-activity');
+  if (activityMount) {
+    const related = activityData.filter(a => (a.sub || '').toLowerCase().includes(s.name.toLowerCase()) || (a.title || '').toLowerCase().includes(s.name.toLowerCase()));
+    if (related.length === 0) {
+      activityMount.innerHTML = `<div class="italic-voice" style="font-size: 12px; padding: 16px 0; text-align: center;">no runs yet. tap "see it work" to simulate.</div>`;
+    } else {
+      activityMount.innerHTML = related.map(a => {
+        const frameModes = a.frames.map(f => f.mode).join(',');
+        const titleHtml = a.titlePill ? `<span class="entry-pill-blocked">${a.titlePill}</span>${a.title}` : a.title;
+        const rightHtml = a.amount ? `<div class="entry-right"><div class="entry-amount hide-on-privacy ${a.amountClass || 'white'}">${a.amount}</div><div class="entry-amount-sub hide-on-privacy">${a.amountSub || ''}</div></div>` : '';
+        return `
+          <div class="entry" onclick="toggleEntry(this)" data-frames="${frameModes}" data-blocked="${a.blocked}">
+            <div class="entry-avatar" id="${a.avatarId || ''}"></div>
+            <div class="entry-body">
+              <div class="entry-title">${titleHtml}</div>
+              <div class="entry-sub">${a.sub}</div>
+            </div>
+            ${rightHtml}
+            <div class="entry-chevron">›</div>
+            <div class="frames">${a.frames.length ? framePipelineHTML(a.frames, { eyebrow: false }) : ''}${a.txHash ? `<div style="display:flex; justify-content: flex-end; padding-top: 8px;">${txHashCopyHTML(a.txHash)}</div>` : ''}</div>
+          </div>
+        `;
+      }).join('');
+      seedActivityAvatars();
+    }
+  }
+
+  // revoke button visibility + handler (past sessions: hide revoke)
+  const revokeBtn = document.getElementById('tlive-revoke-btn');
+  if (revokeBtn) revokeBtn.style.display = s.status === 'active' ? '' : 'none';
+  // simulate button visibility (past sessions: hide)
+  const simBtn = document.getElementById('tlive-sim-btn');
+  if (simBtn) simBtn.style.display = s.status === 'active' ? '' : 'none';
+}
+
+function simulateTemplateLiveRun() {
+  // reuse the existing agent simulation modal if available
+  if (templateLiveContext.sessionId && typeof openAgentSimulation === 'function') {
+    openAgentSimulation(templateLiveContext.sessionId);
+  }
+}
+
+function requestRevokeFromTemplateLive() {
+  const sid = templateLiveContext.sessionId;
+  if (!sid) return;
+  requestRevoke(sid);
+}
+
+
 function sessionMetaLine(s) {
   const isPast = s.status === 'revoked' || s.status === 'expired';
   if (isPast) {
@@ -3536,6 +3292,161 @@ function sessionMetaLine(s) {
   if (s.lastRunAgo) base += ` · last ${s.lastRunAgo}`;
   return base;
 }
+
+// ---- home feed renderer ----
+// compute balance from activity (debits/credits) and push to all balance-readout spans
+const INITIAL_BALANCE = 2847.30;
+
+function parseAmountToNumber(str) {
+  if (!str) return 0;
+  // e.g. "+250" / "−0.5" / "−$100"
+  const cleaned = String(str).replace(/[^\d.\-−]/g, '').replace('−', '-');
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? 0 : n;
+}
+
+function computeBalance() {
+  // sum credits (+) and debits (-) across activityData
+  // "−$100" → -100 (debit), "+250" → assume USDC (~$1) → +250
+  // we only track USD-denominated amounts for rough balance
+  let delta = 0;
+  activityData.forEach(a => {
+    if (!a.amount) return;
+    const n = parseAmountToNumber(a.amount);
+    // if amountSub mentions ETH, convert at ~$2780 rate (matches original $1390 for 0.5 ETH)
+    if (a.amountSub && /ETH/i.test(a.amountSub)) {
+      delta += n * 2780;
+    } else if (a.amountSub && /USDC/i.test(a.amountSub)) {
+      delta += n;
+    } else {
+      // dollar amount
+      delta += n;
+    }
+  });
+  return INITIAL_BALANCE + delta;
+}
+
+function updateBalanceReadouts() {
+  const amount = computeBalance();
+  const formatted = amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  document.querySelectorAll('.balance-readout').forEach(el => { el.textContent = formatted; });
+}
+
+function renderHome() {
+  const activeSessions = sessionsData.filter(s => s.status === 'active');
+  const totalRuns = sessionsData.reduce((sum, s) => sum + (s.executed || 0), 0);
+
+  // stat tile: active session count + total executed
+  const runsEl = document.getElementById('home-stat-runs');
+  const runsSubEl = document.getElementById('home-stat-runs-sub');
+  if (runsEl) runsEl.textContent = activeSessions.length;
+  if (runsSubEl) {
+    if (activeSessions.length === 0) runsSubEl.textContent = 'nothing active';
+    else runsSubEl.textContent = `${totalRuns} run${totalRuns === 1 ? '' : 's'} total`;
+  }
+
+  // chart bars: per-day distribution of ticks across sessions (pad to 7 days m-s)
+  const barsEl = document.getElementById('home-chart-bars');
+  if (barsEl) {
+    // crude distribution: spread all ticks evenly across 7 days, with a bit of variation
+    const allTicks = sessionsData.flatMap(s => s.ticks || []);
+    const n = allTicks.length;
+    // distribute across 7 days — most recent ticks get the highest weight on "today"
+    const perDay = [0, 0, 0, 0, 0, 0, 0];
+    for (let i = 0; i < n; i++) {
+      // ticks ordered chronologically; earlier ticks → earlier days
+      const dayIdx = Math.floor((i / n) * 7);
+      perDay[Math.min(6, dayIdx)]++;
+    }
+    const maxCount = Math.max(1, ...perDay);
+    barsEl.innerHTML = perDay.map(c => {
+      const h = Math.max(8, (c / maxCount) * 100);
+      const muted = c === 0 ? ' muted' : '';
+      return `<div class="home-chart-bar${muted}" style="height: ${h}%;"></div>`;
+    }).join('');
+  }
+
+  // what-happened stat: tx count this week
+  const txsEl = document.getElementById('home-stat-txs');
+  const txsSubEl = document.getElementById('home-stat-txs-sub');
+  const weekTxs = activityData.filter(a => a.day === 'today' || a.day === 'yesterday' || a.day === 'earlier this week').length;
+  if (txsEl) txsEl.textContent = weekTxs;
+  if (txsSubEl) txsSubEl.textContent = `tx${weekTxs === 1 ? '' : 's'} this week`;
+
+  // sessions feed: show most-recently-active session
+  const feed = document.getElementById('home-sessions-feed');
+  const empty = document.getElementById('home-sessions-empty');
+  if (feed && empty) {
+    if (activeSessions.length === 0) {
+      feed.style.display = 'none';
+      empty.style.display = 'flex';
+    } else {
+      feed.style.display = '';
+      empty.style.display = 'none';
+      // prefer the session with a recent lastRunAgo; fall back to first active
+      const featured = activeSessions.find(s => s.lastRunAgo) || activeSessions[0];
+      const pillHtml = featured.lastRunAgo
+        ? `<span class="home-feed-pill live">live</span>`
+        : `<span class="home-feed-pill live">ready</span>`;
+      const timeHtml = featured.lastRunAgo
+        ? `<div class="home-feed-time">${featured.lastRunAgo}</div>`
+        : `<div class="home-feed-time">no runs yet</div>`;
+      feed.innerHTML = `
+        <div class="home-feed-row" onclick="openTemplateLive('${featured.id}')">
+          <div class="home-feed-avatar" id="home-feed-s1"></div>
+          <div class="home-feed-body">
+            <div class="home-feed-name">${featured.name}</div>
+            <div class="home-feed-sub">${sessionMetaLine(featured)}</div>
+          </div>
+          <div class="home-feed-right">
+            ${pillHtml}
+            ${timeHtml}
+          </div>
+        </div>
+      `;
+      // re-seed avatar
+      if (typeof _setSlot === 'function' && typeof _pfpInner === 'function') {
+        _setSlot('home-feed-s1', _pfpInner(featured.id));
+      }
+    }
+  }
+
+  // activity feed: most recent entry
+  const actFeed = document.getElementById('home-activity-feed');
+  if (actFeed) {
+    const first = activityData[0];
+    if (!first) {
+      actFeed.innerHTML = `<div class="italic-voice" style="font-size: 12px; padding: 14px 16px;">no activity yet.</div>`;
+    } else {
+      const amountHtml = first.amount
+        ? `<div class="home-feed-amount hide-on-privacy ${first.amountClass === 'green' ? 'green' : 'red'}">${first.amount}</div>`
+        : '';
+      const timeStr = (first.sub || '').split(' · ').pop() || '';
+      actFeed.innerHTML = `
+        <div class="home-feed-row" onclick="go('activity')">
+          <div class="home-feed-avatar" id="home-feed-a1"></div>
+          <div class="home-feed-body">
+            <div class="home-feed-name">${first.title}</div>
+            <div class="home-feed-sub hide-on-privacy">${first.amountSub || first.sub}</div>
+          </div>
+          <div class="home-feed-right">
+            ${amountHtml}
+            <div class="home-feed-time">${timeStr}</div>
+          </div>
+        </div>
+      `;
+      // seed home activity avatar from the entry's avatarId if it exists
+      if (first.avatarId && typeof seedActivityAvatars === 'function') {
+        seedActivityAvatars();
+      }
+      // also try to seed home-feed-a1 with a generic fallback
+      if (typeof _setSlot === 'function' && typeof _pfpInner === 'function' && !document.getElementById('home-feed-a1')?.innerHTML) {
+        _setSlot('home-feed-a1', _pfpInner(first.title));
+      }
+    }
+  }
+}
+
 
 function renderSessions() {
   const el = document.getElementById('sessions-feed');
@@ -3561,17 +3472,10 @@ function renderSessions() {
       : (s.cap ? `<div class="usage-bar"><div class="usage-bar-fill muted" style="width: ${usedPct}%;"></div></div>` : '');
     const cardClass = isPast ? (isRevoked ? 'revoked' : 'expired') : '';
     const dotClass  = isPast ? (isRevoked ? 'revoked' : 'expired') : 'active';
-    const nameStyle = isRevoked ? ' style="color: #ef4444;"' : '';
-    const footer = !isPast ? `
-      <div class="card-footer">
-        <div class="card-footer-text">${sessionMetaLine(s)}</div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <button class="simulate-link" onclick="event.stopPropagation(); openAgentSimulation('${s.id}')">see it work</button>
-          <button class="revoke-link" onclick="event.stopPropagation(); requestRevoke(this)">revoke</button>
-        </div>
-      </div>` : '';
+    const nameStyle = isRevoked ? ' style="color: var(--red);"' : '';
+    const meta = sessionMetaLine(s);
     return `
-      <div class="session-card cursor-pointer${isPast ? ' ' + cardClass : ''}" ${!isPast ? 'onclick="toggleSessionCard(this, event)"' : ''}>
+      <div class="session-card${isPast ? ' ' + cardClass : ''}" style="cursor: pointer;" onclick="openTemplateLive('${s.id}')">
         <div class="session-card-header">
           <div class="session-dot ${dotClass}"></div>
           <div style="flex: 1;">
@@ -3579,11 +3483,10 @@ function renderSessions() {
             <div class="session-meta hide-on-privacy">${topMeta}</div>
             ${usageBar}
             ${ticksHtml}
+            <div style="font-size: 11px; color: var(--text-4); margin-top: 8px;">${meta}</div>
           </div>
-          ${!isPast ? '<span class="session-card-chev">›</span>' : ''}
+          <span class="session-card-chev" style="color: var(--text-4);">›</span>
         </div>
-        <div class="frame-section" data-sid="${s.id}"></div>
-        ${footer}
       </div>
     `;
   };
@@ -3604,12 +3507,6 @@ function renderSessions() {
     `;
   }
   el.innerHTML = html;
-
-  // render frame pipelines into each card's frame-section
-  sessionsData.forEach(s => {
-    const section = el.querySelector(`.frame-section[data-sid="${s.id}"]`);
-    if (section) section.innerHTML = framePipelineHTML(s.frames, { eyebrow: 'agent can sign' });
-  });
 }
 
 // ---- activity data (full submitted pipeline incl. paymaster) ----
@@ -3797,36 +3694,6 @@ function framePipelineHTML(frames, opts) {
   `;
 }
 
-// ============== REBALANCE AUTHORIZE POLICY ==============
-const authPolicy = { limit: 500, window: '7d', keepRunning: false };
-
-function setAuthLimit(val) {
-  authPolicy.limit = val;
-  document.querySelectorAll('[data-auth-limit]').forEach(b => {
-    b.classList.toggle('active', Number(b.dataset.authLimit) === val);
-  });
-  const readout = document.getElementById('auth-limit-value');
-  if (readout) readout.textContent = val >= 1000 ? `$${(val/1000)}k` : `$${val}`;
-}
-
-function setAuthWindow(val) {
-  authPolicy.window = val;
-  document.querySelectorAll('[data-auth-window]').forEach(b => {
-    b.classList.toggle('active', b.dataset.authWindow === val);
-  });
-  const readout = document.getElementById('auth-window-value');
-  if (readout) {
-    const pretty = { '1h': '1 hour', '6h': '6 hours', '24h': '24 hours', '7d': '7 days' }[val] || val;
-    readout.textContent = pretty;
-  }
-}
-
-function toggleAuthKeepRunning() {
-  authPolicy.keepRunning = !authPolicy.keepRunning;
-  const el = document.getElementById('auth-keep-toggle');
-  if (el) el.classList.toggle('on', authPolicy.keepRunning);
-}
-
 // ============== ADD DEVICE ==============
 const devicePolicy = { threshold: 1000 };
 
@@ -3926,7 +3793,7 @@ function renderSendRecipientPicker() {
     return `<div onclick="pickSendRecipient('${r.id}')" style="padding: 10px 6px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider); cursor: pointer;">
       <div class="addr-avatar">${identicon(r.seed, r.tone)}</div>
       <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">${r.name}</div><div style="font-size:11px;color:var(--text-4);">${r.addr} · ${r.sub}</div></div>
-      ${selected ? '<div style="width:18px;height:18px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;">✓</div>' : ''}
+      ${selected ? '<div style="width:18px;height:18px;border-radius:50%;background:#00d632;display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;">✓</div>' : ''}
     </div>`;
   }).join('');
   const lastRow = list.querySelector(':scope > div:last-child');
@@ -4008,9 +3875,9 @@ function simulateLaptopSign() {
   if (btn) { btn.disabled = true; btn.textContent = 'signing on laptop...'; btn.style.opacity = '0.7'; }
   // laptop signs
   setTimeout(() => {
-    if (pill) { pill.innerHTML = '✓ signed'; pill.style.color = '#22c55e'; }
+    if (pill) { pill.innerHTML = '✓ signed'; pill.style.color = '#00d632'; }
     if (status) status.textContent = 'signed · just now';
-    if (card) card.style.borderColor = '#22c55e';
+    if (card) card.style.borderColor = '#00d632';
     if (btn) btn.textContent = 'both signed · submitting...';
   }, 1200);
   // tx submits and confirms
@@ -4038,14 +3905,14 @@ function renderDelegateAgentList() {
   if (!list) return;
   list.innerHTML = delegateAgentPool.map(a => {
     const selected = a.id === delegateState.agentId;
-    return `<div onclick="pickDelegateAgent('${a.id}')" style="background: var(--card); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; ${selected ? 'border: 1px solid #22c55e;' : 'border: 1px solid transparent;'}">
+    return `<div onclick="pickDelegateAgent('${a.id}')" style="background: var(--card); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; ${selected ? 'border: 1px solid #00d632;' : 'border: 1px solid transparent;'}">
       <div class="addr-avatar">${gradientPfpSvg(a.id)}</div>
       <div style="flex: 1; min-width: 0;">
         <div style="font-size: 13px; color: var(--text-1); font-weight: 500;">${a.name}</div>
         <div style="font-size: 11px; color: var(--text-4); margin-top: 2px;">${a.pitch}</div>
         <div style="font-size: 10px; color: #555; margin-top: 4px; font-family: 'DM Mono', monospace;">${a.selectors}</div>
       </div>
-      <div style="width:18px;height:18px;border-radius:50%;${selected ? 'background:#22c55e;' : 'border:1px solid #333;'}display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;flex-shrink:0;">${selected ? '✓' : ''}</div>
+      <div style="width:18px;height:18px;border-radius:50%;${selected ? 'background:#00d632;' : 'border:1px solid #333;'}display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;flex-shrink:0;">${selected ? '✓' : ''}</div>
     </div>`;
   }).join('');
 }
@@ -4154,12 +4021,12 @@ function journeyAgentActs() {
 const tourSteps = [
   {
     title: 'welcome to grantr',
-    body: 'a frames-native smart account. every action is a chain of frames — verify, approve, sender, default. the chain enforces the rules, not the app.',
+    body: 'a frames-native smart account. every action is a chain of frames — verify, sender, default. the chain enforces the rules, not the app.',
     enter: () => { closeAction(); closeTray(); go('home'); }
   },
   {
     title: 'send a tx',
-    body: 'here\'s what an action looks like. your passkey signs, grantr pays gas, and the sender frame moves the tokens. 3 frames, atomic on-chain.',
+    body: 'here\'s what an action looks like. your passkey signs, grantr pays gas (via a second verify frame), and the sender frame moves the tokens. 3 frames, atomic on-chain.',
     enter: () => { sendState.amount = 100; sendState.recipient = 'bob'; go('send'); }
   },
   {
@@ -4358,16 +4225,16 @@ function playAgentSimulation() {
   agentSimTimers.push(setTimeout(() => {
     stepPass(1, 3, script.attempts[0].sender);
     const status = document.getElementById('sim-1-status');
-    if (status) { status.textContent = 'confirmed'; status.style.color = '#22c55e'; }
+    if (status) { status.textContent = 'confirmed'; status.style.color = '#00d632'; }
     const card = document.getElementById('sim-attempt-1');
-    if (card) card.style.borderColor = 'rgba(34,197,94,0.3)';
+    if (card) card.style.borderColor = 'rgba(0,214,50,0.3)';
   }, 1800));
 
   // attempt 2: verify fails
   agentSimTimers.push(setTimeout(() => {
     stepFail(2, 1, script.attempts[1].verify);
     const status = document.getElementById('sim-2-status');
-    if (status) { status.textContent = 'blocked'; status.style.color = '#ef4444'; }
+    if (status) { status.textContent = 'blocked'; status.style.color = 'var(--red)'; }
     const card = document.getElementById('sim-attempt-2');
     if (card) card.style.borderColor = 'rgba(239,68,68,0.3)';
     const btn2 = document.getElementById('sim-play-btn');
@@ -4432,7 +4299,7 @@ function renderSponsorPicker() {
     return `<div onclick="pickSponsorRecipient('${r.id}')" style="padding: 10px 6px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider); cursor: pointer;">
       <div class="addr-avatar">${identicon(r.seed, r.tone)}</div>
       <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">${r.name}</div><div style="font-size:11px;color:var(--text-4);">${r.addr} · ${r.sub}</div></div>
-      ${selected ? '<div style="width:18px;height:18px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;">✓</div>' : ''}
+      ${selected ? '<div style="width:18px;height:18px;border-radius:50%;background:#00d632;display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;">✓</div>' : ''}
     </div>`;
   }).join('');
   const lastRow = list.querySelector(':scope > div:last-child');
@@ -4495,7 +4362,7 @@ function selectVerifyPolicy(type) {
           <div style="font-size: 10px; color: var(--text-4); margin-top: 6px;">must implement isValidSignature(bytes32, bytes) returns (bytes4)</div>
         </div>
         <div style="background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 11px; color: var(--text-3); line-height: 1.5;">
-          <span style="color: #f59e0b;">⚠</span> grantr can't audit custom signers. only use contracts you trust.
+          <span style="color: #ff9f0a;">⚠</span> grantr can't audit custom signers. only use contracts you trust.
         </div>
       `,
       cta: 'install custom signer',
@@ -4714,30 +4581,6 @@ function renderBuildQueue() {
 // ============== TX PREVIEW MODAL ==============
 
 const txPreviewData = {
-  rebalance: {
-    title: 'let grantr rebalance your lp',
-    desc: 'install a session key so the agent can rebalance this position and collect fees. it can\'t do anything else.',
-    frames: [
-      { type: 'verify', name: 'passkey signature', sub: 'p-256 · your device', scope: 1, target: 'account' },
-      { type: 'verify', name: 'grantr pays gas',   sub: 'sponsored paymaster', scope: 2, target: 'sponsor' },
-      { type: 'default', name: 'add session key', sub: 'scope: rebalance() · collectFees()', fn: 'CREATE2' }
-    ],
-    details: [
-      ['spending limit', '—'],
-      ['access window', '—'],
-      ['keep running', '—'],
-      ['agent', 'lp rebalancer · ...9d8f'],
-      ['network', 'ethrex devnet'],
-      ['gas', '0 ETH · sponsored']
-    ],
-    onConfirm: () => { closeTxPreview(); go('rebalance-authorize'); setTimeout(() => grantRebalance(), 100); },
-    onOpen: () => {
-      const d = txPreviewData.rebalance.details;
-      d[0][1] = `$${authPolicy.limit.toLocaleString()} per action`;
-      d[1][1] = authPolicy.window;
-      d[2][1] = authPolicy.keepRunning ? 'on · loops until revoked' : 'off · stops after one';
-    }
-  },
   sponsor: {
     title: 'sponsor their gas',
     desc: 'you pay the gas for this transaction. the recipient still signs the action.',
@@ -4764,13 +4607,35 @@ const txPreviewData = {
   },
   build: {
     title: 'custom transaction',
-    desc: 'these steps run together. if any fails, the whole thing reverts.',
+    desc: 'these frames run together. if any fails, the whole thing reverts.',
     frames: [],
     details: [
       ['network', 'ethrex devnet'],
       ['gas', '0 ETH · sponsored']
     ],
-    onConfirm: () => { closeTxPreview(); resetBuildQueue(); go('home'); }
+    onConfirm: () => {
+      closeTxPreview();
+      // land the custom build in activity
+      const builtFrames = filledSteps().map(f => ({
+        mode: f.mode, scope: f.scope, target: f.target, fn: f.fn, desc: f.desc || f.name
+      }));
+      const newEntry = {
+        id: 'build-' + Date.now(),
+        day: 'today',
+        title: 'custom transaction',
+        sub: 'just now · built',
+        kind: 'custom',
+        blocked: false,
+        expanded: true,
+        avatarId: null,
+        txHash: '0x' + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join(''),
+        frames: builtFrames,
+      };
+      activityData.forEach(a => { a.expanded = false; });
+      activityData.unshift(newEntry);
+      resetBuildQueue();
+      go('activity');
+    }
   },
   'add-guardians': {
     title: 'add your guardians',
@@ -4837,27 +4702,25 @@ const txPreviewData = {
     ],
     onConfirm: () => {
       closeTxPreview();
-      if (pendingRevoke) {
-        pendingRevoke.classList.add('revoked-anim');
-        setTimeout(() => {
-          pendingRevoke.classList.add('revoked');
-          pendingRevoke.classList.remove('revoked-anim');
-          const dot = pendingRevoke.querySelector('.session-dot');
-          if (dot) { dot.classList.remove('active'); dot.classList.add('revoked'); }
-          const name = pendingRevoke.querySelector('.session-name');
-          if (name) name.style.color = '#ef4444';
-          const btn = pendingRevoke.querySelector('.revoke-link');
-          if (btn) { btn.textContent = 'revoked'; btn.style.color = '#555'; btn.style.pointerEvents = 'none'; }
-          pendingRevoke = null;
-        }, 700);
+      const s = sessionsData.find(x => x.id === pendingRevokeId);
+      if (s) {
+        s.status = 'revoked';
+        s.endedAgo = 'revoked just now';
       }
+      pendingRevokeId = null;
+      // refresh views
+      if (document.getElementById('screen-template-live')?.classList.contains('active')) renderTemplateLive();
+      if (document.getElementById('screen-sessions')?.classList.contains('active')) renderSessions();
+      // navigate back to sessions tab after revoke
+      setTimeout(() => { go('sessions'); }, 200);
     },
     onOpen: () => {
-      if (!pendingRevoke) return;
-      const name = pendingRevoke.querySelector('.session-name')?.textContent || '—';
-      const footer = pendingRevoke.querySelector('.card-footer-text')?.textContent || '—';
+      const s = sessionsData.find(x => x.id === pendingRevokeId);
+      if (!s) return;
+      const name = s.name;
+      const exec = `${s.executed} executed${s.blocked ? ` · ${s.blocked} blocked` : ''}`;
       txPreviewData.revoke.details[0][1] = name;
-      txPreviewData.revoke.details[1][1] = footer;
+      txPreviewData.revoke.details[1][1] = exec;
       txPreviewData.revoke.frames[2].sub = `${name} session key`;
     }
   },
@@ -4944,9 +4807,15 @@ const txPreviewData = {
   }
 };
 
-let pendingRevoke = null;
-function requestRevoke(btn) {
-  pendingRevoke = btn.closest('.session-card');
+let pendingRevokeId = null;
+function requestRevoke(sessionIdOrBtn) {
+  // accepts either a session id string or (legacy) a button in a card
+  if (typeof sessionIdOrBtn === 'string') {
+    pendingRevokeId = sessionIdOrBtn;
+  } else if (sessionIdOrBtn && sessionIdOrBtn.closest) {
+    // legacy: ignore
+    pendingRevokeId = null;
+  }
   openTxPreview('revoke');
 }
 
@@ -4957,7 +4826,7 @@ function exportAccountData(btn) {
   btn.style.opacity = '0.7';
   setTimeout(() => {
     btn.textContent = 'sent to alice@example.com';
-    btn.style.color = '#22c55e';
+    btn.style.color = '#00d632';
     setTimeout(() => {
       btn.textContent = original;
       btn.style.opacity = '1';
@@ -4975,7 +4844,7 @@ function copyAddressFromTray(row) {
   } catch (e) {}
   if (label) {
     label.textContent = 'copied';
-    label.style.color = '#22c55e';
+    label.style.color = '#00d632';
     setTimeout(() => {
       label.textContent = 'copy';
       label.style.color = '';
@@ -5039,9 +4908,9 @@ function togglePastSessions() {
 function identicon(seed, tone) {
   // tone: 'green' | 'amber' | 'blue' | 'gray'
   const ramps = {
-    green: ['#15803d', '#22c55e', '#86efac'],
-    amber: ['#92400e', '#f59e0b', '#fcd34d'],
-    blue:  ['#1e3a8a', '#3b82f6', '#93c5fd'],
+    green: ['#15803d', '#00d632', '#86efac'],
+    amber: ['#92400e', '#ff9f0a', '#fcd34d'],
+    blue:  ['#1e3a8a', '#0a84ff', '#93c5fd'],
     gray:  ['#1f2937', '#6b7280', '#d1d5db'],
     red:   ['#7f1d1d', '#ef4444', '#fca5a5'],
     pink:  ['#831843', '#ec4899', '#f9a8d4'],
@@ -5119,7 +4988,7 @@ function gradientPfpSvg(seed) {
 }
 function gradientPfpDiv(seed) { return `<div class="addr-avatar">${gradientPfpSvg(seed)}</div>`; }
 function logoDiv(url) { return `<div class="addr-avatar" style="background:#fff;"><img src="${url}" style="width:72%;height:72%;object-fit:contain;display:block;margin:14%;" alt=""/></div>`; }
-function grantrMarkDiv() { return `<div class="addr-avatar" style="background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-weight:700;font-family:'DM Mono',monospace;font-size:14px;">g</div>`; }
+function grantrMarkDiv() { return `<div class="addr-avatar" style="background:#00d632;display:flex;align-items:center;justify-content:center;color:#000;font-weight:700;font-family:'DM Mono',monospace;font-size:14px;">g</div>`; }
 
 // alice uses her illustrated character, not a gradient
 const aliceAvatarDiv = `<div class="addr-avatar"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg></div>`;
@@ -5128,28 +4997,28 @@ const addrData = {
   own: {
     sub: 'showing 1 own address',
     rows: [
-      { avatar: aliceAvatarDiv, name: 'alice.eth', addr: '...4c7a', pill: 'this device', pillColor: '#22c55e' }
+      { avatar: aliceAvatarDiv, name: 'alice.eth', addr: '...4c7a', pill: 'this device', pillColor: '#00d632' }
     ]
   },
   guardians: {
     sub: 'showing 3 guardians · 2-of-3 quorum',
     rows: [
-      { avatar: gradientPfpDiv('bob.eth'), name: 'bob.eth', addr: '...7e3a', pill: '1 of 3', pillColor: '#f59e0b' },
-      { avatar: gradientPfpDiv('carol.eth'), name: 'carol.eth', addr: '...f291', pill: '2 of 3', pillColor: '#f59e0b' },
-      { avatar: gradientPfpDiv('dan.eth'), name: 'dan.eth', addr: '...1b4c', pill: '3 of 3', pillColor: '#f59e0b' }
+      { avatar: gradientPfpDiv('bob.eth'), name: 'bob.eth', addr: '...7e3a', pill: '1 of 3', pillColor: '#ff9f0a' },
+      { avatar: gradientPfpDiv('carol.eth'), name: 'carol.eth', addr: '...f291', pill: '2 of 3', pillColor: '#ff9f0a' },
+      { avatar: gradientPfpDiv('dan.eth'), name: 'dan.eth', addr: '...1b4c', pill: '3 of 3', pillColor: '#ff9f0a' }
     ]
   },
   agents: {
     sub: 'showing 2 authorized agents',
     rows: [
-      { avatar: gradientPfpDiv('lp-rebalancer'), name: 'lp rebalancer', addr: '...9d8f', pill: 'active', pillColor: '#3b82f6' },
-      { avatar: gradientPfpDiv('ens-renewer'), name: 'ens renewer', addr: '...a3c2', pill: 'active', pillColor: '#3b82f6' }
+      { avatar: gradientPfpDiv('lp-rebalancer'), name: 'lp rebalancer', addr: '...9d8f', pill: 'active', pillColor: '#0a84ff' },
+      { avatar: gradientPfpDiv('ens-renewer'), name: 'ens renewer', addr: '...a3c2', pill: 'active', pillColor: '#0a84ff' }
     ]
   },
   sponsors: {
     sub: 'showing 1 gas sponsor',
     rows: [
-      { avatar: grantrMarkDiv(), name: 'grantr paymaster', addr: '...0001', pill: 'default', pillColor: '#22c55e' }
+      { avatar: grantrMarkDiv(), name: 'grantr paymaster', addr: '...0001', pill: 'default', pillColor: '#00d632' }
     ]
   },
   contracts: {
@@ -5215,7 +5084,7 @@ function copyAddrRow(row, addr) {
   const origText = pill.textContent;
   const origColor = pill.style.color;
   pill.textContent = 'copied';
-  pill.style.color = '#22c55e';
+  pill.style.color = '#00d632';
   setTimeout(() => {
     pill.textContent = origText;
     pill.style.color = origColor;
@@ -5305,7 +5174,7 @@ function renderGuardianPool() {
     return `<div onclick="toggleGuardian('${g.id}')" style="padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider); cursor: ${disabled ? 'default' : 'pointer'}; opacity: ${disabled ? '0.4' : '1'};">
       <div class="addr-avatar">${identicon(g.seed, g.tone)}</div>
       <div style="flex:1;"><div style="font-size:13px;color:var(--text-1);font-weight:500;">${g.name}</div><div style="font-size:11px;color:var(--text-4);">${g.sub}</div></div>
-      <div style="width:18px;height:18px;border-radius:50%;${selected ? 'background:#22c55e;' : 'border:1px solid #333;'}display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;">${selected ? '✓' : ''}</div>
+      <div style="width:18px;height:18px;border-radius:50%;${selected ? 'background:#00d632;' : 'border:1px solid #333;'}display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;">${selected ? '✓' : ''}</div>
     </div>`;
   }).join('');
   // strip last-child border
@@ -5342,7 +5211,7 @@ function confirmGuardianSelection() {
       if (accepted === 3) {
         const btn = document.getElementById('guardian-proceed-btn');
         if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
-        if (status) { status.textContent = 'all accepted'; status.style.color = '#22c55e'; }
+        if (status) { status.textContent = 'all accepted'; status.style.color = '#00d632'; }
       }
     }, 1200 + i * 1200);
   });
@@ -5373,9 +5242,9 @@ function renderGuardianInvites() {
 function markGuardianAccepted(id) {
   const status = document.getElementById('invite-' + id + '-status');
   const spinner = document.getElementById('invite-' + id + '-spinner');
-  if (status) { status.textContent = 'passkey created · accepted'; status.style.color = '#22c55e'; }
+  if (status) { status.textContent = 'passkey created · accepted'; status.style.color = '#00d632'; }
   if (spinner) {
-    spinner.outerHTML = `<div style="width:18px;height:18px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;">✓</div>`;
+    spinner.outerHTML = `<div style="width:18px;height:18px;border-radius:50%;background:#00d632;display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;">✓</div>`;
   }
 }
 </script>
