@@ -977,22 +977,36 @@ button {
 }
 .template-card {
   background: var(--card);
-  border: 0.5px dashed var(--border-2);
+  border: 0.5px solid var(--border);
   border-radius: 22px;
-  padding: 22px 24px;
+  padding: 20px 22px;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 .template-card:hover {
   background: var(--card-hover);
-  border-color: var(--text-4);
+  border-color: var(--tpl-border, var(--text-4));
+  box-shadow: 0 0 0 0.5px var(--tpl-border, transparent);
+}
+.template-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+  gap: 10px;
 }
 .template-name {
   font-size: 18px;
   color: var(--text-1);
   font-weight: 500;
   letter-spacing: -0.01em;
-  margin-bottom: 6px;
+}
+.template-session-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  flex-shrink: 0;
 }
 .template-desc {
   font-family: 'DM Mono', monospace;
@@ -1004,6 +1018,192 @@ button {
   display: flex;
   gap: 5px;
   flex-wrap: wrap;
+}
+
+/* ===== build-top: templates strip above library/queue ===== */
+.build-top {
+  margin-bottom: 18px;
+}
+.build-top-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding: 0 2px;
+}
+.build-top-title {
+  font-size: 15px;
+  color: var(--text-1);
+  font-weight: 500;
+}
+.build-top-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+/* ===== account policies (validation rules) ===== */
+.ap-card {
+  background: var(--card);
+  border: 0.5px solid var(--border);
+  border-radius: 22px;
+  padding: 22px 24px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.ap-card:hover {
+  background: var(--card-hover);
+  border-color: var(--border-2);
+}
+.ap-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.ap-head-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.ap-name {
+  font-size: 18px;
+  color: var(--text-1);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.ap-status-chip {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 0.5px solid;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.ap-status-chip.active {
+  color: var(--green);
+  border-color: rgba(0, 214, 50, 0.3);
+  background: rgba(0, 214, 50, 0.06);
+}
+.ap-status-chip.paused {
+  color: var(--text-3);
+  border-color: var(--border-2);
+  background: transparent;
+}
+.ap-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+}
+.ap-status-dot.paused {
+  background: var(--text-4);
+}
+.ap-desc {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.5;
+  margin-bottom: 14px;
+  letter-spacing: -0.005em;
+}
+.ap-config {
+  background: var(--bg);
+  border: 0.5px solid var(--border-2);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.ap-config-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+.ap-config-key {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-4);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+.ap-config-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--text-2);
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.ap-foot {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* ===== policy picker list (+ add policy modal) ===== */
+.policy-picker-list {
+  display: flex;
+  flex-direction: column;
+}
+.policy-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 4px;
+  border-top: 0.5px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.policy-picker-row:first-child {
+  border-top: none;
+}
+.policy-picker-row:hover {
+  background: var(--card-hover);
+}
+.policy-picker-row > .frame-pill {
+  flex-shrink: 0;
+  min-width: 68px;
+  text-align: center;
+  justify-content: center;
+}
+.policy-picker-body {
+  flex: 1;
+  min-width: 0;
+}
+.policy-picker-name {
+  font-size: 14px;
+  color: var(--text-1);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.policy-picker-desc {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+.policy-picker-chev {
+  color: var(--text-4);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* policy-action.danger for "remove" button on account policy cards */
+.policy-action.danger {
+  color: var(--red);
+}
+.policy-action.danger:hover {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.3);
 }
 
 /* ===== sessions screen ===== */
@@ -2884,28 +3084,30 @@ button {
       <div class="policies-head">
         <div>
           <div class="policies-title">your policies</div>
-          <div class="policies-sub">rules that define what agents can do</div>
+          <div class="policies-sub">validation rules installed on your account</div>
         </div>
-        <button class="policies-new" onclick="newPolicy()">+ new policy</button>
+        <button class="policies-new" onclick="newPolicy()">+ add policy</button>
       </div>
 
       <div class="policies-section">
         <div class="policies-section-label">
-          <span>your policies</span>
+          <span>installed</span>
           <span class="policies-section-count" id="policies-count">0</span>
         </div>
         <div id="policies-list" class="policies-grid"></div>
       </div>
-
-      <div class="policies-section">
-        <div class="policies-section-label">
-          <span>templates</span>
-          <span class="policies-section-count">start from these</span>
+    </div>
+    <div id="screen-build" class="screen">
+      <div class="build-top" id="build-top">
+        <div class="build-top-head">
+          <div>
+            <div class="build-top-title">start from a template</div>
+            <div class="build-top-sub">or compose your own queue below</div>
+          </div>
         </div>
         <div class="template-grid" id="templates-grid"></div>
       </div>
-    </div>
-    <div id="screen-build" class="screen">
+
       <div class="build">
         <!-- LIBRARY -->
         <div class="build-pane">
@@ -2928,7 +3130,7 @@ button {
           </div>
           <div id="queue-container"></div>
           <div class="queue-actions">
-            <button class="queue-btn secondary" id="btn-save-policy" disabled onclick="savePolicy()">save as policy</button>
+            <button class="queue-btn secondary" id="btn-save-policy" disabled onclick="savePolicy()">save as template</button>
             <button class="queue-btn primary" id="btn-run" disabled onclick="runQueue()">sign &amp; run</button>
           </div>
         </div>
@@ -3246,7 +3448,7 @@ button {
 // ===== mock data =====
 const sessions = [
   {
-    id: 's1', name: 'lp rebalancer', status: 'active', policyId: 'p1', policyName: 'lp rebalance',
+    id: 's1', name: 'lp rebalancer', status: 'active', templateId: 't1', templateName: 'lp rebalance',
     used: 12.40, cap: 500, daysLeft: 29,
     frames: [
       { mode: 'verify', desc: 'session key · rebalance() · collectFees()', status: 'pass' },
@@ -3255,7 +3457,7 @@ const sessions = [
     executed: 3, blocked: 1,
   },
   {
-    id: 's2', name: 'ens renewer', status: 'active', policyId: 'p2', policyName: 'ens renew',
+    id: 's2', name: 'ens renewer', status: 'active', templateId: 't2', templateName: 'ens renew',
     used: 0, cap: 50, daysLeft: 345,
     frames: [
       { mode: 'verify', desc: 'session key · renew()', status: 'pass' },
@@ -3264,7 +3466,7 @@ const sessions = [
     executed: 0, blocked: 0,
   },
   {
-    id: 's3', name: 'dca bot', status: 'warning', policyId: 'p3', policyName: 'dca weekly',
+    id: 's3', name: 'dca bot', status: 'warning', templateId: 't3', templateName: 'dca weekly',
     used: 220, cap: 500, daysLeft: 3,
     frames: [
       { mode: 'verify', desc: 'session key · exactInputSingle()', status: 'pass' },
@@ -3276,7 +3478,7 @@ const sessions = [
 
 const pastSessions = [
   {
-    id: 's4', name: 'price oracle', status: 'revoked', policyId: 'p4', policyName: 'price oracle',
+    id: 's4', name: 'price oracle', status: 'revoked', templateId: 't4', templateName: 'price oracle',
     used: 0, cap: 100, daysLeft: null, endedAgo: 'revoked yesterday',
     frames: [
       { mode: 'verify', desc: 'session key · updatePrice()', status: 'pass' },
@@ -3285,7 +3487,7 @@ const pastSessions = [
     executed: 0, blocked: 0,
   },
   {
-    id: 's5', name: 'dca bot', status: 'expired', policyId: 'p3', policyName: 'dca weekly',
+    id: 's5', name: 'dca bot', status: 'expired', templateId: 't3', templateName: 'dca weekly',
     used: 420, cap: 500, daysLeft: null, endedAgo: 'expired 3 days ago',
     frames: [
       { mode: 'verify', desc: 'session key · exactInputSingle()', status: 'pass' },
@@ -3445,7 +3647,7 @@ function renderSpark() {
 // ===== shared card/row templates =====
 function sessionCardHTML(s) {
   const isPast = s.status === 'revoked' || s.status === 'expired';
-  const color = policyColor(s.policyId);
+  const color = policyColor(s.templateId);
   const elapsedPct = isPast ? 100 : pctElapsed(s);
 
   const ticks = deriveTicks(s);
@@ -3457,9 +3659,9 @@ function sessionCardHTML(s) {
     ? `${fmtMoneyPlain(s.used)} of ${fmtMoneyPlain(s.cap)} · ${s.endedAgo}`
     : `${fmtMoneyPlain(s.used)} of ${fmtMoneyPlain(s.cap)} · ${s.daysLeft}d left`;
 
-  const policyChip = s.policyName
+  const policyChip = s.templateName
     ? `<div class="home-session-chip" onclick="event.stopPropagation(); go('policies')" style="background:${color.bg}; border-color:${color.border}; color:${color.fg};">
-         ${s.policyName}
+         ${s.templateName}
        </div>`
     : '';
 
@@ -3565,15 +3767,19 @@ function toggleActivity(id) {
 
 // ===== sessions tab =====
 // policy color map — each policy gets its own accent (purple/teal/coral/pink/blue)
-const policyColors = {
-  'p1': { fg: '#AFA9EC', bg: 'rgba(127, 119, 221, 0.1)', border: 'rgba(127, 119, 221, 0.35)' }, // purple
-  'p2': { fg: '#5DCAA5', bg: 'rgba(29, 158, 117, 0.1)',  border: 'rgba(29, 158, 117, 0.35)' },  // teal
-  'p3': { fg: '#F0997B', bg: 'rgba(216, 90, 48, 0.1)',   border: 'rgba(216, 90, 48, 0.35)' },   // coral
-  'p4': { fg: '#85B7EB', bg: 'rgba(55, 138, 221, 0.1)',  border: 'rgba(55, 138, 221, 0.35)' },  // blue
+const templateColors = {
+  't1': { fg: '#AFA9EC', bg: 'rgba(127, 119, 221, 0.1)', border: 'rgba(127, 119, 221, 0.35)' }, // purple
+  't2': { fg: '#5DCAA5', bg: 'rgba(29, 158, 117, 0.1)',  border: 'rgba(29, 158, 117, 0.35)' },  // teal
+  't3': { fg: '#F0997B', bg: 'rgba(216, 90, 48, 0.1)',   border: 'rgba(216, 90, 48, 0.35)' },   // coral
+  't4': { fg: '#85B7EB', bg: 'rgba(55, 138, 221, 0.1)',  border: 'rgba(55, 138, 221, 0.35)' },  // blue
 };
-function policyColor(policyId) {
-  return policyColors[policyId] || { fg: '#a3a3a3', bg: 'rgba(163,163,163,0.1)', border: 'rgba(163,163,163,0.35)' };
+// kept for backward compat in case anything still references policyColors; new code should use templateColors.
+const policyColors = templateColors;
+function templateColor(templateId) {
+  return templateColors[templateId] || { fg: '#a3a3a3', bg: 'rgba(163,163,163,0.1)', border: 'rgba(163,163,163,0.35)' };
 }
+// backward-compat alias
+const policyColor = templateColor;
 
 // derive timeline ticks for a session.
 // assumes executions are spread across the elapsed portion of the session's window.
@@ -3613,7 +3819,7 @@ function sessionTabCardHTML(s) {
   const isPast = isPastSession(s);
   const pct = Math.min((s.used / s.cap) * 100, 100);
   const elapsedPct = isPast ? 100 : pctElapsed(s);
-  const color = policyColor(s.policyId);
+  const color = policyColor(s.templateId);
 
   const cardClasses = ['session-tab-card', isPast ? 'past' : ''].filter(Boolean).join(' ');
 
@@ -3658,9 +3864,9 @@ function sessionTabCardHTML(s) {
          <button class="stab-action danger" onclick="event.stopPropagation(); revokeSession('${s.id}')">revoke</button>
        </div>`;
 
-  const policyChip = s.policyName
+  const policyChip = s.templateName
     ? `<div class="stab-policy-chip" onclick="event.stopPropagation(); go('policies')" style="background:${color.bg}; border-color:${color.border}; color:${color.fg};">
-         ${s.policyName}<span class="stab-policy-chev">›</span>
+         ${s.templateName}<span class="stab-policy-chev">›</span>
        </div>`
     : '';
 
@@ -3707,7 +3913,7 @@ function toggleSessionTab(id) {
 function seeItWork(id) {
   const s = sessions.find(x => x.id === id);
   if (!s) return;
-  const color = policyColor(s.policyId);
+  const color = policyColor(s.templateId);
   const executed = s.executed || 0;
   const blocked = s.blocked || 0;
 
@@ -3735,7 +3941,7 @@ function seeItWork(id) {
 
       <div class="sm-label">check against policy</div>
       <div class="sm-kv">
-        <div class="sm-kv-row"><div class="sm-kv-key">policy</div><div class="sm-kv-val" style="color:${color.fg};">${escapeHTML(s.policyName || '—')}</div></div>
+        <div class="sm-kv-row"><div class="sm-kv-key">policy</div><div class="sm-kv-val" style="color:${color.fg};">${escapeHTML(s.templateName || '—')}</div></div>
         <div class="sm-kv-row"><div class="sm-kv-key">spent</div><div class="sm-kv-val">${fmtMoneyPlain(s.used)} / ${fmtMoneyPlain(s.cap)}</div></div>
         <div class="sm-kv-row"><div class="sm-kv-key">time</div><div class="sm-kv-val">${s.daysLeft}d left</div></div>
         <div class="sm-kv-row"><div class="sm-kv-key">verdict</div><div class="sm-kv-val" style="color: var(--green);">would pass</div></div>
@@ -4456,10 +4662,10 @@ function renderQueue() {
   const sub = document.getElementById('queue-sub');
   const btnRun = document.getElementById('btn-run');
   const btnSave = document.getElementById('btn-save-policy');
-  const isEditing = !!editingPolicyId;
-  const editedName = isEditing ? (policies.find(p => p.id === editingPolicyId) || {}).name : '';
+  const isEditing = !!editingTemplateId;
+  const editedName = isEditing ? (templates.find(t => t.id === editingTemplateId) || {}).name : '';
 
-  btnSave.textContent = isEditing ? 'update policy' : 'save as policy';
+  btnSave.textContent = isEditing ? 'update template' : 'save as template';
 
   if (queue.length === 0) {
     container.innerHTML = '<div class="queue-empty">add a frame to begin</div>';
@@ -4490,6 +4696,7 @@ function renderQueue() {
       `).join('')}
     </div>
   `;
+  updateBuildTopVisibility();
 }
 
 function runQueue() {
@@ -4619,42 +4826,50 @@ function runDoneAndClose() {
 function savePolicy() {
   if (queue.length === 0) return;
   // if editing, update in place
-  if (editingPolicyId) {
-    const p = policies.find(x => x.id === editingPolicyId);
-    if (p) {
-      p.frames = queue.map(q => ({ mode: q.mode, desc: q.desc }));
+  if (editingTemplateId) {
+    const t = templates.find(x => x.id === editingTemplateId);
+    if (t) {
+      t.frames = queue.map(q => ({ mode: q.mode, desc: q.desc }));
+      editingTemplateId = null;
       editingPolicyId = null;
       queue = [];
       renderQueue();
-      renderPolicies();
-      go('policies');
+      renderBuild();
       return;
     }
   }
   askName({
-    title: 'save as policy',
-    placeholder: 'policy name',
-    initialValue: 'untitled policy',
-    confirmLabel: 'save policy',
+    title: 'save as template',
+    placeholder: 'template name',
+    initialValue: 'untitled template',
+    confirmLabel: 'save template',
     onConfirm: (name) => {
-      policies.unshift({
-        id: 'p' + Date.now(),
+      templates.unshift({
+        id: 't' + Date.now(),
         name: name.toLowerCase(),
+        desc: 'saved from build',
+        starter: false,
         activeSessions: 0,
         frames: queue.map(q => ({ mode: q.mode, desc: q.desc })),
       });
       queue = [];
       renderQueue();
-      renderPolicies();
-      go('policies');
+      renderBuild();
     },
   });
 }
+// alias
+const saveTemplate = savePolicy;
 
 // ===== policies tab =====
-const policies = [
+// ===== templates =====
+// templates are reusable frame-queue shapes. starter templates are grantr-provided;
+// user templates are composed in the build tab and saved.
+const templates = [
   {
-    id: 'p1', name: 'lp rebalance', activeSessions: 1,
+    id: 't1', name: 'lp rebalance', starter: false,
+    desc: 'keep uniswap v3 positions in range',
+    activeSessions: 1,
     frames: [
       { mode: 'verify', desc: 'session key · rebalance() · collectFees()' },
       { mode: 'sender', desc: 'uniswap v3 position manager' },
@@ -4662,14 +4877,18 @@ const policies = [
     ],
   },
   {
-    id: 'p2', name: 'ens renew', activeSessions: 1,
+    id: 't2', name: 'ens renew', starter: false,
+    desc: 'auto-renew expiring ens names',
+    activeSessions: 1,
     frames: [
       { mode: 'verify', desc: 'session key · renew()' },
       { mode: 'sender', desc: 'ens base registrar' },
     ],
   },
   {
-    id: 'p3', name: 'dca weekly', activeSessions: 1,
+    id: 't3', name: 'dca weekly', starter: false,
+    desc: 'swap eth → usdc weekly, capped',
+    activeSessions: 1,
     frames: [
       { mode: 'verify', desc: 'session key · exactInputSingle()' },
       { mode: 'approve', desc: 'paymaster sponsorship' },
@@ -4678,7 +4897,9 @@ const policies = [
     ],
   },
   {
-    id: 'p4', name: 'price oracle', activeSessions: 0,
+    id: 't4', name: 'price oracle', starter: false,
+    desc: 'update a chainlink price feed',
+    activeSessions: 0,
     frames: [
       { mode: 'verify', desc: 'session key · updatePrice()' },
       { mode: 'sender', desc: 'chainlink price oracle' },
@@ -4686,111 +4907,202 @@ const policies = [
   },
 ];
 
-const templates = [
+// policies = account-level validation rules installed on your account.
+// each is enforced on every inbound transaction.
+const accountPolicies = [
   {
-    id: 't1', name: 'lp rebalance',
-    desc: 'keep uniswap v3 positions in range',
-    frames: ['verify', 'sender', 'default'],
+    id: 'ap1',
+    type: 'verify',
+    kind: 'guardian',
+    name: 'guardian quorum',
+    desc: 'require 2-of-3 guardians for key rotation',
+    status: 'active',
+    config: { quorum: '2 of 3', guardians: ['bob.eth', 'carol.eth', 'dan.eth'] },
   },
   {
-    id: 't2', name: 'dca bot',
-    desc: 'swap on a schedule, capped',
-    frames: ['verify', 'approve', 'sender', 'default'],
+    id: 'ap2',
+    type: 'verify',
+    kind: 'threshold',
+    name: 'threshold by value',
+    desc: 'any tx above $1,000 requires a second device',
+    status: 'active',
+    config: { threshold: '$1,000', secondDevice: 'yubikey 5c' },
+  },
+];
+
+// policy-type catalog — what the "+ add policy" picker offers.
+// each entry becomes a config screen when picked.
+const policyCatalog = [
+  {
+    kind: 'guardian',
+    type: 'verify',
+    name: 'guardian quorum',
+    desc: 'require N-of-M guardians for sensitive actions',
   },
   {
-    id: 't3', name: 'ens renewer',
-    desc: 'auto-renew expiring names',
-    frames: ['verify', 'sender'],
+    kind: 'threshold',
+    type: 'verify',
+    name: 'threshold by value',
+    desc: 'require a second device above a $ amount',
   },
   {
-    id: 't4', name: 'build from scratch',
-    desc: 'compose your own frame queue',
-    frames: [],
+    kind: 'timelock',
+    type: 'verify',
+    name: 'time-locked',
+    desc: 'enforce a delay on specific actions',
+  },
+  {
+    kind: 'custom',
+    type: 'verify',
+    name: 'custom signer',
+    desc: 'a contract that returns valid for approved txs',
   },
 ];
 
 function renderPolicies() {
   const list = document.getElementById('policies-list');
   const count = document.getElementById('policies-count');
-  count.textContent = policies.length;
-  if (policies.length === 0) {
+  if (count) count.textContent = accountPolicies.length;
+
+  if (accountPolicies.length === 0) {
     list.innerHTML = `
       <div class="empty-state">
-        <div class="empty-state-title">no policies yet</div>
-        <div class="empty-state-sub">start from a template below, or compose your own</div>
-        <div class="empty-state-cta" onclick="go('build')">start composing</div>
+        <div class="empty-state-title">no policies installed</div>
+        <div class="empty-state-sub">add a validation rule to strengthen your account</div>
+        <div class="empty-state-cta" onclick="openPolicyPicker()">add your first policy</div>
       </div>`;
     return;
   }
-  list.innerHTML = policies.map(p => {
-    const color = policyColor(p.id);
-    const isInUse = p.activeSessions > 0;
-    const statusText = isInUse
-      ? `${p.activeSessions} active session${p.activeSessions === 1 ? '' : 's'}`
-      : 'dormant';
 
-    const statusChip = isInUse
-      ? `<div class="policy-status-chip" style="background:${color.bg}; border-color:${color.border}; color:${color.fg};">
-           <span class="policy-dot-small" style="background:${color.fg};"></span>
-           ${statusText}
-         </div>`
-      : `<div class="policy-status-chip dormant">
-           <span class="policy-dot-small dormant"></span>
-           dormant
-         </div>`;
+  list.innerHTML = accountPolicies.map(p => {
+    const typeLabel = p.type; // 'verify', 'sender', 'default'
+    const configLines = Object.entries(p.config || {}).map(([k, v]) => {
+      const val = Array.isArray(v) ? v.join(', ') : v;
+      return `<div class="ap-config-row"><span class="ap-config-key">${k}</span><span class="ap-config-val">${val}</span></div>`;
+    }).join('');
 
     return `
-      <div class="policy-card" data-id="${p.id}">
-        <div class="policy-head">
-          <div class="policy-head-left">
-            <div class="policy-name">${p.name}</div>
-            ${statusChip}
+      <div class="ap-card" data-id="${p.id}">
+        <div class="ap-head">
+          <div class="ap-head-left">
+            <div class="frame-pill ${p.type}">${p.type}</div>
+            <div class="ap-name">${p.name}</div>
+          </div>
+          <div class="ap-status-chip ${p.status}">
+            <span class="ap-status-dot ${p.status}"></span>${p.status}
           </div>
         </div>
-        <div class="policy-frames">
-          ${p.frames.map(f => `
-            <div class="frame-row">
-              <div class="frame-pill ${f.mode}">${f.mode}</div>
-              <div class="frame-desc">${f.desc}</div>
-            </div>
-          `).join('')}
-        </div>
-        <div class="policy-foot">
-          <div class="policy-meta">${p.frames.length} frames</div>
-          <div class="policy-actions">
-            <button class="policy-action" onclick="event.stopPropagation(); editPolicy('${p.id}')">edit</button>
-            <button class="policy-action primary" onclick="event.stopPropagation(); authorizePolicy('${p.id}')">use</button>
-          </div>
+        <div class="ap-desc">${p.desc}</div>
+        <div class="ap-config">${configLines}</div>
+        <div class="ap-foot">
+          <button class="policy-action" onclick="event.stopPropagation(); editAccountPolicy('${p.id}')">edit</button>
+          <button class="policy-action danger" onclick="event.stopPropagation(); removeAccountPolicy('${p.id}')">remove</button>
         </div>
       </div>
     `;
   }).join('');
 }
 
-function renderTemplates() {
-  const el = document.getElementById('templates-grid');
-  el.innerHTML = templates.map(t => `
-    <div class="template-card" onclick="useTemplate('${t.id}')">
-      <div class="template-name">${t.name}</div>
-      <div class="template-desc">${t.desc}</div>
-      <div class="template-frames">
-        ${t.frames.length > 0
-          ? t.frames.map(m => `<div class="frame-pill ${m}">${m}</div>`).join('')
-          : '<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text-4);text-transform:uppercase;letter-spacing:0.8px;">empty queue</div>'
-        }
+function openPolicyPicker() {
+  const rows = policyCatalog.map(c => `
+    <div class="policy-picker-row" onclick="pickPolicyType('${c.kind}')">
+      <div class="frame-pill ${c.type}">${c.type}</div>
+      <div class="policy-picker-body">
+        <div class="policy-picker-name">${c.name}</div>
+        <div class="policy-picker-desc">${c.desc}</div>
       </div>
+      <span class="policy-picker-chev">›</span>
     </div>
   `).join('');
+
+  showSmallModal(`
+    <div class="sm-head">
+      <div>
+        <div class="sm-title">add a policy</div>
+        <div class="sm-sub">pick a validation rule to install on your account</div>
+      </div>
+      <button class="sm-close" onclick="closeSmallModal()">×</button>
+    </div>
+    <div class="sm-body">
+      <div class="policy-picker-list">${rows}</div>
+    </div>
+  `);
 }
 
+function pickPolicyType(kind) {
+  closeSmallModal();
+  // in a real app, this would open a config sheet tailored to the kind.
+  // for now: honest stub.
+  alertComingSoon(`configure "${kind}" policy`);
+}
+
+function editAccountPolicy(id) {
+  alertComingSoon(`edit policy`);
+}
+
+function removeAccountPolicy(id) {
+  const p = accountPolicies.find(x => x.id === id);
+  if (!p) return;
+  confirmAction({
+    title: `remove "${p.name}"?`,
+    message: `this will uninstall the policy from your account. you can add it back later.`,
+    confirmLabel: 'remove',
+    confirmClass: 'danger',
+    onConfirm: () => {
+      const i = accountPolicies.findIndex(x => x.id === id);
+      if (i >= 0) accountPolicies.splice(i, 1);
+      renderPolicies();
+    },
+  });
+}
+
+// newPolicy opens the picker
+function newPolicy() { openPolicyPicker(); }
+
+function renderTemplates() {
+  const el = document.getElementById('templates-grid');
+  if (!el) return;
+  el.innerHTML = templates.map(t => {
+    const color = templateColor(t.id);
+    const pills = (t.frames || []).map(f => {
+      const mode = typeof f === 'string' ? f : f.mode;
+      return `<div class="frame-pill ${mode}">${mode}</div>`;
+    }).join('');
+    const sessionTag = t.activeSessions > 0
+      ? `<span class="template-session-tag" style="color:${color.fg};">${t.activeSessions} active</span>`
+      : '';
+    return `
+      <div class="template-card" data-id="${t.id}" onclick="useTemplate('${t.id}')" style="--tpl-fg:${color.fg}; --tpl-border:${color.border};">
+        <div class="template-head">
+          <div class="template-name">${t.name}</div>
+          ${sessionTag}
+        </div>
+        <div class="template-desc">${t.desc}</div>
+        <div class="template-frames">
+          ${pills || '<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text-4);text-transform:uppercase;letter-spacing:0.8px;">empty</div>'}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// show/hide the "start from a template" section of build based on queue state
+function updateBuildTopVisibility() {
+  const top = document.getElementById('build-top');
+  if (!top) return;
+  top.style.display = (queue.length === 0 && !editingTemplateId) ? '' : 'none';
+}
+
+let editingTemplateId = null;
+// backwards-compat alias (some old callers)
 let editingPolicyId = null;
 
-function editPolicy(id) {
-  const p = policies.find(x => x.id === id);
-  if (!p) return;
+function editTemplate(id) {
+  const t = templates.find(x => x.id === id);
+  if (!t) return;
+  editingTemplateId = id;
   editingPolicyId = id;
-  queue = p.frames.map(f => {
-    // try to match a library item by mode, fall back to generic
+  queue = t.frames.map(f => {
     const lib = frameLibrary.flatMap(g => g.items).find(i => i.mode === f.mode);
     return {
       uid: 'q' + Date.now() + Math.random().toString(36).slice(2, 6),
@@ -4802,6 +5114,8 @@ function editPolicy(id) {
   renderQueue();
   go('build');
 }
+// alias for callers that used editPolicy
+const editPolicy = editTemplate;
 
 // ===== authorize agent flow =====
 const agents = [
@@ -4821,8 +5135,8 @@ const authWindowOptions = [
 
 let authState = {
   step: 'agent',
-  policyId: null,
-  policy: null,
+  templateId: null,
+  template: null,
   agentId: null,
   cap: 500,
   window: '7d',
@@ -4830,12 +5144,12 @@ let authState = {
 };
 
 function authorizePolicy(id) {
-  const policy = policies.find(p => p.id === id);
-  if (!policy) return;
+  const template = templates.find(t => t.id === id);
+  if (!template) return;
   authState = {
     step: 'agent',
-    policyId: id,
-    policy: policy,
+    templateId: id,
+    template: template,
     agentId: null,
     cap: 500,
     window: '7d',
@@ -4885,7 +5199,7 @@ function renderAuthStep() {
     framesPanel.style.display = '';
     // always show the policy's frames
     const el = document.getElementById('auth-frames-list');
-    el.innerHTML = authState.policy.frames.map(f => `
+    el.innerHTML = authState.template.frames.map(f => `
       <div class="frame-row">
         <div class="frame-pill ${f.mode}">${f.mode}</div>
         <div class="frame-desc">${f.desc}</div>
@@ -4896,7 +5210,7 @@ function renderAuthStep() {
   if (authState.step === 'agent') {
     body.innerHTML = `
       <div class="send-step-title">authorize an agent</div>
-      <div class="send-step-sub">running policy: ${authState.policy.name}</div>
+      <div class="send-step-sub">running policy: ${authState.template.name}</div>
       <div class="auth-agent-list">
         ${agents.map(a => `
           <div class="auth-agent-row ${authState.agentId === a.id ? 'selected' : ''}" onclick="pickAgent('${a.id}')">
@@ -4973,7 +5287,7 @@ function renderAuthStep() {
         <div class="preview-divider"></div>
         <div class="preview-row">
           <span class="preview-label">policy</span>
-          <span class="preview-value">${authState.policy.name}</span>
+          <span class="preview-value">${authState.template.name}</span>
         </div>
         <div class="preview-divider"></div>
         <div class="preview-row">
@@ -5013,7 +5327,7 @@ function renderAuthStep() {
       <div class="send-status">
         <div class="send-status-icon done">✓</div>
         <div class="send-status-title">authorized</div>
-        <div class="send-status-sub">${agent.name} can now run ${authState.policy.name}<br>session is live, see it on sessions ›</div>
+        <div class="send-status-sub">${agent.name} can now run ${authState.template.name}<br>session is live, see it on sessions ›</div>
       </div>
     `;
     footer.innerHTML = `
@@ -5061,20 +5375,20 @@ function authSign() {
     const windowDays = Math.round(authWindowOptions.find(w => w.val === authState.window).hours / 24) || 1;
     const newSession = {
       id: 's' + Date.now(),
-      name: agent.name === 'grantr agent' ? authState.policy.name : agent.name,
+      name: agent.name === 'grantr agent' ? authState.template.name : agent.name,
       status: 'active',
-      policyId: authState.policy.id,
-      policyName: authState.policy.name,
+      templateId: authState.template.id,
+      templateName: authState.template.name,
       used: 0,
       cap: authState.cap,
       daysLeft: windowDays,
-      frames: authState.policy.frames.map(f => ({ ...f, status: 'pass' })),
+      frames: authState.template.frames.map(f => ({ ...f, status: 'pass' })),
       executed: 0,
       blocked: 0,
     };
     sessions.unshift(newSession);
     // bump policy's active session count
-    authState.policy.activeSessions = (authState.policy.activeSessions || 0) + 1;
+    authState.template.activeSessions = (authState.template.activeSessions || 0) + 1;
 
     authState.step = 'done';
     renderAuthStep();
@@ -5090,18 +5404,22 @@ function authDoneAndClose() {
 }
 
 function useTemplate(id) {
+  editingTemplateId = null;
   editingPolicyId = null;
   const t = templates.find(x => x.id === id);
   if (!t) return;
   queue = [];
   if (t.frames.length > 0) {
-    // pre-fill queue with default library items matching the template's frame modes
-    t.frames.forEach(mode => {
+    // frames can be either strings (mode only) or {mode, desc} objects
+    t.frames.forEach(f => {
+      const mode = typeof f === 'string' ? f : f.mode;
+      const desc = typeof f === 'string' ? null : f.desc;
       const lib = frameLibrary.flatMap(g => g.items).find(i => i.mode === mode);
       if (lib) {
         queue.push({
           uid: 'q' + Date.now() + Math.random().toString(36).slice(2, 6),
           ...lib,
+          desc: desc || lib.desc,
         });
       }
     });
@@ -5110,7 +5428,9 @@ function useTemplate(id) {
   go('build');
 }
 
-function newPolicy() {
+// newPolicy now opens the validation-rule picker (used by policies tab)
+function newPolicyOld_unused() {
+  editingTemplateId = null;
   editingPolicyId = null;
   queue = [];
   renderQueue();
@@ -5272,7 +5592,7 @@ let welcomeDismissed = false;
 function renderWelcome() {
   const el = document.getElementById('welcome-banner');
   if (!el) return;
-  const shouldShow = !welcomeDismissed && policies.length === 0;
+  const shouldShow = !welcomeDismissed && sessions.length === 0;
   el.style.display = shouldShow ? '' : 'none';
 }
 function dismissWelcome() {
@@ -5545,38 +5865,55 @@ function runSearch(query) {
   }
 
   const groups = [
-    { key: 'sessions', label: 'sessions', items: [] },
-    { key: 'policies', label: 'policies', items: [] },
-    { key: 'activity', label: 'activity', items: [] },
-    { key: 'account',  label: 'account',  items: [] },
+    { key: 'sessions',  label: 'sessions',  items: [] },
+    { key: 'templates', label: 'templates', items: [] },
+    { key: 'policies',  label: 'policies',  items: [] },
+    { key: 'activity',  label: 'activity',  items: [] },
+    { key: 'account',   label: 'account',   items: [] },
   ];
 
   // sessions (active + past)
   [...sessions, ...pastSessions].forEach(s => {
-    if (fuzzyContains(s.name, q) || fuzzyContains(s.policyName || '', q)) {
+    if (fuzzyContains(s.name, q) || fuzzyContains(s.templateName || '', q)) {
       groups[0].items.push({
         kind: 'session',
         id: s.id,
         title: s.name,
         sub: s.status === 'revoked' || s.status === 'expired'
           ? `${fmtMoneyPlain(s.used)} of ${fmtMoneyPlain(s.cap)} · ${s.endedAgo}`
-          : `${fmtMoneyPlain(s.used)} of ${fmtMoneyPlain(s.cap)} · ${s.daysLeft}d left · via ${s.policyName}`,
-        color: policyColor(s.policyId).fg,
+          : `${fmtMoneyPlain(s.used)} of ${fmtMoneyPlain(s.cap)} · ${s.daysLeft}d left · via ${s.templateName}`,
+        color: templateColor(s.templateId).fg,
         onPick: () => go('sessions'),
       });
     }
   });
 
-  // policies
-  policies.forEach(p => {
-    const hitFrames = (p.frames || []).some(f => fuzzyContains(f.desc, q));
-    if (fuzzyContains(p.name, q) || hitFrames) {
+  // templates (reusable frame queues)
+  templates.forEach(t => {
+    const hitFrames = (t.frames || []).some(f => {
+      const desc = typeof f === 'string' ? f : f.desc;
+      return fuzzyContains(desc, q);
+    });
+    if (fuzzyContains(t.name, q) || fuzzyContains(t.desc || '', q) || hitFrames) {
       groups[1].items.push({
+        kind: 'template',
+        id: t.id,
+        title: t.name,
+        sub: `${t.frames.length} frames · ${t.activeSessions > 0 ? t.activeSessions + ' active' : 'unused'}`,
+        color: templateColor(t.id).fg,
+        onPick: () => { useTemplate(t.id); },
+      });
+    }
+  });
+
+  // account policies (validation rules)
+  accountPolicies.forEach(p => {
+    if (fuzzyContains(p.name, q) || fuzzyContains(p.desc || '', q)) {
+      groups[2].items.push({
         kind: 'policy',
         id: p.id,
         title: p.name,
-        sub: `${p.frames.length} frames · ${p.activeSessions > 0 ? p.activeSessions + ' active session' + (p.activeSessions === 1 ? '' : 's') : 'dormant'}`,
-        color: policyColor(p.id).fg,
+        sub: `${p.type} · ${p.desc}`,
         onPick: () => go('policies'),
       });
     }
@@ -5586,7 +5923,7 @@ function runSearch(query) {
   activity.forEach(a => {
     const hitFrames = (a.frames || []).some(f => fuzzyContains(f.desc, q));
     if (fuzzyContains(a.title, q) || fuzzyContains(a.source, q) || hitFrames) {
-      groups[2].items.push({
+      groups[3].items.push({
         kind: 'activity',
         id: a.id,
         title: a.title,
@@ -5605,14 +5942,14 @@ function runSearch(query) {
     { title: 'privacy mode',    sub: 'hide amounts across the app',   onPick: () => togglePrivacyMode() },
     { title: 'account details', sub: 'address, network',              onPick: () => go('account') },
     { title: 'home',            sub: 'overview',                      onPick: () => go('home') },
-    { title: 'policies',        sub: 'your rules',                    onPick: () => go('policies') },
-    { title: 'build',           sub: 'compose a policy',              onPick: () => go('build') },
+    { title: 'policies',        sub: 'validation rules',              onPick: () => go('policies') },
+    { title: 'build',           sub: 'compose a transaction',         onPick: () => go('build') },
     { title: 'sessions',        sub: 'live agents',                   onPick: () => go('sessions') },
     { title: 'activity',        sub: 'all transactions',              onPick: () => go('activity') },
   ];
   navItems.forEach(item => {
     if (fuzzyContains(item.title, q) || fuzzyContains(item.sub, q)) {
-      groups[3].items.push({ kind: 'account', ...item });
+      groups[4].items.push({ kind: 'account', ...item });
     }
   });
 
