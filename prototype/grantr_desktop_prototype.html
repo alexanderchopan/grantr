@@ -6,7 +6,7 @@
 <title>grantr</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=DM+Mono:wght@400;500&display=swap">
 <style>
 :root {
   --bg: #0e0e0e;
@@ -19,11 +19,16 @@
   --text-2: #a3a3a3;
   --text-3: #737373;
   --text-4: #555555;
+  --text-voice: #b3b3b3;
   --green: #00d632;
   --amber: #ff9f0a;
   --blue: #0a84ff;
   --red: #ef4444;
   --search-h: 72px;
+}
+.voice {
+  font-style: italic;
+  color: var(--text-voice);
 }
 * { box-sizing: border-box; }
 html, body {
@@ -161,9 +166,10 @@ button {
 }
 .hero-change {
   font-size: 14px;
-  color: var(--text-3);
+  color: var(--text-voice);
+  font-style: italic;
   margin-top: 8px;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .tabs {
@@ -331,7 +337,8 @@ button {
 }
 .chart-stat-sub {
   font-size: 13px;
-  color: var(--text-3);
+  color: var(--text-voice);
+  font-style: italic;
   margin-left: 10px;
 }
 .bars {
@@ -632,7 +639,8 @@ button {
 }
 .build-pane-sub {
   font-size: 12px;
-  color: var(--text-3);
+  color: var(--text-voice);
+  font-style: italic;
 }
 
 .frame-group {
@@ -820,7 +828,8 @@ button {
 }
 .policies-sub {
   font-size: 13px;
-  color: var(--text-3);
+  color: var(--text-voice);
+  font-style: italic;
   margin-top: 4px;
 }
 .policies-new {
@@ -1037,9 +1046,9 @@ button {
   font-weight: 500;
 }
 .build-top-sub {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--text-3);
+  font-size: 13px;
+  color: var(--text-voice);
+  font-style: italic;
   margin-top: 2px;
 }
 
@@ -1108,7 +1117,8 @@ button {
 }
 .ap-desc {
   font-size: 13px;
-  color: var(--text-2);
+  color: var(--text-voice);
+  font-style: italic;
   line-height: 1.5;
   margin-bottom: 14px;
   letter-spacing: -0.005em;
@@ -1186,9 +1196,9 @@ button {
   letter-spacing: -0.01em;
 }
 .policy-picker-desc {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--text-3);
+  font-size: 12px;
+  color: var(--text-voice);
+  font-style: italic;
   margin-top: 2px;
 }
 .policy-picker-chev {
@@ -1249,7 +1259,8 @@ button {
 }
 .sessions-sub {
   font-size: 13px;
-  color: var(--text-3);
+  color: var(--text-voice);
+  font-style: italic;
   margin-top: 4px;
 }
 
@@ -1478,7 +1489,8 @@ button {
 }
 .activity-page-sub {
   font-size: 13px;
-  color: var(--text-3);
+  color: var(--text-voice);
+  font-style: italic;
   margin-top: 4px;
 }
 .activity-export {
@@ -1916,7 +1928,8 @@ button {
 }
 .addr-sub-tagline {
   font-size: 13px;
-  color: var(--text-3);
+  color: var(--text-voice);
+  font-style: italic;
   margin-top: 4px;
 }
 .addr-search-wrap {
@@ -2111,7 +2124,8 @@ button {
 }
 .welcome-banner-sub {
   font-size: 13px;
-  color: var(--text-3);
+  color: var(--text-voice);
+  font-style: italic;
   margin-top: 4px;
 }
 .welcome-banner-actions {
@@ -2372,7 +2386,8 @@ button {
 }
 .sm-sub {
   font-size: 13px;
-  color: var(--text-3);
+  color: var(--text-voice);
+  font-style: italic;
   margin-top: 4px;
 }
 .sm-close {
@@ -2659,7 +2674,8 @@ button {
 }
 .send-step-sub {
   font-size: 13px;
-  color: var(--text-3);
+  color: var(--text-voice);
+  font-style: italic;
   margin-bottom: 8px;
 }
 
@@ -2921,7 +2937,8 @@ button {
 }
 .send-status-sub {
   font-size: 13px;
-  color: var(--text-3);
+  color: var(--text-voice);
+  font-style: italic;
   line-height: 1.5;
 }
 
@@ -3072,7 +3089,8 @@ button {
 }
 .auth-toggle-sub {
   font-size: 12px;
-  color: var(--text-3);
+  color: var(--text-voice);
+  font-style: italic;
   margin-top: 2px;
 }
 .auth-toggle {
