@@ -3447,6 +3447,84 @@ button {
   gap: 8px;
 }
 
+/* ===== frame pipeline diagram (v40) ===== */
+.frame-pipeline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.fp-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text-4);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+.fp-track {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.fp-node {
+  flex: 0 0 auto;
+  min-width: 110px;
+  border-radius: 10px;
+  border: 0.5px solid var(--border);
+  padding: 12px 14px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: opacity 0.2s;
+}
+.fp-node-mode {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  font-weight: 500;
+}
+.fp-node-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fp-verify .fp-node-mode { color: var(--green); }
+.fp-verify { border-color: rgba(0, 214, 50, 0.25); background: rgba(0, 214, 50, 0.04); }
+.fp-sender .fp-node-mode { color: var(--text-1); }
+.fp-sender { border-color: rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.02); }
+.fp-default .fp-node-mode { color: var(--blue); }
+.fp-default { border-color: rgba(10, 132, 255, 0.25); background: rgba(10, 132, 255, 0.04); }
+.fp-inactive { opacity: 0.35; }
+.fp-arrow {
+  color: var(--text-4);
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  flex-shrink: 0;
+  padding: 0 2px;
+}
+.fp-arrow-dim { opacity: 0.35; }
+
+/* queue-item meta caption: scope/fn label next to the description */
+.queue-item-meta {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.04);
+  border: 0.5px solid var(--border);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text-3);
+  text-transform: none;
+  letter-spacing: 0.3px;
+}
+
 /* signing / done */
 .send-status {
   padding: 48px 24px 32px;
@@ -4026,8 +4104,7 @@ button {
     </div>
 
     <div class="send-frames-panel" id="send-frames-panel">
-      <div class="send-frames-label">composed frame queue</div>
-      <div class="send-frames-list" id="send-frames-list"></div>
+      <div id="send-pipeline-container"></div>
     </div>
 
     <div class="send-footer" id="send-footer">
@@ -4054,8 +4131,7 @@ button {
     </div>
 
     <div class="send-frames-panel" id="auth-frames-panel">
-      <div class="send-frames-label">policy frames</div>
-      <div class="send-frames-list" id="auth-frames-list"></div>
+      <div id="auth-pipeline-container"></div>
     </div>
 
     <div class="send-footer" id="auth-footer">
@@ -4080,8 +4156,7 @@ button {
     </div>
 
     <div class="send-frames-panel" id="run-frames-panel">
-      <div class="send-frames-label">composed frame queue</div>
-      <div class="send-frames-list" id="run-frames-list"></div>
+      <div id="run-pipeline-container"></div>
     </div>
 
     <div class="send-footer" id="run-footer">
@@ -4433,6 +4508,7 @@ const templateColors = {
   't2': { fg: '#5DCAA5', bg: 'rgba(29, 158, 117, 0.1)',  border: 'rgba(29, 158, 117, 0.35)' },  // teal
   't3': { fg: '#F0997B', bg: 'rgba(216, 90, 48, 0.1)',   border: 'rgba(216, 90, 48, 0.35)' },   // coral
   't4': { fg: '#85B7EB', bg: 'rgba(55, 138, 221, 0.1)',  border: 'rgba(55, 138, 221, 0.35)' },  // blue
+  't5': { fg: '#E6B85A', bg: 'rgba(230, 184, 90, 0.1)',  border: 'rgba(230, 184, 90, 0.35)' },  // amber
 };
 // kept for backward compat in case anything still references policyColors; new code should use templateColors.
 const policyColors = templateColors;
@@ -5311,19 +5387,21 @@ function renderSendStep() {
 }
 
 function renderSendFrames() {
-  const el = document.getElementById('send-frames-list');
+  const el = document.getElementById('send-pipeline-container');
+  if (!el) return;
   const amt = parseFloat(sendState.amount) || 0;
   const tk = TOKENS[sendState.token];
-  const amtText = tk.formatBig(amt);
   const senderDesc = sendState.recipient
     ? (sendState.token === 'ETH'
         ? `eth native · transfer · ${sendState.recipient.name}`
-        : `usdc contract · transfer() · ${sendState.recipient.name}`)
+        : `usdc · transfer() · ${sendState.recipient.name}`)
     : `${tk.contract} · recipient pending`;
   const frames = [
     {
       mode: 'verify',
-      desc: 'passkey · scope: execution',
+      desc: 'passkey · this device',
+      scope: 1,
+      target: 'account',
       active: amt > 0,
     },
     {
@@ -5331,20 +5409,18 @@ function renderSendFrames() {
       desc: amt > 0
         ? (sendState.recipient ? senderDesc : `${tk.contract} · recipient pending`)
         : `${tk.contract} · amount pending`,
-      active: !!sendState.recipient,
+      fn: 'transfer()',
+      active: !!sendState.recipient && amt > 0,
     },
     {
       mode: 'verify',
       desc: 'sponsor · grantr paymaster',
+      scope: 2,
+      target: 'sponsor',
       active: true,
     },
   ];
-  el.innerHTML = frames.map(f => `
-    <div class="frame-row" style="opacity:${f.active ? 1 : 0.4};">
-      <div class="frame-pill ${f.mode}">${f.mode}</div>
-      <div class="frame-desc">${f.desc}</div>
-    </div>
-  `).join('');
+  el.innerHTML = framePipelineHTML(frames, { showActive: true });
 }
 
 function setAmount(v) {
@@ -5453,25 +5529,27 @@ const frameLibrary = [
   {
     group: 'verify',
     items: [
-      { id: 'verify-passkey', name: "prove it's you", desc: 'passkey · this device', mode: 'verify' },
-      { id: 'verify-session', name: 'prove an agent is allowed', desc: 'session key · scoped actions', mode: 'verify' },
-      { id: 'verify-paymaster', name: 'have grantr pay gas', desc: 'sponsor · grantr paymaster', mode: 'verify' },
+      { id: 'verify-passkey', name: "prove it's you", desc: 'passkey · this device', mode: 'verify', scope: 1, target: 'account' },
+      { id: 'verify-session', name: 'prove an agent is allowed', desc: 'session key · scoped actions', mode: 'verify', scope: 1, target: 'account' },
+      { id: 'verify-paymaster', name: 'have grantr pay gas', desc: 'sponsor · grantr paymaster', mode: 'verify', scope: 2, target: 'sponsor' },
+      { id: 'verify-batch', name: 'prove a batch is allowed', desc: 'one signature, many ops', mode: 'verify', scope: 3, target: 'batch' },
     ],
   },
   {
     group: 'sender',
     items: [
-      { id: 'sender-tokens', name: 'send tokens', desc: 'transfer erc-20 or eth', mode: 'sender' },
-      { id: 'sender-contract', name: 'call a contract', desc: 'any address + calldata', mode: 'sender' },
-      { id: 'sender-approve', name: 'approve token spending', desc: 'erc-20 · approve()', mode: 'sender' },
-      { id: 'sender-account', name: 'change account rules', desc: 'rotate key · add guardian', mode: 'sender' },
+      { id: 'sender-tokens', name: 'send tokens', desc: 'transfer erc-20 or eth', mode: 'sender', fn: 'transfer()' },
+      { id: 'sender-contract', name: 'call a contract', desc: 'any address + calldata', mode: 'sender', fn: 'execute()' },
+      { id: 'sender-approve', name: 'approve token spending', desc: 'erc-20 · approve()', mode: 'sender', fn: 'approve()' },
+      { id: 'sender-account', name: 'change account rules', desc: 'rotate key · add guardian', mode: 'sender', fn: 'execute()' },
     ],
   },
   {
     group: 'default',
     items: [
-      { id: 'default-deploy', name: 'deploy account', desc: 'first-time account setup', mode: 'default' },
-      { id: 'default-refund', name: 'gas refund hook', desc: 'refund sponsor overcharge', mode: 'default' },
+      { id: 'default-deploy', name: 'deploy a contract', desc: 'create2 via deployer proxy', mode: 'default', fn: 'CREATE2' },
+      { id: 'default-account', name: 'deploy account', desc: 'first-time account setup', mode: 'default', fn: 'CREATE2' },
+      { id: 'default-refund', name: 'gas refund hook', desc: 'refund sponsor overcharge', mode: 'default', fn: 'refund()' },
     ],
   },
 ];
@@ -5483,6 +5561,19 @@ let queue = [null, null, null];
 // helper: only return the filled steps (skip nulls) — used for run/preview/activity
 function filledSteps() {
   return queue.filter(q => q && q.uid);
+}
+
+// meta label for a frame: scope+target for verify, function signature for sender/default.
+// returns "" if nothing to show.
+function frameMeta(step) {
+  if (!step) return '';
+  if (step.mode === 'verify' && step.scope != null) {
+    return `scope ${step.scope} · ${step.target || 'account'}`;
+  }
+  if ((step.mode === 'sender' || step.mode === 'default') && step.fn) {
+    return step.fn;
+  }
+  return '';
 }
 
 function renderFrameLibrary() {
@@ -5684,6 +5775,7 @@ function slotHTML(step, idx) {
       </div>
     `;
   }
+  const meta = frameMeta(step);
   return `
     <div class="queue-slot queue-slot-filled"
          data-idx="${idx}"
@@ -5694,9 +5786,34 @@ function slotHTML(step, idx) {
       <div class="frame-pill ${step.mode}">${step.mode}</div>
       <div class="queue-item-body">
         <div class="queue-item-name">${step.name}</div>
-        <div class="queue-item-desc">${step.desc}</div>
+        <div class="queue-item-desc">${step.desc}${meta ? ` <span class="queue-item-meta">${meta}</span>` : ''}</div>
       </div>
       <button class="queue-item-remove" onclick="removeFrame('${step.uid}')" title="clear slot">×</button>
+    </div>
+  `;
+}
+
+// renders a horizontal frame pipeline: a row of mode boxes connected by arrows,
+// each box shows mode label + meta (scope/fn). used in run review + send review.
+// optional opts: {showActive: true} respects step.active (dims inactive nodes).
+function framePipelineHTML(frames, opts) {
+  opts = opts || {};
+  if (!frames || frames.length === 0) return '';
+  const nodes = frames.map((f, i) => {
+    const meta = frameMeta(f);
+    const inactive = opts.showActive && f.active === false;
+    return `
+      <div class="fp-node fp-${f.mode}${inactive ? ' fp-inactive' : ''}">
+        <div class="fp-node-mode">${f.mode}</div>
+        <div class="fp-node-meta">${meta || '—'}</div>
+      </div>
+      ${i < frames.length - 1 ? `<div class="fp-arrow${inactive ? ' fp-arrow-dim' : ''}">→</div>` : ''}
+    `;
+  }).join('');
+  return `
+    <div class="frame-pipeline">
+      <div class="fp-eyebrow">frame pipeline</div>
+      <div class="fp-track">${nodes}</div>
     </div>
   `;
 }
@@ -5735,14 +5852,9 @@ function renderRunStep() {
 
   if (runState.step === 'review') {
     framesPanel.style.display = '';
-    const el = document.getElementById('run-frames-list');
     const filled = filledSteps();
-    el.innerHTML = filled.map(q => `
-      <div class="frame-row">
-        <div class="frame-pill ${q.mode}">${q.mode}</div>
-        <div class="frame-desc">${q.desc}</div>
-      </div>
-    `).join('');
+    const el = document.getElementById('run-pipeline-container');
+    el.innerHTML = framePipelineHTML(filled);
 
     body.innerHTML = `
       <div class="send-step-title">review &amp; sign</div>
@@ -5882,9 +5994,9 @@ const templates = [
     desc: 'keep uniswap v3 positions in range',
     activeSessions: 1,
     frames: [
-      { mode: 'verify', desc: 'session key · scope: execution' },
-      { mode: 'sender', desc: 'uniswap v3 position manager · rebalance(), collectFees()' },
-      { mode: 'verify', desc: 'sponsor · grantr paymaster' },
+      { mode: 'verify', desc: 'session key · scope: execution', scope: 1, target: 'account' },
+      { mode: 'sender', desc: 'uniswap v3 position manager · rebalance(), collectFees()', fn: 'execute()' },
+      { mode: 'verify', desc: 'sponsor · grantr paymaster', scope: 2, target: 'sponsor' },
     ],
   },
   {
@@ -5892,8 +6004,8 @@ const templates = [
     desc: 'auto-renew expiring ens names',
     activeSessions: 1,
     frames: [
-      { mode: 'verify', desc: 'session key · scope: execution' },
-      { mode: 'sender', desc: 'ens base registrar · renew()' },
+      { mode: 'verify', desc: 'session key · scope: execution', scope: 1, target: 'account' },
+      { mode: 'sender', desc: 'ens base registrar · renew()', fn: 'renew()' },
     ],
   },
   {
@@ -5901,9 +6013,9 @@ const templates = [
     desc: 'swap eth → usdc weekly, within agent caps',
     activeSessions: 1,
     frames: [
-      { mode: 'verify', desc: 'session key · scope: execution' },
-      { mode: 'sender', desc: 'uniswap v3 router · exactInputSingle() · eth → usdc' },
-      { mode: 'verify', desc: 'sponsor · grantr paymaster' },
+      { mode: 'verify', desc: 'session key · scope: execution', scope: 1, target: 'account' },
+      { mode: 'sender', desc: 'uniswap v3 router · exactInputSingle() · eth → usdc', fn: 'exactInputSingle()' },
+      { mode: 'verify', desc: 'sponsor · grantr paymaster', scope: 2, target: 'sponsor' },
     ],
   },
   {
@@ -5911,8 +6023,18 @@ const templates = [
     desc: 'update a chainlink price feed',
     activeSessions: 0,
     frames: [
-      { mode: 'verify', desc: 'session key · scope: execution' },
-      { mode: 'sender', desc: 'chainlink price oracle · updatePrice()' },
+      { mode: 'verify', desc: 'session key · scope: execution', scope: 1, target: 'account' },
+      { mode: 'sender', desc: 'chainlink price oracle · updatePrice()', fn: 'updatePrice()' },
+    ],
+  },
+  {
+    id: 't5', name: 'deploy + execute', starter: false,
+    desc: 'deploy a contract and call it, atomically',
+    activeSessions: 0,
+    frames: [
+      { mode: 'verify', desc: 'passkey · scope: batch', scope: 3, target: 'batch' },
+      { mode: 'default', desc: 'deployer proxy · CREATE2', fn: 'CREATE2' },
+      { mode: 'sender', desc: 'newly deployed contract · execute()', fn: 'execute()' },
     ],
   },
 ];
@@ -6191,13 +6313,8 @@ function renderAuthStep() {
   } else {
     framesPanel.style.display = '';
     // always show the policy's frames
-    const el = document.getElementById('auth-frames-list');
-    el.innerHTML = authState.template.frames.map(f => `
-      <div class="frame-row">
-        <div class="frame-pill ${f.mode}">${f.mode}</div>
-        <div class="frame-desc">${f.desc}</div>
-      </div>
-    `).join('');
+    const el = document.getElementById('auth-pipeline-container');
+    el.innerHTML = framePipelineHTML(authState.template.frames);
   }
 
   if (authState.step === 'agent') {
@@ -6407,12 +6524,31 @@ function useTemplate(id) {
     t.frames.forEach(f => {
       const mode = typeof f === 'string' ? f : f.mode;
       const desc = typeof f === 'string' ? null : f.desc;
-      const lib = frameLibrary.flatMap(g => g.items).find(i => i.mode === mode);
+      const tScope = typeof f === 'object' ? f.scope : null;
+      const tTarget = typeof f === 'object' ? f.target : null;
+      const tFn = typeof f === 'object' ? f.fn : null;
+      // prefer the library item that matches both mode AND scope/target/fn when available;
+      // this ensures a template's paymaster verify (scope 2) resolves to verify-paymaster,
+      // not to the first verify item (verify-passkey).
+      const libItems = frameLibrary.flatMap(g => g.items).filter(i => i.mode === mode);
+      let lib = null;
+      if (tScope != null || tTarget || tFn) {
+        lib = libItems.find(i =>
+          (tScope == null || i.scope === tScope) &&
+          (!tTarget || i.target === tTarget) &&
+          (!tFn || i.fn === tFn)
+        );
+      }
+      if (!lib) lib = libItems[0];
       if (lib) {
         queue.push({
           uid: 'q' + Date.now() + Math.random().toString(36).slice(2, 6),
           ...lib,
           desc: desc || lib.desc,
+          // template frame can override scope/target/fn explicitly
+          scope: tScope != null ? tScope : lib.scope,
+          target: tTarget || lib.target,
+          fn: tFn || lib.fn,
         });
       }
     });
