@@ -5741,6 +5741,483 @@ renderSessionsTab();
 renderActivityTab();
 renderAddresses();
 renderWelcome();
+
+// ===============================================================
+// delight layer — v25
+// small moments of polish. nothing here changes data or semantics.
+// each block is self-contained and safe to remove.
+// ===============================================================
+
+// 1. balance count-up on first load.
+// the hero balance tweens from $0.00 → $2,847.30 over ~700ms.
+(function balanceCountUp() {
+  const el = document.getElementById('hero-balance');
+  if (!el) return;
+  const target = 2847.30;
+  const duration = 700;
+  const start = performance.now();
+  const format = n => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  function tick(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+    el.textContent = format(target * eased);
+    if (t < 1) requestAnimationFrame(tick);
+    else el.textContent = format(target);
+  }
+  requestAnimationFrame(tick);
+})();
+
+// 2. sparkline draws on.
+(function sparkDrawOn() {
+  const line = document.getElementById('spark-line');
+  if (!line) return;
+  const len = line.getTotalLength ? line.getTotalLength() : 600;
+  line.style.transition = 'none';
+  line.style.strokeDasharray = len;
+  line.style.strokeDashoffset = len;
+  requestAnimationFrame(() => {
+    line.style.transition = 'stroke-dashoffset 1100ms cubic-bezier(0.3, 0.7, 0.3, 1)';
+    line.style.strokeDashoffset = 0;
+  });
+})();
+
+// 3. bar chart grows from bottom on first paint.
+(function barsGrow() {
+  const bars = document.querySelectorAll('#exec-bars .bar');
+  bars.forEach((b, i) => {
+    const target = b.style.height;
+    b.style.transformOrigin = 'bottom';
+    b.style.transform = 'scaleY(0)';
+    b.style.transition = 'transform 500ms cubic-bezier(0.2, 0.8, 0.2, 1)';
+    b.style.transitionDelay = (60 * i) + 'ms';
+    requestAnimationFrame(() => {
+      b.style.transform = 'scaleY(1)';
+    });
+  });
+})();
+
+// 4. session timeline — ambient playhead pulse at the elapsed edge.
+// adds a pulsing dot on each timeline's fill edge. purely decorative.
+(function addPlayheads() {
+  document.querySelectorAll('.stab-timeline').forEach(tl => {
+    const fill = tl.querySelector('.stab-timeline-fill');
+    if (!fill) return;
+    // if already has a playhead, skip
+    if (tl.querySelector('.stab-playhead')) return;
+    const pct = fill.style.width || '0%';
+    // don't show playhead for finished/empty timelines
+    if (pct === '0%' || pct === '100%') return;
+    const ph = document.createElement('div');
+    ph.className = 'stab-playhead';
+    const color = fill.style.background || '#00d632';
+    ph.style.cssText = `
+      position: absolute;
+      left: ${pct};
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: ${color};
+      box-shadow: 0 0 0 0 ${color};
+      animation: playhead-pulse 1.8s ease-in-out infinite;
+      pointer-events: none;
+    `;
+    tl.style.position = tl.style.position || 'relative';
+    tl.appendChild(ph);
+  });
+})();
+// re-run after renders that create new timelines
+const _origRenderHomeSessions = renderHomeSessions;
+renderHomeSessions = function() { _origRenderHomeSessions.apply(this, arguments); setTimeout(addPlayheadsAll, 0); };
+const _origRenderSessionsTab = renderSessionsTab;
+renderSessionsTab = function() { _origRenderSessionsTab.apply(this, arguments); setTimeout(addPlayheadsAll, 0); };
+function addPlayheadsAll() {
+  document.querySelectorAll('.stab-timeline').forEach(tl => {
+    const fill = tl.querySelector('.stab-timeline-fill');
+    if (!fill) return;
+    if (tl.querySelector('.stab-playhead')) return;
+    const pct = fill.style.width || '0%';
+    if (pct === '0%' || pct === '100%') return;
+    const ph = document.createElement('div');
+    ph.className = 'stab-playhead';
+    const color = fill.style.background || '#00d632';
+    ph.style.cssText = `position:absolute;left:${pct};top:50%;transform:translate(-50%, -50%);width:8px;height:8px;border-radius:50%;background:${color};box-shadow:0 0 0 0 ${color};animation:playhead-pulse 1.8s ease-in-out infinite;pointer-events:none;`;
+    if (getComputedStyle(tl).position === 'static') tl.style.position = 'relative';
+    tl.appendChild(ph);
+  });
+}
+
+// 5. frame added to queue: fly-in + green flash.
+// wraps addFrame() so each new queue item animates.
+const _origAddFrame = addFrame;
+addFrame = function(id) {
+  _origAddFrame.apply(this, arguments);
+  requestAnimationFrame(() => {
+    const items = document.querySelectorAll('.queue-item');
+    const last = items[items.length - 1];
+    if (!last) return;
+    last.style.animation = 'queue-flyin 420ms cubic-bezier(0.2, 0.8, 0.2, 1)';
+    last.addEventListener('animationend', () => { last.style.animation = ''; }, { once: true });
+  });
+};
+
+// 6. policy card hover — pick up the policy's color as a subtle outline.
+(function wirePolicyHover() {
+  document.addEventListener('mouseover', e => {
+    const card = e.target.closest('.policy-card');
+    if (!card || card._wiredHover) return;
+    card._wiredHover = true;
+    const id = card.dataset.id;
+    if (!id) return;
+    const c = policyColors[id];
+    if (!c) return;
+    card.style.setProperty('--policy-fg', c.fg);
+    card.style.setProperty('--policy-border', c.border);
+    card.style.setProperty('--policy-bg-faint', c.bg);
+  });
+})();
+
+// 7. FLIP sort animation for activity grid.
+// wraps the sort/re-render so rows slide to new positions instead of popping.
+const _origRenderActivityTab = renderActivityTab;
+renderActivityTab = function() {
+  const container = document.getElementById('activity-full-list');
+  if (!container) {
+    _origRenderActivityTab.apply(this, arguments);
+    return;
+  }
+  const firstRects = new Map();
+  container.querySelectorAll('.activity-grid-row').forEach(r => {
+    const id = r.dataset.id;
+    if (id) firstRects.set(id, r.getBoundingClientRect());
+  });
+
+  _origRenderActivityTab.apply(this, arguments);
+
+  requestAnimationFrame(() => {
+    container.querySelectorAll('.activity-grid-row').forEach(r => {
+      const id = r.dataset.id;
+      if (!id) return;
+      const first = firstRects.get(id);
+      if (!first) return;
+      const last = r.getBoundingClientRect();
+      const dy = first.top - last.top;
+      if (Math.abs(dy) < 1) return;
+      r.style.transform = `translateY(${dy}px)`;
+      r.style.transition = 'transform 0ms';
+      requestAnimationFrame(() => {
+        r.style.transition = 'transform 380ms cubic-bezier(0.2, 0.8, 0.2, 1)';
+        r.style.transform = '';
+      });
+    });
+  });
+};
+
+// 8. keyboard shortcuts:  g + [h/p/b/s/a] = tab nav.  ?  opens shortcut help.
+(function keyboardNav() {
+  let gMode = false;
+  let gTimer = null;
+  document.addEventListener('keydown', e => {
+    // skip if typing in an input
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) return;
+    // skip if any modal is open
+    if (document.querySelector('.modal-overlay.open, .small-modal-overlay.open')) return;
+
+    if (e.key === '?' && !e.metaKey && !e.ctrlKey) {
+      e.preventDefault();
+      openShortcutHelp();
+      return;
+    }
+    if (e.key.toLowerCase() === 'g' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      gMode = true;
+      clearTimeout(gTimer);
+      gTimer = setTimeout(() => { gMode = false; }, 900);
+      return;
+    }
+    if (gMode) {
+      const map = { h: 'home', p: 'policies', b: 'build', s: 'sessions', a: 'activity' };
+      const dest = map[e.key.toLowerCase()];
+      if (dest) {
+        e.preventDefault();
+        go(dest);
+        flashTabBadge();
+        gMode = false;
+        clearTimeout(gTimer);
+      }
+    }
+  });
+})();
+
+function flashTabBadge() {
+  const tab = document.querySelector('.tab.active');
+  if (!tab) return;
+  tab.style.animation = 'tab-flash 480ms cubic-bezier(0.2, 0.8, 0.2, 1)';
+  tab.addEventListener('animationend', () => { tab.style.animation = ''; }, { once: true });
+}
+
+function openShortcutHelp() {
+  const shortcuts = [
+    ['⌘K',    'open search'],
+    ['g h',   'go to home'],
+    ['g p',   'go to policies'],
+    ['g b',   'go to build'],
+    ['g s',   'go to sessions'],
+    ['g a',   'go to activity'],
+    ['esc',   'close modal / search'],
+    ['?',     'this help'],
+  ];
+  const rows = shortcuts.map(([k, d]) =>
+    `<div class="kbd-help-row"><span class="kbd-help-keys">${k.split(' ').map(s => `<kbd>${s}</kbd>`).join(' ')}</span><span class="kbd-help-desc">${d}</span></div>`
+  ).join('');
+  showSmallModal(`
+    <div class="sm-head">
+      <div><div class="sm-title">keyboard shortcuts</div></div>
+      <button class="sm-close" onclick="closeSmallModal()">×</button>
+    </div>
+    <div class="sm-body">
+      <div class="kbd-help">${rows}</div>
+    </div>
+    <div class="sm-footer">
+      <button class="sm-btn primary" onclick="closeSmallModal()">close</button>
+    </div>
+  `);
+}
+
+// 9. privacy mode handshake — digits type in/out when toggling.
+const _origTogglePrivacy = togglePrivacyMode;
+togglePrivacyMode = function() {
+  _origTogglePrivacy.apply(this, arguments);
+  // after the toggle, find the hero and animate it.
+  const el = document.getElementById('hero-balance');
+  if (!el) return;
+  // detect current state from text content
+  const isPrivate = el.textContent.includes('•');
+  el.style.transition = 'opacity 140ms ease';
+  el.style.opacity = '0.4';
+  setTimeout(() => {
+    el.style.opacity = '1';
+  }, 160);
+};
+
+// 10. send success — expanding ring pulse.
+const _origSendDoneRender = (typeof renderSendStep === 'function') ? renderSendStep : null;
+if (_origSendDoneRender) {
+  renderSendStep = function() {
+    _origSendDoneRender.apply(this, arguments);
+    // if we landed on the done step, spawn the ring
+    if (typeof sendState !== 'undefined' && sendState && sendState.step === 'done') {
+      setTimeout(() => {
+        const icon = document.querySelector('.send-status-icon.done');
+        if (!icon || icon._ringed) return;
+        icon._ringed = true;
+        const ring = document.createElement('div');
+        ring.className = 'success-ring';
+        icon.appendChild(ring);
+      }, 50);
+    }
+  };
+}
+
+// authorize-done ring pulse
+const _origRenderAuthStep = (typeof renderAuthStep === 'function') ? renderAuthStep : null;
+if (_origRenderAuthStep) {
+  renderAuthStep = function() {
+    _origRenderAuthStep.apply(this, arguments);
+    if (typeof authState !== 'undefined' && authState && authState.step === 'done') {
+      setTimeout(() => {
+        const icon = document.querySelector('.send-status-icon.done');
+        if (!icon || icon._ringed) return;
+        icon._ringed = true;
+        const ring = document.createElement('div');
+        ring.className = 'success-ring';
+        icon.appendChild(ring);
+      }, 50);
+    }
+  };
+}
+
+// run-done ring pulse
+const _origRenderRunStep = (typeof renderRunStep === 'function') ? renderRunStep : null;
+if (_origRenderRunStep) {
+  renderRunStep = function() {
+    _origRenderRunStep.apply(this, arguments);
+    if (typeof runState !== 'undefined' && runState && runState.step === 'done') {
+      setTimeout(() => {
+        const icon = document.querySelector('.send-status-icon.done');
+        if (!icon || icon._ringed) return;
+        icon._ringed = true;
+        const ring = document.createElement('div');
+        ring.className = 'success-ring';
+        icon.appendChild(ring);
+      }, 50);
+    }
+  };
+}
+
+// 11. brand wordmark easter egg — 5 clicks opens a credits splash.
+(function brandEasterEgg() {
+  const brand = document.querySelector('.brand');
+  if (!brand) return;
+  brand.style.cursor = 'default';
+  let count = 0;
+  let timer = null;
+  brand.addEventListener('click', () => {
+    count++;
+    clearTimeout(timer);
+    timer = setTimeout(() => { count = 0; }, 1200);
+    if (count >= 5) {
+      count = 0;
+      showSmallModal(`
+        <div class="sm-head">
+          <div><div class="sm-title">hello, friend.</div></div>
+          <button class="sm-close" onclick="closeSmallModal()">×</button>
+        </div>
+        <div class="sm-body">
+          <div style="font-size:13px;line-height:1.7;color:var(--text-2);">grantr is a reference implementation of <strong style="color:var(--text-1);">eip-8141 frames</strong>.<br><br>built with obsessive attention by a team that believes<br>crypto interfaces can feel like real software.<br><br><span style="color:var(--text-3);font-family:'DM Mono',monospace;font-size:11px;">v25 · base mainnet · prototype</span></div>
+        </div>
+        <div class="sm-footer">
+          <button class="sm-btn primary" onclick="closeSmallModal()">nice</button>
+        </div>
+      `);
+    }
+  });
+})();
+
+// 12. keyboard hint for empty queue.
+// if the queue is empty on the build page, replace the placeholder with a hint.
+const _origRenderQueue = renderQueue;
+renderQueue = function() {
+  _origRenderQueue.apply(this, arguments);
+  const c = document.getElementById('queue-container');
+  if (c && c.querySelector('.queue-empty')) {
+    c.querySelector('.queue-empty').innerHTML = 'add a frame to begin <span class="kbd-tip">tip: press <kbd>1</kbd>–<kbd>5</kbd> to add frames fast</span>';
+  }
+};
+
+// ⌘1-5 (or plain 1-5 on build page) add frames from library
+document.addEventListener('keydown', e => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) return;
+  if (document.querySelector('.modal-overlay.open, .small-modal-overlay.open')) return;
+  // only on build screen
+  const buildScreen = document.getElementById('screen-build');
+  if (!buildScreen || !buildScreen.classList.contains('active')) return;
+  const n = parseInt(e.key, 10);
+  if (!(n >= 1 && n <= 9)) return;
+  const items = document.querySelectorAll('.frame-option');
+  if (items[n-1]) {
+    e.preventDefault();
+    items[n-1].click();
+  }
+});
+
+// ===============================================================
+// delight layer css — one big block, injected at runtime.
+// ===============================================================
+(function injectDelightStyles() {
+  const css = `
+@keyframes playhead-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 currentColor;
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+    opacity: 0.9;
+  }
+}
+.stab-playhead {
+  /* color is set inline; playhead-pulse uses box-shadow with matching color */
+}
+.stab-timeline { position: relative; }
+
+@keyframes queue-flyin {
+  0%   { transform: translateX(28px) scale(0.96); opacity: 0; background: rgba(0,214,50,0.12); }
+  60%  { background: rgba(0,214,50,0.08); }
+  100% { transform: translateX(0) scale(1); opacity: 1; background: transparent; }
+}
+
+.policy-card {
+  --policy-fg: transparent;
+  --policy-border: transparent;
+  --policy-bg-faint: transparent;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.policy-card:hover {
+  border-color: var(--policy-border) !important;
+  background: linear-gradient(180deg, var(--policy-bg-faint), transparent), var(--card-hover);
+  box-shadow: 0 0 0 0.5px var(--policy-border);
+}
+
+@keyframes tab-flash {
+  0%   { box-shadow: 0 0 0 0 rgba(0,214,50,0.5); }
+  50%  { box-shadow: 0 0 0 8px rgba(0,214,50,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,214,50,0); }
+}
+
+.kbd-help { display: flex; flex-direction: column; gap: 10px; padding: 4px 0; }
+.kbd-help-row { display: flex; align-items: center; gap: 16px; }
+.kbd-help-keys { display: flex; gap: 4px; min-width: 110px; }
+.kbd-help-desc { font-size: 13px; color: var(--text-2); }
+.kbd-help kbd {
+  display: inline-block;
+  padding: 3px 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-1);
+  background: var(--bg);
+  border: 0.5px solid var(--border-2);
+  border-radius: 6px;
+  min-width: 22px;
+  text-align: center;
+}
+
+.success-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--green);
+  pointer-events: none;
+  animation: success-ring 900ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+@keyframes success-ring {
+  0%   { transform: scale(1);   opacity: 0.9; }
+  100% { transform: scale(2.2); opacity: 0;   }
+}
+.send-status-icon.done { position: relative; }
+
+.kbd-tip {
+  display: block;
+  margin-top: 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-4);
+  letter-spacing: 0.4px;
+}
+.kbd-tip kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text-2);
+  background: var(--bg);
+  border: 0.5px solid var(--border-2);
+  border-radius: 4px;
+  margin: 0 1px;
+}
+
+/* respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .stab-playhead { animation: none !important; }
+  .policy-card, .policy-card:hover { transition: none !important; box-shadow: none !important; }
+  .success-ring { animation: none !important; }
+}
+`;
+  const s = document.createElement('style');
+  s.textContent = css;
+  document.head.appendChild(s);
+})();
 </script>
 
 </body>
