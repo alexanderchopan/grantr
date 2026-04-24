@@ -8,10 +8,11 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
-  --green: #22c55e; --red: #ef4444; --amber: #f59e0b; --blue: #3b82f6;
-  --bg: #000; --card: #0a0a0a; --card-dark: #0f0f0f; --card-inner: #060606;
+  --green: #00d632; --red: #ef4444; --amber: #ff9f0a; --blue: #0a84ff;
+  --bg: #0e0e0e; --card: #141414; --card-2: #1a1a1a; --card-dark: #0f0f0f; --card-inner: #060606;
   --border: #1f1f1f; --divider: #1a1a1a;
   --text-1: #fff; --text-2: #a3a3a3; --text-3: #737373; --text-4: #555;
+  --text-voice: #b3b3b3;
 }
 body {
   background: #1a1a1a; font-family: 'DM Sans', sans-serif;
@@ -151,7 +152,8 @@ body {
 .balance-bar { padding: 8px 20px 24px; flex-shrink: 0; }
 .balance-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .balance-label { font-size: 10px; color: var(--text-4); text-transform: lowercase; letter-spacing: 1.5px; }
-.balance-amount { font-size: 64px; font-weight: 700; letter-spacing: -0.045em; line-height: 0.9; color: var(--green); margin-bottom: 14px; }
+.balance-amount { font-size: 64px; font-weight: 700; letter-spacing: -0.045em; line-height: 0.9; color: var(--text-1); margin-bottom: 14px; }
+.italic-voice { font-family: 'DM Sans', sans-serif; font-style: italic; color: var(--text-voice); font-weight: 400; }
 .identity-row { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
 .avatar-large { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
 .avatar-large svg { display: block; width: 100%; height: 100%; }
@@ -258,6 +260,27 @@ body {
 .usage-bar { margin-top: 8px; height: 3px; background: #141414; border-radius: 2px; overflow: hidden; }
 .usage-bar-fill { height: 100%; background: var(--blue); border-radius: 2px; }
 .usage-bar-fill.muted { background: var(--text-4); }
+
+/* session timeline ticks (compact run history) */
+.session-ticks { display: flex; align-items: center; gap: 3px; margin-top: 8px; min-height: 8px; }
+.session-ticks-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-4); letter-spacing: 0.8px; margin-right: 6px; }
+.tick { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.tick.success { background: var(--green); }
+.tick.blocked { background: var(--red); }
+
+/* privacy mode: hide balance amounts */
+.privacy-on .balance-amount,
+.privacy-on .hide-on-privacy { color: transparent !important; text-shadow: 0 0 12px rgba(255,255,255,0.35); user-select: none; }
+.privacy-toggle { background: transparent; border: none; padding: 4px; cursor: pointer; color: var(--text-4); display: flex; align-items: center; justify-content: center; }
+.privacy-toggle:hover { color: var(--text-2); }
+.balance-label-row { display: flex; align-items: center; justify-content: space-between; }
+
+/* tx hash copy */
+.tx-hash-copy { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-3); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; background: transparent; border: none; padding: 0; }
+.tx-hash-copy:hover { color: var(--text-2); }
+.tx-hash-copy-icon { font-size: 10px; color: var(--text-4); }
+.tx-hash-copy.copied .tx-hash-copy-icon { color: var(--green); }
+
 .frame-section { border-top: 1px solid var(--divider); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
 .frame-row { display: flex; align-items: center; gap: 8px; padding-left: 18px; }
 .frames .frame-row { padding-left: 0; }
@@ -427,10 +450,9 @@ body {
 .frames-toggle.open .frames-toggle-body { display: block; }
 .ftb-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; }
 .ftb-badge { font-size: 9px; padding: 3px 8px; border-radius: 999px; letter-spacing: 0.5px; flex-shrink: 0; font-family: 'DM Mono', monospace; text-transform: uppercase; }
-.ftb-badge.verify { background: #0a1428; color: #3b82f6; }
-.ftb-badge.approve { background: #1f1708; color: #f59e0b; }
-.ftb-badge.sender { background: #141414; color: #a3a3a3; }
-.ftb-badge.default { background: #0a1428; color: #3b82f6; }
+.ftb-badge.verify { background: rgba(0,214,50,0.08); color: var(--green); }
+.ftb-badge.sender { background: rgba(255,255,255,0.04); color: var(--text-2); }
+.ftb-badge.default { background: rgba(10,132,255,0.08); color: var(--blue); }
 .ftb-info { flex: 1; }
 .ftb-name { font-size: 12px; color: #fff; font-weight: 500; }
 .ftb-sub { font-size: 10px; color: #555; margin-top: 2px; line-height: 1.4; }
@@ -453,10 +475,53 @@ body {
 .frame-badge.verify { background: #141414; color: var(--green); }
 .frame-badge.sender { background: #141414; color: var(--text-2); }
 .frame-badge.default { background: #141414; color: var(--blue); }
-.frame-badge.approve { background: #141414; color: #f59e0b; }
 .build-row-info { flex: 1; display: flex; flex-direction: column; gap: 1px; }
 .build-row-name { font-size: 13px; color: var(--text-1); font-weight: 500; }
 .build-row-sub { font-size: 10px; color: var(--text-4); }
+
+/* frame pipeline widget (ported from desktop) — horizontal scroll track */
+.frame-pipeline { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.fp-eyebrow { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1.2px; }
+.fp-track { display: flex; align-items: center; gap: 6px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+.fp-track::-webkit-scrollbar { display: none; }
+.fp-node { flex: 0 0 auto; min-width: 120px; max-width: 180px; border-radius: 10px; border: 0.5px solid rgba(255,255,255,0.08); padding: 10px 12px; background: var(--bg); display: flex; flex-direction: column; gap: 4px; transition: opacity 0.2s; }
+.fp-node-mode { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 500; }
+.fp-node-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fp-verify .fp-node-mode { color: var(--green); }
+.fp-verify { border-color: rgba(0,214,50,0.25); background: rgba(0,214,50,0.04); }
+.fp-sender .fp-node-mode { color: var(--text-1); }
+.fp-sender { border-color: rgba(255,255,255,0.12); background: rgba(255,255,255,0.02); }
+.fp-default .fp-node-mode { color: var(--blue); }
+.fp-default { border-color: rgba(10,132,255,0.25); background: rgba(10,132,255,0.04); }
+.fp-inactive { opacity: 0.35; }
+.fp-arrow { color: var(--text-4); font-family: 'DM Mono', monospace; font-size: 14px; flex-shrink: 0; padding: 0 2px; }
+.fp-arrow-dim { opacity: 0.35; }
+
+/* build slots (3 default, tap-to-fill-first-empty) */
+.slot-list { display: flex; flex-direction: column; gap: 8px; }
+.slot { border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 10px; min-height: 56px; transition: border-color 0.15s, background 0.15s; }
+.slot-empty { border: 0.5px dashed rgba(255,255,255,0.15); background: transparent; }
+.slot-filled { border: 0.5px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.02); }
+.slot-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-4); letter-spacing: 1.2px; flex-shrink: 0; width: 22px; }
+.slot-empty-hint { font-size: 12px; color: var(--text-4); font-style: italic; flex: 1; }
+.slot-filled-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.slot-filled-name { font-size: 13px; color: var(--text-1); font-weight: 500; }
+.slot-filled-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.slot-x { background: transparent; border: none; color: var(--text-4); font-size: 16px; cursor: pointer; padding: 0 4px; font-family: inherit; line-height: 1; }
+.slot-x:hover { color: var(--text-2); }
+.slot-add { background: transparent; border: 0.5px dashed rgba(255,255,255,0.08); color: var(--text-3); font-size: 11px; font-family: inherit; padding: 10px; border-radius: 10px; cursor: pointer; width: 100%; letter-spacing: 0.3px; }
+.slot-add:hover { color: var(--text-2); border-color: rgba(255,255,255,0.15); }
+
+/* template tiles (shown below slots when queue untouched) */
+.tpl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tpl-tile { background: transparent; border: 0.5px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px 14px; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 4px; font-family: inherit; transition: border-color 0.15s, background 0.15s; min-height: 68px; }
+.tpl-tile:hover { border-color: var(--tpl-border, rgba(255,255,255,0.18)); background: rgba(255,255,255,0.02); }
+.tpl-tile-name { font-size: 13px; color: var(--tpl-fg, var(--text-1)); font-weight: 500; }
+.tpl-tile-desc { font-size: 10px; color: var(--text-3); line-height: 1.35; }
+
+/* frame group labels for library */
+.frame-group-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1.2px; padding: 12px 0 6px; }
+.frame-group-label:first-child { padding-top: 0; }
 
 /* devtools */
 .devtools { position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.8); border: 1px solid #333; border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 4px; z-index: 9999; font-size: 10px; color: #888; max-height: calc(100vh - 20px); overflow-y: auto; }
@@ -676,7 +741,7 @@ body {
             </div>
           </div>
           <div class="frame-detail-row">
-            <span class="frame-badge approve">approve</span>
+            <span class="frame-badge verify">verify</span>
             <div class="frame-detail-info">
               <div class="frame-detail-name">gas sponsored</div>
               <div class="frame-detail-sub">grantr paymaster</div>
@@ -813,7 +878,7 @@ body {
             </div>
           </div>
           <div class="frame-detail-row">
-            <span class="frame-badge approve">approve</span>
+            <span class="frame-badge verify">verify</span>
             <div class="frame-detail-info">
               <div class="frame-detail-name">gas sponsored</div>
               <div class="frame-detail-sub">grantr paymaster</div>
@@ -991,7 +1056,7 @@ body {
             </div>
           </div>
           <div class="frame-detail-row">
-            <span class="frame-badge approve">approve</span>
+            <span class="frame-badge verify">verify</span>
             <div class="frame-detail-info">
               <div class="frame-detail-name">gas sponsored</div>
               <div class="frame-detail-sub">grantr paymaster</div>
@@ -1180,7 +1245,7 @@ body {
             </div>
           </div>
           <div class="ftb-row">
-            <span class="ftb-badge approve">approve</span>
+            <span class="ftb-badge verify">verify</span>
             <div class="ftb-info">
               <div class="ftb-name">grantr pays gas</div>
               <div class="ftb-sub">sponsored paymaster</div>
@@ -1247,7 +1312,7 @@ body {
             </div>
           </div>
           <div class="frame-detail-row">
-            <span class="frame-badge approve">approve</span>
+            <span class="frame-badge verify">verify</span>
             <div class="frame-detail-info">
               <div class="frame-detail-name">gas sponsored</div>
               <div class="frame-detail-sub">grantr paymaster</div>
@@ -1275,8 +1340,25 @@ body {
       <span class="spacer"></span>
     </div>
     <div style="flex: 1; padding: 8px 0 16px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto;">
+      <div class="italic-voice" style="font-size: 12px; line-height: 1.5; padding-bottom: 4px;">how much, then to whom. grantr covers the gas.</div>
+
+      <!-- AMOUNT FIRST -->
+      <div class="choice-card">
+        <div class="choice-head">
+          <span class="choice-label">amount</span>
+          <span class="choice-value hide-on-privacy" id="send-amount-value">$100</span>
+        </div>
+        <div class="choice-pills">
+          <button class="choice-pill active" data-send-amt="100" onclick="setSendAmount(100)">$100</button>
+          <button class="choice-pill" data-send-amt="500" onclick="setSendAmount(500)">$500</button>
+          <button class="choice-pill" data-send-amt="1500" onclick="setSendAmount(1500)">$1,500</button>
+          <button class="choice-pill" data-send-amt="5000" onclick="setSendAmount(5000)">$5,000</button>
+        </div>
+      </div>
+
+      <!-- RECIPIENT SECOND -->
       <div>
-        <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">to</div>
+        <div style="font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px;">to</div>
         <div id="send-recipient-display" style="background: var(--card); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer;" onclick="openSendRecipientPicker()">
           <div class="addr-avatar" id="send-recipient-avatar"></div>
           <div style="flex: 1;">
@@ -1287,54 +1369,12 @@ body {
         </div>
       </div>
 
-      <div class="choice-card">
-        <div class="choice-head">
-          <span class="choice-label">amount</span>
-          <span class="choice-value" id="send-amount-value">$100</span>
-        </div>
-        <div class="choice-pills">
-          <button class="choice-pill active" data-send-amt="100" onclick="setSendAmount(100)">$100</button>
-          <button class="choice-pill" data-send-amt="500" onclick="setSendAmount(500)">$500</button>
-          <button class="choice-pill" data-send-amt="1500" onclick="setSendAmount(1500)">$1,500</button>
-          <button class="choice-pill" data-send-amt="5000" onclick="setSendAmount(5000)">$5,000</button>
-        </div>
-      </div>
-
       <div id="send-threshold-note" style="background: var(--card-dark); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 11px; color: var(--text-3); line-height: 1.5;">
         <span style="color: var(--text-2);">below threshold.</span> your passkey can sign this alone.
       </div>
 
-      <div class="frames-toggle">
-        <div class="frames-toggle-head" onclick="toggleFrames(this)">
-          <span class="frames-toggle-chev">›</span>
-          <span class="frames-toggle-label">more detail</span>
-          <span class="frames-toggle-eip">eip-8141</span>
-        </div>
-        <div class="frames-toggle-body">
-          <div class="ftb-row">
-            <span class="ftb-badge verify">verify</span>
-            <div class="ftb-info">
-              <div class="ftb-name" id="send-frame-verify-name">your passkey signs</div>
-              <div class="ftb-sub" id="send-frame-verify-sub">p-256 on this device</div>
-            </div>
-          </div>
-          <div class="ftb-row">
-            <span class="ftb-badge approve">approve</span>
-            <div class="ftb-info">
-              <div class="ftb-name">grantr pays gas</div>
-              <div class="ftb-sub">sponsored paymaster</div>
-            </div>
-          </div>
-          <div class="ftb-row">
-            <span class="ftb-badge sender">sender</span>
-            <div class="ftb-info">
-              <div class="ftb-name" id="send-frame-sender-name">transfer</div>
-              <div class="ftb-sub" id="send-frame-sender-sub">—</div>
-            </div>
-          </div>
-          <div class="ftb-footnote">above your threshold, both devices must sign — the verify frame enforces that on-chain.</div>
-        </div>
-      </div>
+      <!-- REVIEW: pipeline widget lights up as form fills -->
+      <div id="send-pipeline-mount" style="padding-top: 4px;"></div>
     </div>
     <div class="bottom" style="padding-top: 0;">
       <button class="btn btn-primary" onclick="openTxPreview('send')" id="send-sign-btn">send</button>
@@ -1396,7 +1436,7 @@ body {
             </div>
           </div>
           <div class="frame-detail-row">
-            <span class="frame-badge approve">approve</span>
+            <span class="frame-badge verify">verify</span>
             <div class="frame-detail-info">
               <div class="frame-detail-name">gas sponsored</div>
               <div class="frame-detail-sub">grantr paymaster</div>
@@ -1495,7 +1535,7 @@ body {
             </div>
           </div>
           <div class="ftb-row">
-            <span class="ftb-badge approve">approve</span>
+            <span class="ftb-badge verify">verify</span>
             <div class="ftb-info">
               <div class="ftb-name">grantr pays gas</div>
               <div class="ftb-sub">sponsored paymaster</div>
@@ -1561,7 +1601,7 @@ body {
             </div>
           </div>
           <div class="frame-detail-row">
-            <span class="frame-badge approve">approve</span>
+            <span class="frame-badge verify">verify</span>
             <div class="frame-detail-info">
               <div class="frame-detail-name">gas sponsored</div>
               <div class="frame-detail-sub">grantr paymaster</div>
@@ -1730,7 +1770,7 @@ body {
             </div>
           </div>
           <div class="frame-detail-row">
-            <span class="frame-badge approve">approve</span>
+            <span class="frame-badge verify">verify</span>
             <div class="frame-detail-info">
               <div class="frame-detail-name">gas sponsored</div>
               <div class="frame-detail-sub">grantr paymaster</div>
@@ -1755,6 +1795,9 @@ body {
     <div class="balance-bar">
       <div class="balance-label-row">
         <div class="balance-label">balance</div>
+        <button type="button" class="privacy-toggle" onclick="togglePrivacy()" aria-label="toggle privacy">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12 S4 5 12 5 23 12 23 12 20 19 12 19 1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
       </div>
       <div class="balance-amount">$2,847.30</div>
       <button type="button" class="identity-row" onclick="go('account')" style="cursor:pointer; width:100%; background:none; border:none; text-align:left; padding:0; font-family:inherit;">
@@ -1823,9 +1866,9 @@ body {
       <div class="home-chart-tile">
         <div class="home-spark-box" style="flex:1;">
           <svg width="100%" height="100%" viewBox="0 0 100 40" preserveAspectRatio="none" style="display:block;">
-            <polyline points="0,32 10,30 20,34 30,24 40,26 50,18 60,22 70,14 80,18 90,8 100,6" fill="none" stroke="#22c55e" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="0,32 10,30 20,34 30,24 40,26 50,18 60,22 70,14 80,18 90,8 100,6" fill="none" stroke="#00d632" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
             <polyline points="0,32 10,30 20,34 30,24 40,26 50,18 60,22 70,14 80,18 90,8 100,6 100,40 0,40" fill="url(#gHomeSpark)" stroke="none"/>
-            <defs><linearGradient id="gHomeSpark" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22c55e" stop-opacity="0.22"/><stop offset="100%" stop-color="#22c55e" stop-opacity="0"/></linearGradient></defs>
+            <defs><linearGradient id="gHomeSpark" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00d632" stop-opacity="0.22"/><stop offset="100%" stop-color="#00d632" stop-opacity="0"/></linearGradient></defs>
           </svg>
         </div>
       </div>
@@ -1861,7 +1904,7 @@ body {
         </div>
         <div>
           <div style="font-size: 18px; color: var(--text-1); font-weight: 600;">alice.eth</div>
-          <div style="font-size: 11px; color: var(--text-4); font-family: 'DM Mono', monospace; margin-top: 2px;">...4c7a · etherex devnet</div>
+          <div style="font-size: 11px; color: var(--text-4); font-family: 'DM Mono', monospace; margin-top: 2px;">...4c7a · ethrex devnet</div>
         </div>
       </div>
 
@@ -2136,6 +2179,9 @@ body {
     <div class="balance-bar">
       <div class="balance-label-row">
         <div class="balance-label">balance</div>
+        <button type="button" class="privacy-toggle" onclick="togglePrivacy()" aria-label="toggle privacy">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12 S4 5 12 5 23 12 23 12 20 19 12 19 1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
       </div>
       <div class="balance-amount">$2,847.30</div>
       <div class="identity-row">
@@ -2146,85 +2192,8 @@ body {
         </div>
       </div>
     </div>
-    <div class="feed">
-      <div class="section-label">active</div>
-      <div class="session-card" onclick="toggleSessionCard(this, event)">
-        <div class="session-card-header">
-          <div class="session-dot active"></div>
-          <div style="flex: 1;">
-            <div class="session-name">lp rebalancer</div>
-            <div class="session-meta">$12.40 of $500 · 29 days left</div>
-            <div class="usage-bar"><div class="usage-bar-fill" style="width: 2.5%;"></div></div>
-          </div>
-          <span class="session-card-chev">›</span>
-        </div>
-        <div class="frame-section">
-          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · rebalance() · collectFees()</div></div>
-          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">uniswap v3 position manager</div></div>
-        </div>
-        <div class="card-footer">
-          <div class="card-footer-text">3 executed · 1 blocked</div>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <button class="simulate-link" onclick="openAgentSimulation('lp-rebalancer')">see it work</button>
-            <button class="revoke-link" onclick="requestRevoke(this)">revoke</button>
-          </div>
-        </div>
-      </div>
-      <div class="session-card" onclick="toggleSessionCard(this, event)">
-        <div class="session-card-header">
-          <div class="session-dot active"></div>
-          <div style="flex: 1;">
-            <div class="session-name">ens renewer</div>
-            <div class="session-meta">$0 of $50 · 345 days left</div>
-            <div class="usage-bar"><div class="usage-bar-fill" style="width: 0%;"></div></div>
-          </div>
-          <span class="session-card-chev">›</span>
-        </div>
-        <div class="frame-section">
-          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">verify</div><div class="frame-desc">session key · renew()</div></div>
-          <div class="frame-row"><div class="frame-dot pass"></div><div class="frame-mode">sender</div><div class="frame-desc">ens base registrar</div></div>
-        </div>
-        <div class="card-footer">
-          <div class="card-footer-text">0 executed</div>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <button class="simulate-link" onclick="openAgentSimulation('ens-renewer')">see it work</button>
-            <button class="revoke-link" onclick="requestRevoke(this)">revoke</button>
-          </div>
-        </div>
-      </div>
-      <button class="past-sessions-link" onclick="togglePastSessions()">
-        <span id="past-sessions-label">past sessions (2)</span>
-        <span id="past-sessions-chevron">›</span>
-      </button>
-      <div id="past-sessions" class="past-sessions-group" style="display: none;">
-        <div class="session-card revoked">
-          <div class="session-card-header">
-            <div class="session-dot revoked"></div>
-            <div style="flex: 1;">
-              <div class="session-name" style="color: #ef4444;">price oracle</div>
-              <div class="session-meta">revoked yesterday · $0 used</div>
-            </div>
-          </div>
-          <div class="frame-section">
-            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">verify</div><div class="frame-desc muted">session key · updatePrice()</div></div>
-            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted">chainlink price oracle</div></div>
-          </div>
-        </div>
-        <div class="session-card expired">
-          <div class="session-card-header">
-            <div class="session-dot expired"></div>
-            <div style="flex: 1;">
-              <div class="session-name">dca bot</div>
-              <div class="session-meta">$420 of $500 · expired 3 days ago</div>
-              <div class="usage-bar"><div class="usage-bar-fill muted" style="width: 84%;"></div></div>
-            </div>
-          </div>
-          <div class="frame-section">
-            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">verify</div><div class="frame-desc muted">session key · exactInputSingle()</div></div>
-            <div class="frame-row"><div class="frame-dot off"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted">uniswap v3 router · ETH → USDC</div></div>
-          </div>
-        </div>
-      </div>
+    <div class="feed" id="sessions-feed">
+      <!-- populated by renderSessions() -->
     </div>
   </div>
 
@@ -2233,6 +2202,9 @@ body {
     <div class="balance-bar">
       <div class="balance-label-row">
         <div class="balance-label">balance</div>
+        <button type="button" class="privacy-toggle" onclick="togglePrivacy()" aria-label="toggle privacy">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12 S4 5 12 5 23 12 23 12 20 19 12 19 1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
       </div>
       <div class="balance-amount">$2,847.30</div>
       <div class="identity-row">
@@ -2246,102 +2218,11 @@ body {
     <div class="filters">
       <button class="pill active" data-filter="all" onclick="filterActivity('all')">all</button>
       <button class="pill" data-filter="verify" onclick="filterActivity('verify')">verify</button>
-      <button class="pill" data-filter="approve" onclick="filterActivity('approve')">approve</button>
       <button class="pill" data-filter="sender" onclick="filterActivity('sender')">sender</button>
       <button class="pill" data-filter="default" onclick="filterActivity('default')">default</button>
     </div>
-    <div class="feed">
-      <div class="section-label" style="padding-top: 6px;">today</div>
-
-      <div class="entry expanded" onclick="toggleEntry(this)" data-frames="verify,sender" data-blocked="false">
-        <div class="entry-avatar" id="actx-eth"></div>
-        <div class="entry-body">
-          <div class="entry-title">sent ETH</div>
-          <div class="entry-sub">to ...9f2b · 2 min ago</div>
-        </div>
-        <div class="entry-right">
-          <div class="entry-amount white">−0.5</div>
-          <div class="entry-amount-sub">ETH · $1,390</div>
-        </div>
-        <div class="entry-chevron">›</div>
-        <div class="frames">
-          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p-256</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">transfer 0.5 ETH to ...9f2b</div><div class="frame-status pass">✓</div></div>
-        </div>
-      </div>
-
-      <div class="entry blocked" onclick="toggleEntry(this)" data-frames="verify,sender" data-blocked="true">
-        <div class="entry-avatar dim" id="actx-rebal-blocked"></div>
-        <div class="entry-body">
-          <div class="entry-title"><span class="entry-pill-blocked">blocked</span>lp rebalancer</div>
-          <div class="entry-sub">tried transfer · 42 min ago</div>
-        </div>
-        <div class="entry-chevron">›</div>
-        <div class="frames">
-          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">session key · selector not allowed</div><div class="frame-status fail">✗</div></div>
-          <div class="frame-row"><div class="frame-mode muted">sender</div><div class="frame-desc muted">transfer USDC</div><div class="frame-status" style="color:#555">—</div></div>
-        </div>
-      </div>
-
-      <div class="entry" onclick="toggleEntry(this)" data-frames="verify,sender" data-blocked="false">
-        <div class="entry-avatar" id="actx-uniswap"></div>
-        <div class="entry-body">
-          <div class="entry-title">rebalanced on uniswap</div>
-          <div class="entry-sub">via lp rebalancer · 1 hr ago</div>
-        </div>
-        <div class="entry-chevron">›</div>
-        <div class="frames">
-          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">session key · rebalance()</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">uniswap v3 position manager</div><div class="frame-status pass">✓</div></div>
-        </div>
-      </div>
-
-      <div class="entry" onclick="toggleEntry(this)" data-frames="verify,approve,default" data-blocked="false">
-        <div class="entry-avatar" id="actx-rebal-granted"></div>
-        <div class="entry-body">
-          <div class="entry-title">granted access</div>
-          <div class="entry-sub">lp rebalancer · 3 hrs ago · gas by grantr</div>
-        </div>
-        <div class="entry-chevron">›</div>
-        <div class="frames">
-          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p-256</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode" style="color:#f59e0b;">approve</div><div class="frame-desc">gas sponsored by grantr</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode" style="color:#3b82f6;">default</div><div class="frame-desc">add session key · scoped selectors</div><div class="frame-status pass">✓</div></div>
-        </div>
-      </div>
-
-      <div class="section-label">earlier this week</div>
-
-      <div class="entry" onclick="toggleEntry(this)" data-frames="verify,sender" data-blocked="false">
-        <div class="entry-avatar" id="actx-received"></div>
-        <div class="entry-body">
-          <div class="entry-title">received USDC</div>
-          <div class="entry-sub">from ...3e8c · yesterday</div>
-        </div>
-        <div class="entry-right">
-          <div class="entry-amount green">+250</div>
-          <div class="entry-amount-sub">USDC</div>
-        </div>
-        <div class="entry-chevron">›</div>
-        <div class="frames">
-          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">sender's passkey · p-256</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">transfer 250 USDC</div><div class="frame-status pass">✓</div></div>
-        </div>
-      </div>
-
-      <div class="entry" onclick="toggleEntry(this)" data-frames="verify,approve,default" data-blocked="false">
-        <div class="entry-avatar" id="actx-alice"></div>
-        <div class="entry-body">
-          <div class="entry-title">account created</div>
-          <div class="entry-sub">2 days ago · gas by grantr</div>
-        </div>
-        <div class="entry-chevron">›</div>
-        <div class="frames">
-          <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p-256</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode" style="color:#f59e0b;">approve</div><div class="frame-desc">gas sponsored by grantr</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode" style="color:#3b82f6;">default</div><div class="frame-desc">deploy account · set email recovery</div><div class="frame-status pass">✓</div></div>
-        </div>
-      </div>
+    <div class="feed" id="activity-feed">
+      <!-- populated by renderActivity() -->
     </div>
   </div>
 
@@ -2350,6 +2231,9 @@ body {
     <div class="balance-bar">
       <div class="balance-label-row">
         <div class="balance-label">balance</div>
+        <button type="button" class="privacy-toggle" onclick="togglePrivacy()" aria-label="toggle privacy">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12 S4 5 12 5 23 12 23 12 20 19 12 19 1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
       </div>
       <div class="balance-amount">$2,847.30</div>
       <div class="identity-row">
@@ -2517,7 +2401,7 @@ body {
             </div>
           </div>
           <div class="ftb-row">
-            <span class="ftb-badge approve">approve</span>
+            <span class="ftb-badge verify">verify</span>
             <div class="ftb-info">
               <div class="ftb-name">grantr pays gas</div>
               <div class="ftb-sub">sponsored paymaster</div>
@@ -2546,6 +2430,9 @@ body {
     <div class="balance-bar">
       <div class="balance-label-row">
         <div class="balance-label">balance</div>
+        <button type="button" class="privacy-toggle" onclick="togglePrivacy()" aria-label="toggle privacy">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12 S4 5 12 5 23 12 23 12 20 19 12 19 1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
       </div>
       <div class="balance-amount">$2,847.30</div>
       <div class="identity-row">
@@ -2586,8 +2473,8 @@ body {
         <div class="entry-chevron">›</div>
         <div class="frames">
           <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">passkey · p-256</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode" style="color:#f59e0b;">approve</div><div class="frame-desc">gas sponsored by grantr</div><div class="frame-status pass">✓</div></div>
-          <div class="frame-row"><div class="frame-mode" style="color:#3b82f6;">default</div><div class="frame-desc">add session key · scoped selectors</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode" style="color:#00d632;">verify</div><div class="frame-desc">gas sponsored by grantr</div><div class="frame-status pass">✓</div></div>
+          <div class="frame-row"><div class="frame-mode" style="color:#0a84ff;">default</div><div class="frame-desc">add session key · scoped selectors</div><div class="frame-status pass">✓</div></div>
         </div>
       </div>
       <div class="entry" onclick="toggleEntry(this)">
@@ -2619,24 +2506,37 @@ body {
     </div>
     <div style="flex: 1; padding: 8px 0 16px; display: flex; flex-direction: column; gap: 0; overflow-y: auto;">
 
-      <div style="font-size: 11px; color: var(--text-4); line-height: 1.6; padding-bottom: 10px;">build a transaction by stacking steps. they all run together — if any step fails, nothing happens.</div>
+      <div class="italic-voice" style="font-size: 13px; line-height: 1.5; padding-bottom: 14px;">stack frames to build any action. they all run together — if any frame fails, nothing happens.</div>
 
-      <details class="frame-detail" style="margin-bottom: 16px; margin-top: 0;">
+      <!-- FRAMES QUEUE (slots) -->
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px;">
+        <div style="font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1.2px;">frames</div>
+        <div id="build-queue-sub" class="italic-voice" style="font-size: 11px;">3 empty slots</div>
+      </div>
+      <div id="build-queue" class="slot-list"></div>
+      <button class="slot-add" onclick="addSlot()" style="margin-top: 8px;">+ add another</button>
+
+      <!-- TEMPLATES (shown only when queue untouched) -->
+      <div id="build-templates-block" style="padding-top: 18px;">
+        <div class="italic-voice" style="font-size: 12px; padding-bottom: 8px;">or start with</div>
+        <div id="build-templates" class="tpl-grid"></div>
+      </div>
+
+      <!-- STEPS LIBRARY -->
+      <div style="padding-top: 20px;">
+        <div style="font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1.2px; padding-bottom: 4px;">steps</div>
+        <div id="build-library"></div>
+      </div>
+
+      <details class="frame-detail" style="margin-top: 18px;">
         <summary>what's a frame?</summary>
         <div class="frame-detail-body">
-          <div style="font-size: 11px; color: var(--text-3); line-height: 1.6; padding-bottom: 8px;">a frame is one step in a transaction. eip-8141 defines four kinds. you stack them to build any action you want.</div>
+          <div class="italic-voice" style="font-size: 12px; line-height: 1.6; padding-bottom: 8px;">a frame is one step in a transaction. eip-8141 defines three kinds. you stack them to build any action.</div>
           <div class="frame-detail-row">
             <span class="frame-badge verify">verify</span>
             <div class="frame-detail-info">
-              <div class="frame-detail-name">who can do this</div>
-              <div class="frame-detail-sub">passkey · session key · guardian quorum</div>
-            </div>
-          </div>
-          <div class="frame-detail-row">
-            <span class="frame-badge approve">approve</span>
-            <div class="frame-detail-info">
-              <div class="frame-detail-name">who pays</div>
-              <div class="frame-detail-sub">you, or a sponsor like grantr</div>
+              <div class="frame-detail-name">who is allowed</div>
+              <div class="frame-detail-sub">passkey · session key · sponsor · batch</div>
             </div>
           </div>
           <div class="frame-detail-row">
@@ -2650,78 +2550,12 @@ body {
             <span class="frame-badge default">default</span>
             <div class="frame-detail-info">
               <div class="frame-detail-name">what changes after</div>
-              <div class="frame-detail-sub">rotate key · update policy</div>
+              <div class="frame-detail-sub">deploy · refund · account setup</div>
             </div>
           </div>
           <div class="frame-detail-footnote">all frames execute atomically. one fails, none apply.</div>
         </div>
       </details>
-
-      <div style="font-size: 9px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px; padding-bottom: 8px;">add a step</div>
-
-      <div class="build-row" onclick="addFrame('verify', 'prove it\'s you', 'verify · passkey · p-256')">
-        <span class="frame-badge verify">verify</span>
-        <div class="build-row-info">
-          <div class="build-row-name">prove it's you</div>
-          <div class="build-row-sub">passkey signature · p-256 · this device</div>
-        </div>
-        <span style="color: var(--text-4); font-size: 14px;">+</span>
-      </div>
-
-      <div class="build-row" onclick="addFrame('verify', 'prove an agent is allowed', 'verify · session key · scoped')">
-        <span class="frame-badge verify">verify</span>
-        <div class="build-row-info">
-          <div class="build-row-name">prove an agent is allowed</div>
-          <div class="build-row-sub">session key · scoped to specific actions</div>
-        </div>
-        <span style="color: var(--text-4); font-size: 14px;">+</span>
-      </div>
-
-      <div class="build-row" onclick="addFrame('approve', 'pay with grantr gas', 'approve · paymaster sponsored')">
-        <span class="frame-badge approve">approve</span>
-        <div class="build-row-info">
-          <div class="build-row-name">pay with grantr gas</div>
-          <div class="build-row-sub">paymaster sponsorship · you hold 0 ETH</div>
-        </div>
-        <span style="color: var(--text-4); font-size: 14px;">+</span>
-      </div>
-
-      <div class="build-row" onclick="addFrame('sender', 'send tokens', 'sender · erc-20 or native ETH')">
-        <span class="frame-badge sender">sender</span>
-        <div class="build-row-info">
-          <div class="build-row-name">send tokens</div>
-          <div class="build-row-sub">transfer erc-20 or native ETH to an address</div>
-        </div>
-        <span style="color: var(--text-4); font-size: 14px;">+</span>
-      </div>
-
-      <div class="build-row" onclick="addFrame('sender', 'call a contract', 'sender · any address + calldata')">
-        <span class="frame-badge sender">sender</span>
-        <div class="build-row-info">
-          <div class="build-row-name">call a contract</div>
-          <div class="build-row-sub">any address + calldata · read or write</div>
-        </div>
-        <span style="color: var(--text-4); font-size: 14px;">+</span>
-      </div>
-
-      <div class="build-row" onclick="addFrame('default', 'change your account rules', 'default · post-op policy update')">
-        <span class="frame-badge default">default</span>
-        <div class="build-row-info">
-          <div class="build-row-name">change your account rules</div>
-          <div class="build-row-sub">rotate key · add guardian · update session</div>
-        </div>
-        <span style="color: var(--text-4); font-size: 14px;">+</span>
-      </div>
-
-      <div style="margin-top: 20px; padding: 14px 16px; background: var(--card-dark); border-radius: 14px; display: flex; flex-direction: column; gap: 8px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div style="font-size: 10px; color: var(--text-4); text-transform: uppercase; letter-spacing: 1px;">your frame queue</div>
-          <button id="build-clear" onclick="resetBuildQueue()" style="background: transparent; border: none; color: var(--text-4); font-size: 10px; font-family: inherit; cursor: pointer; display: none;">clear</button>
-        </div>
-        <div id="build-queue">
-          <div id="build-queue-empty" style="font-size: 12px; color: #555; font-style: italic;">empty — add frames above</div>
-        </div>
-      </div>
 
     </div>
     <div class="bottom" style="padding-top: 0;">
@@ -2772,7 +2606,7 @@ body {
             <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;">your passkey</div><div style="font-size:10px;color:#555;margin-top:2px;">p-256 signature</div></div>
           </div>
           <div class="receipt-row">
-            <span class="frame-badge approve">approve</span>
+            <span class="frame-badge verify">verify</span>
             <div style="text-align:right;"><div style="font-size:13px;color:#fff;font-weight:500;" id="sponsor-frame-pay">you pay gas</div><div style="font-size:10px;color:#22c55e;margin-top:2px;" id="sponsor-frame-cap">up to 0.005 ETH</div></div>
           </div>
         </div>
@@ -2871,7 +2705,7 @@ body {
         <div style="font-size: 12px; color: var(--text-2); margin-bottom: 10px; font-family: 'DM Mono', monospace;" id="sim-1-call">—</div>
         <div class="frame-section">
           <div class="frame-row" id="sim-1-f1"><div class="frame-dot pending"></div><div class="frame-mode">verify</div><div class="frame-desc" id="sim-1-f1-desc">session key · checking selector</div></div>
-          <div class="frame-row" id="sim-1-f2"><div class="frame-dot pending"></div><div class="frame-mode muted">approve</div><div class="frame-desc muted">gas sponsored by grantr</div></div>
+          <div class="frame-row" id="sim-1-f2"><div class="frame-dot pending"></div><div class="frame-mode muted">verify</div><div class="frame-desc muted">grantr paymaster</div></div>
           <div class="frame-row" id="sim-1-f3"><div class="frame-dot pending"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted" id="sim-1-f3-desc">—</div></div>
         </div>
       </div>
@@ -2885,7 +2719,7 @@ body {
         <div style="font-size: 12px; color: var(--text-2); margin-bottom: 10px; font-family: 'DM Mono', monospace;" id="sim-2-call">—</div>
         <div class="frame-section">
           <div class="frame-row" id="sim-2-f1"><div class="frame-dot pending"></div><div class="frame-mode">verify</div><div class="frame-desc" id="sim-2-f1-desc">session key · checking selector</div></div>
-          <div class="frame-row" id="sim-2-f2"><div class="frame-dot pending"></div><div class="frame-mode muted">approve</div><div class="frame-desc muted">—</div></div>
+          <div class="frame-row" id="sim-2-f2"><div class="frame-dot pending"></div><div class="frame-mode muted">verify</div><div class="frame-desc muted">grantr paymaster</div></div>
           <div class="frame-row" id="sim-2-f3"><div class="frame-dot pending"></div><div class="frame-mode muted">sender</div><div class="frame-desc muted">—</div></div>
         </div>
       </div>
@@ -3029,12 +2863,11 @@ function filterActivity(filter) {
   });
   const entries = document.querySelectorAll('#screen-activity .entry');
   entries.forEach(e => {
-    const frames = (e.dataset.frames || '').split(',');
+    const frames = (e.dataset.frames || '').split(',').filter(Boolean);
     const blocked = e.dataset.blocked === 'true';
     let show = false;
     if (filter === 'all') show = true;
     else if (filter === 'verify') show = blocked; // verify filter = "what got rejected"
-    else if (filter === 'approve') show = frames.includes('approve');
     else if (filter === 'sender') show = frames.includes('sender');
     else if (filter === 'default') show = frames.includes('default');
     e.style.display = show ? '' : 'none';
@@ -3069,7 +2902,6 @@ function filterActivity(filter) {
     }
     const msgs = {
       verify:  'nothing rejected. every transaction passed its verify frame.',
-      approve: 'no sponsored transactions yet.',
       sender:  'no send or call actions yet.',
       default: 'no policy changes yet.'
     };
@@ -3227,6 +3059,17 @@ function go(id) {
   }
   if (id === 'sponsor') {
     renderSponsorRecipient();
+  }
+  if (id === 'build') {
+    renderBuildLibrary();
+    renderBuildTemplates();
+    renderBuildQueue();
+  }
+  if (id === 'sessions') {
+    renderSessions();
+  }
+  if (id === 'activity') {
+    renderActivity();
   }
   if (id === 'send') {
     renderSendScreen();
@@ -3480,7 +3323,7 @@ const trayTemplates = {
         <div><div class="tray-row-name">ens</div><div class="tray-row-sub" style="font-family: 'DM Sans', sans-serif;">alice.eth</div></div>
       </div>
       <div class="tray-row">
-        <div><div class="tray-row-name">network</div><div class="tray-row-sub" style="font-family: 'DM Sans', sans-serif;">etherex devnet</div></div>
+        <div><div class="tray-row-name">network</div><div class="tray-row-sub" style="font-family: 'DM Sans', sans-serif;">ethrex devnet</div></div>
       </div>
       <div class="tray-row">
         <div><div class="tray-row-name">account code</div><div class="tray-row-sub" style="font-family: 'DM Sans', sans-serif;">grantr default · v1</div></div>
@@ -3560,8 +3403,399 @@ function closeTray() {
   document.getElementById('tray-overlay').classList.remove('open');
 }
 
-// ============== BUILD QUEUE ==============
+// ============== BUILD QUEUE (slot model) ==============
+// queue is a sparse array: each element is null (empty slot) or a step object.
+// default: 3 empty slots on landing.
+let queue = [null, null, null];
+// legacy alias used by some older callers
 let buildQueue = [];
+// tracks whether we're editing a template (affects sub-copy)
+let editingTemplateName = null;
+
+// ---- frame library (10 atoms in 3 groups) ----
+const frameLibrary = [
+  {
+    group: 'verify',
+    items: [
+      { id: 'verify-passkey',   name: "prove it's you",           desc: 'passkey · this device',        mode: 'verify', scope: 1, target: 'account' },
+      { id: 'verify-session',   name: 'prove an agent is allowed', desc: 'session key · scoped actions', mode: 'verify', scope: 1, target: 'account' },
+      { id: 'verify-paymaster', name: 'have grantr pay gas',       desc: 'sponsor · grantr paymaster',   mode: 'verify', scope: 2, target: 'sponsor' },
+      { id: 'verify-batch',     name: 'prove a batch is allowed',  desc: 'one signature, many ops',      mode: 'verify', scope: 3, target: 'batch' },
+    ],
+  },
+  {
+    group: 'sender',
+    items: [
+      { id: 'sender-tokens',   name: 'send tokens',           desc: 'transfer erc-20 or eth', mode: 'sender', fn: 'transfer()' },
+      { id: 'sender-contract', name: 'call a contract',       desc: 'any address + calldata', mode: 'sender', fn: 'execute()' },
+      { id: 'sender-approve',  name: 'approve token spending', desc: 'erc-20 · approve()',     mode: 'sender', fn: 'approve()' },
+      { id: 'sender-account',  name: 'change account rules',   desc: 'rotate key · add guardian', mode: 'sender', fn: 'execute()' },
+    ],
+  },
+  {
+    group: 'default',
+    items: [
+      { id: 'default-deploy',  name: 'deploy a contract', desc: 'create2 via deployer proxy', mode: 'default', fn: 'CREATE2' },
+      { id: 'default-account', name: 'deploy account',    desc: 'first-time account setup',   mode: 'default', fn: 'CREATE2' },
+      { id: 'default-refund',  name: 'gas refund hook',   desc: 'refund sponsor overcharge',  mode: 'default', fn: 'refund()' },
+    ],
+  },
+];
+
+// ---- templates (t1–t5) ----
+const buildTemplates = [
+  { id: 't1', name: 'lp rebalance',     desc: 'keep uniswap v3 positions in range',       color: { fg: '#AFA9EC', border: 'rgba(175,169,236,0.35)' },
+    frames: [
+      { mode: 'verify', scope: 1, target: 'account', desc: 'session key · scope: execution' },
+      { mode: 'sender', fn: 'execute()', desc: 'uniswap v3 position manager · rebalance(), collectFees()' },
+      { mode: 'verify', scope: 2, target: 'sponsor', desc: 'sponsor · grantr paymaster' },
+    ] },
+  { id: 't2', name: 'ens renew',        desc: 'auto-renew expiring ens names',             color: { fg: '#5DCAA5', border: 'rgba(93,202,165,0.35)' },
+    frames: [
+      { mode: 'verify', scope: 1, target: 'account', desc: 'session key · scope: execution' },
+      { mode: 'sender', fn: 'renew()', desc: 'ens base registrar · renew()' },
+    ] },
+  { id: 't3', name: 'dca weekly',       desc: 'swap eth → usdc weekly, within agent caps', color: { fg: '#F0997B', border: 'rgba(240,153,123,0.35)' },
+    frames: [
+      { mode: 'verify', scope: 1, target: 'account', desc: 'session key · scope: execution' },
+      { mode: 'sender', fn: 'exactInputSingle()', desc: 'uniswap v3 router · exactInputSingle() · eth → usdc' },
+      { mode: 'verify', scope: 2, target: 'sponsor', desc: 'sponsor · grantr paymaster' },
+    ] },
+  { id: 't4', name: 'price oracle',     desc: 'update a chainlink price feed',             color: { fg: '#85B7EB', border: 'rgba(133,183,235,0.35)' },
+    frames: [
+      { mode: 'verify', scope: 1, target: 'account', desc: 'session key · scope: execution' },
+      { mode: 'sender', fn: 'updatePrice()', desc: 'chainlink price oracle · updatePrice()' },
+    ] },
+  { id: 't5', name: 'deploy + execute', desc: 'deploy a contract and call it, atomically', color: { fg: '#E6B85A', border: 'rgba(230,184,90,0.35)' },
+    frames: [
+      { mode: 'verify', scope: 3, target: 'batch',   desc: 'passkey · scope: batch' },
+      { mode: 'default', fn: 'CREATE2',              desc: 'deployer proxy · CREATE2' },
+      { mode: 'sender', fn: 'execute()',             desc: 'newly deployed contract · execute()' },
+    ] },
+];
+
+// ---- sessions data (agent-signed subset only: verify + sender, no paymaster) ----
+let sessionsData = [
+  {
+    id: 'lp-rebalancer', name: 'lp rebalancer', status: 'active', templateId: 't1',
+    used: 12.40, cap: 500, daysLeft: 29, lastRunAgo: '2m ago',
+    executed: 3, blocked: 1,
+    // session.frames = what the session key can sign — agent subset only
+    frames: [
+      { mode: 'verify', scope: 1, target: 'account', desc: 'session key · rebalance() · collectFees()' },
+      { mode: 'sender', fn: 'execute()', desc: 'uniswap v3 position manager' },
+    ],
+    // run history (each tick: success or blocked)
+    ticks: ['success', 'success', 'blocked', 'success'],
+  },
+  {
+    id: 'ens-renewer', name: 'ens renewer', status: 'active', templateId: 't2',
+    used: 0, cap: 50, daysLeft: 345, lastRunAgo: null,
+    executed: 0, blocked: 0,
+    frames: [
+      { mode: 'verify', scope: 1, target: 'account', desc: 'session key · renew()' },
+      { mode: 'sender', fn: 'renew()', desc: 'ens base registrar' },
+    ],
+    ticks: [],
+  },
+  {
+    id: 'price-oracle', name: 'price oracle', status: 'revoked', templateId: 't4',
+    used: 0, cap: 100, daysLeft: null, lastRunAgo: null,
+    executed: 0, blocked: 0,
+    endedAgo: 'revoked yesterday',
+    frames: [
+      { mode: 'verify', scope: 1, target: 'account', desc: 'session key · updatePrice()' },
+      { mode: 'sender', fn: 'updatePrice()', desc: 'chainlink price oracle' },
+    ],
+    ticks: [],
+  },
+  {
+    id: 'dca-bot', name: 'dca bot', status: 'expired', templateId: 't3',
+    used: 420, cap: 500, daysLeft: null, lastRunAgo: null,
+    executed: 8, blocked: 0,
+    endedAgo: 'expired 3 days ago',
+    frames: [
+      { mode: 'verify', scope: 1, target: 'account', desc: 'session key · exactInputSingle()' },
+      { mode: 'sender', fn: 'exactInputSingle()', desc: 'uniswap v3 router · ETH → USDC' },
+    ],
+    ticks: ['success','success','success','success','success','success','success','success'],
+  },
+];
+
+function sessionMetaLine(s) {
+  const isPast = s.status === 'revoked' || s.status === 'expired';
+  if (isPast) {
+    let base = `${s.executed} executed`;
+    if (s.blocked) base += ` · ${s.blocked} blocked`;
+    return base;
+  }
+  // active
+  if (s.executed === 0) return `0 executed · no runs yet`;
+  let base = `${s.executed} executed`;
+  if (s.blocked) base += ` · ${s.blocked} blocked`;
+  if (s.lastRunAgo) base += ` · last ${s.lastRunAgo}`;
+  return base;
+}
+
+function renderSessions() {
+  const el = document.getElementById('sessions-feed');
+  if (!el) return;
+  const active = sessionsData.filter(s => s.status === 'active');
+  const past   = sessionsData.filter(s => s.status !== 'active');
+
+  const renderCard = (s) => {
+    const isPast = s.status !== 'active';
+    const isRevoked = s.status === 'revoked';
+    const usedPct = s.cap ? Math.min(100, (s.used / s.cap) * 100) : 0;
+    const topMeta = isPast
+      ? `${s.endedAgo || s.status}${s.used ? ` · $${s.used} used` : ''}`
+      : `$${s.used.toFixed(2)} of $${s.cap} · ${s.daysLeft} days left`;
+    const ticksHtml = !isPast && s.ticks && s.ticks.length
+      ? `<div class="session-ticks" title="each dot is a run">
+           <span class="session-ticks-label">runs</span>
+           ${s.ticks.map((t, i) => `<span class="tick ${t}" title="${t === 'success' ? `successful run #${i+1}` : `blocked attempt #${i+1}`}"></span>`).join('')}
+         </div>`
+      : '';
+    const usageBar = s.cap && !isPast
+      ? `<div class="usage-bar"><div class="usage-bar-fill${isPast ? ' muted' : ''}" style="width: ${usedPct}%;"></div></div>`
+      : (s.cap ? `<div class="usage-bar"><div class="usage-bar-fill muted" style="width: ${usedPct}%;"></div></div>` : '');
+    const cardClass = isPast ? (isRevoked ? 'revoked' : 'expired') : '';
+    const dotClass  = isPast ? (isRevoked ? 'revoked' : 'expired') : 'active';
+    const nameStyle = isRevoked ? ' style="color: #ef4444;"' : '';
+    const footer = !isPast ? `
+      <div class="card-footer">
+        <div class="card-footer-text">${sessionMetaLine(s)}</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="simulate-link" onclick="event.stopPropagation(); openAgentSimulation('${s.id}')">see it work</button>
+          <button class="revoke-link" onclick="event.stopPropagation(); requestRevoke(this)">revoke</button>
+        </div>
+      </div>` : '';
+    return `
+      <div class="session-card cursor-pointer${isPast ? ' ' + cardClass : ''}" ${!isPast ? 'onclick="toggleSessionCard(this, event)"' : ''}>
+        <div class="session-card-header">
+          <div class="session-dot ${dotClass}"></div>
+          <div style="flex: 1;">
+            <div class="session-name"${nameStyle}>${s.name}</div>
+            <div class="session-meta hide-on-privacy">${topMeta}</div>
+            ${usageBar}
+            ${ticksHtml}
+          </div>
+          ${!isPast ? '<span class="session-card-chev">›</span>' : ''}
+        </div>
+        <div class="frame-section" data-sid="${s.id}"></div>
+        ${footer}
+      </div>
+    `;
+  };
+
+  let html = '';
+  if (active.length) {
+    html += `<div class="section-label">active</div>` + active.map(renderCard).join('');
+  }
+  if (past.length) {
+    html += `
+      <button class="past-sessions-link" onclick="togglePastSessions()">
+        <span id="past-sessions-label">past sessions (${past.length})</span>
+        <span id="past-sessions-chevron">›</span>
+      </button>
+      <div id="past-sessions" class="past-sessions-group" style="display: none;">
+        ${past.map(renderCard).join('')}
+      </div>
+    `;
+  }
+  el.innerHTML = html;
+
+  // render frame pipelines into each card's frame-section
+  sessionsData.forEach(s => {
+    const section = el.querySelector(`.frame-section[data-sid="${s.id}"]`);
+    if (section) section.innerHTML = framePipelineHTML(s.frames, { eyebrow: 'agent can sign' });
+  });
+}
+
+// ---- activity data (full submitted pipeline incl. paymaster) ----
+// for user sends: verify(passkey) + sender + verify(paymaster) = 3 frames
+// for agent runs: verify(session) + sender + verify(paymaster) = 3 frames
+// for grants: verify(passkey) + default + verify(paymaster) = 3 frames
+// for external receives: 0 frames
+let activityData = [
+  {
+    id: 'a1', day: 'today', title: 'sent ETH', sub: 'to ...9f2b · 2 min ago',
+    amount: '−0.5', amountSub: 'ETH · $1,390', amountClass: 'white',
+    kind: 'send', blocked: false, expanded: true,
+    avatarId: 'actx-eth',
+    txHash: '0x8f3a2c1e9b4d7f6a5c8e3b9d2a7f4c1e6b8d5a9f3c2e7b1d4a8f6c5e9b3d2a7f',
+    frames: [
+      { mode: 'verify', scope: 1, target: 'account', desc: 'passkey · p-256' },
+      { mode: 'sender', fn: 'transfer()', desc: 'transfer 0.5 ETH to ...9f2b' },
+      { mode: 'verify', scope: 2, target: 'sponsor', desc: 'grantr paymaster' },
+    ],
+  },
+  {
+    id: 'a2', day: 'today', title: 'lp rebalancer', sub: 'tried transfer · 42 min ago',
+    kind: 'agent', blocked: true,
+    titlePill: 'blocked',
+    avatarId: 'actx-rebal-blocked', avatarDim: true,
+    txHash: '0x2a7f9c4e1b6d3f8a5c2e9b4d7f1a6c8e3b9d5a2f7c1e4b8d6a9f3c5e2b7d1a4f',
+    frames: [
+      { mode: 'verify', scope: 1, target: 'account', desc: 'session key · selector not allowed', failed: true },
+      { mode: 'sender', fn: 'transfer()', desc: 'transfer USDC', skipped: true },
+      { mode: 'verify', scope: 2, target: 'sponsor', desc: 'grantr paymaster', skipped: true },
+    ],
+  },
+  {
+    id: 'a3', day: 'today', title: 'rebalanced on uniswap', sub: 'via lp rebalancer · 1 hr ago',
+    kind: 'agent', blocked: false,
+    avatarId: 'actx-uniswap',
+    txHash: '0x4c7a8f2e1d9b6c3a5f8e2b7d4a1c9f6e3b8d5a2c7f1e4b9d6a3c8f5e2b7d1a4c',
+    frames: [
+      { mode: 'verify', scope: 1, target: 'account', desc: 'session key · rebalance()' },
+      { mode: 'sender', fn: 'execute()', desc: 'uniswap v3 position manager' },
+      { mode: 'verify', scope: 2, target: 'sponsor', desc: 'grantr paymaster' },
+    ],
+  },
+  {
+    id: 'a4', day: 'today', title: 'granted access', sub: 'lp rebalancer · 3 hrs ago · gas by grantr',
+    kind: 'grant', blocked: false,
+    avatarId: 'actx-rebal-granted',
+    txHash: '0x1e4b8d6a9f3c5e2b7d1a4c8f2e9b6d3a5c8f1e4b7d9a2c6f3e8b5d1a4c7f2e9b',
+    frames: [
+      { mode: 'verify', scope: 1, target: 'account', desc: 'passkey · p-256' },
+      { mode: 'default', fn: 'CREATE2', desc: 'add session key · scoped selectors' },
+      { mode: 'verify', scope: 2, target: 'sponsor', desc: 'grantr paymaster' },
+    ],
+  },
+  {
+    id: 'a5', day: 'earlier this week', title: 'received USDC', sub: 'from ...3e8c · yesterday',
+    amount: '+250', amountSub: 'USDC', amountClass: 'green',
+    kind: 'receive', blocked: false,
+    avatarId: 'actx-received',
+    txHash: '0x7d1a4c8f2e9b6d3a5c8f1e4b7d9a2c6f3e8b5d1a4c7f2e9b1e4b8d6a9f3c5e2b',
+    // external receives: no pipeline on your side
+    frames: [],
+    externalNote: 'received externally — no pipeline on your side',
+  },
+  {
+    id: 'a6', day: 'earlier this week', title: 'account created', sub: '2 days ago · gas by grantr',
+    kind: 'grant', blocked: false,
+    avatarId: 'actx-alice',
+    txHash: '0x9f3c5e2b7d1a4c8f2e9b6d3a5c8f1e4b7d9a2c6f3e8b5d1a4c7f2e9b1e4b8d6a',
+    frames: [
+      { mode: 'verify', scope: 1, target: 'account', desc: 'passkey · p-256' },
+      { mode: 'default', fn: 'CREATE2', desc: 'deploy account · set email recovery' },
+      { mode: 'verify', scope: 2, target: 'sponsor', desc: 'grantr paymaster' },
+    ],
+  },
+];
+
+function shortHash(h) { return h ? `${h.slice(0,6)}...${h.slice(-4)}` : ''; }
+
+function txHashCopyHTML(hash) {
+  if (!hash) return '';
+  return `<button class="tx-hash-copy" onclick="event.stopPropagation(); copyTxHash(this, '${hash}')">
+    <span class="tx-hash-copy-hash">${shortHash(hash)}</span>
+    <span class="tx-hash-copy-icon">⎘</span>
+  </button>`;
+}
+
+function copyTxHash(btn, hash) {
+  try { navigator.clipboard && navigator.clipboard.writeText(hash); } catch (e) {}
+  btn.classList.add('copied');
+  const icon = btn.querySelector('.tx-hash-copy-icon');
+  const hashEl = btn.querySelector('.tx-hash-copy-hash');
+  const original = hashEl ? hashEl.textContent : '';
+  if (hashEl) hashEl.textContent = 'copied';
+  setTimeout(() => {
+    btn.classList.remove('copied');
+    if (hashEl) hashEl.textContent = original;
+  }, 1500);
+}
+
+function renderActivity() {
+  const feed = document.getElementById('activity-feed');
+  if (!feed) return;
+  const days = [];
+  const byDay = {};
+  activityData.forEach(a => {
+    if (!byDay[a.day]) { byDay[a.day] = []; days.push(a.day); }
+    byDay[a.day].push(a);
+  });
+
+  let html = '';
+  days.forEach((d, di) => {
+    html += `<div class="section-label"${di === 0 ? ' style="padding-top: 6px;"' : ''}>${d}</div>`;
+    byDay[d].forEach(a => {
+      const frameModes = a.frames.map(f => f.mode).join(',');
+      const entryClass = ['entry'];
+      if (a.expanded) entryClass.push('expanded');
+      if (a.blocked) entryClass.push('blocked');
+      const titleHtml = a.titlePill
+        ? `<span class="entry-pill-blocked">${a.titlePill}</span>${a.title}`
+        : a.title;
+      const rightHtml = a.amount
+        ? `<div class="entry-right">
+            <div class="entry-amount hide-on-privacy ${a.amountClass || 'white'}">${a.amount}</div>
+            <div class="entry-amount-sub hide-on-privacy">${a.amountSub || ''}</div>
+           </div>`
+        : '';
+      const framesInner = a.frames.length
+        ? framePipelineHTML(a.frames, { eyebrow: 'frame pipeline' })
+        : (a.externalNote ? `<div class="italic-voice" style="font-size: 11px; padding: 6px 0;">${a.externalNote}</div>` : '');
+      html += `
+        <div class="${entryClass.join(' ')}" onclick="toggleEntry(this)" data-frames="${frameModes}" data-blocked="${a.blocked}" data-id="${a.id}">
+          <div class="entry-avatar${a.avatarDim ? ' dim' : ''}" id="${a.avatarId || ''}"></div>
+          <div class="entry-body">
+            <div class="entry-title">${titleHtml}</div>
+            <div class="entry-sub">${a.sub}</div>
+          </div>
+          ${rightHtml}
+          <div class="entry-chevron">›</div>
+          <div class="frames">
+            ${framesInner}
+            ${a.txHash ? `<div style="display:flex; justify-content: flex-end; padding-top: 8px;">${txHashCopyHTML(a.txHash)}</div>` : ''}
+          </div>
+        </div>
+      `;
+    });
+  });
+  feed.innerHTML = html;
+  // seed avatars for known slot ids (eth/uniswap logos, pfp identicons)
+  if (typeof seedActivityAvatars === 'function') seedActivityAvatars();
+}
+
+function filledSteps() {
+  return queue.filter(q => q && q.uid);
+}
+
+function frameMeta(step) {
+  if (!step) return '';
+  if (step.mode === 'verify' && step.scope != null) return `scope ${step.scope} · ${step.target || 'account'}`;
+  if ((step.mode === 'sender' || step.mode === 'default') && step.fn) return step.fn;
+  return '';
+}
+
+// horizontal-scroll pipeline widget (ported from desktop)
+function framePipelineHTML(frames, opts) {
+  opts = opts || {};
+  if (!frames || frames.length === 0) return '';
+  const nodes = frames.map((f, i) => {
+    const meta = frameMeta(f);
+    const inactive = opts.showActive && f.active === false;
+    return `
+      <div class="fp-node fp-${f.mode}${inactive ? ' fp-inactive' : ''}">
+        <div class="fp-node-mode">${f.mode}</div>
+        <div class="fp-node-meta">${meta || '—'}</div>
+      </div>
+      ${i < frames.length - 1 ? `<div class="fp-arrow${inactive ? ' fp-arrow-dim' : ''}">→</div>` : ''}
+    `;
+  }).join('');
+  const eyebrow = opts.eyebrow === false ? '' : `<div class="fp-eyebrow">${opts.eyebrow || 'frame pipeline'}</div>`;
+  return `
+    <div class="frame-pipeline">
+      ${eyebrow}
+      <div class="fp-track">${nodes}</div>
+    </div>
+  `;
+}
 
 // ============== REBALANCE AUTHORIZE POLICY ==============
 const authPolicy = { limit: 500, window: '7d', keepRunning: false };
@@ -3634,27 +3868,31 @@ function renderSendScreen() {
   // big readout for amount
   const amountEl = document.getElementById('send-amount-value');
   if (amountEl) amountEl.textContent = `$${sendState.amount.toLocaleString()}`;
-  // threshold note + verify frame
+  // threshold note
   const aboveThreshold = sendState.amount > devicePolicy.threshold;
   const note = document.getElementById('send-threshold-note');
-  const vName = document.getElementById('send-frame-verify-name');
-  const vSub = document.getElementById('send-frame-verify-sub');
-  const sName = document.getElementById('send-frame-sender-name');
-  const sSub = document.getElementById('send-frame-sender-sub');
   const btn = document.getElementById('send-sign-btn');
   if (aboveThreshold) {
-    if (note) note.innerHTML = `<span style="color:#f59e0b;">above your $${devicePolicy.threshold.toLocaleString()} threshold.</span> both your devices must sign this.`;
-    if (vName) vName.textContent = 'both passkeys sign';
-    if (vSub) vSub.textContent = '2-of-2 · iphone + macbook';
+    if (note) note.innerHTML = `<span style="color:var(--amber);">above your $${devicePolicy.threshold.toLocaleString()} threshold.</span> both your devices must sign this.`;
     if (btn) btn.textContent = 'sign on this device';
   } else {
     if (note) note.innerHTML = `<span style="color:var(--text-2);">below $${devicePolicy.threshold.toLocaleString()} threshold.</span> your passkey can sign this alone.`;
-    if (vName) vName.textContent = 'your passkey signs';
-    if (vSub) vSub.textContent = 'p-256 on this device';
     if (btn) btn.textContent = 'send';
   }
-  if (sName) sName.textContent = `transfer $${sendState.amount.toLocaleString()}`;
-  if (sSub) sSub.textContent = `to ${r.name}`;
+
+  // progressive pipeline: lights up as form is filled.
+  // order: verify(passkey) → sender(transfer) → verify(paymaster)
+  const hasAmount = sendState.amount > 0;
+  const hasRecipient = !!r;
+  const verifyDesc = aboveThreshold ? '2-of-2 · iphone + macbook' : 'p-256 · this device';
+  const senderDesc = hasAmount && hasRecipient ? `transfer $${sendState.amount.toLocaleString()} to ${r.name}` : '—';
+  const frames = [
+    { mode: 'verify', scope: 1, target: 'account', desc: verifyDesc,        active: hasAmount && hasRecipient },
+    { mode: 'sender', fn: 'transfer()',             desc: senderDesc,       active: hasAmount && hasRecipient },
+    { mode: 'verify', scope: 2, target: 'sponsor', desc: 'grantr paymaster', active: true },
+  ];
+  const mount = document.getElementById('send-pipeline-mount');
+  if (mount) mount.innerHTML = framePipelineHTML(frames, { showActive: true, eyebrow: 'frame pipeline' });
 }
 
 function setSendAmount(val) {
@@ -3718,52 +3956,47 @@ function simulateSendSubmit() {
 }
 
 function addActivityEntryForSend(wasCoSigned) {
-  // prepend an activity entry to the feed reflecting the completed send
-  const feed = document.querySelector('#screen-activity .feed');
-  if (!feed) return;
   const r = sponsorPool.find(x => x.id === sendState.recipient);
   const amount = sendState.amount;
-  const recipientShort = r ? r.name.replace('.eth', '') : '...';
-  const avatarInner = r ? identicon(r.seed, r.tone) : '';
+  const recipientName = r ? r.name : '—';
 
-  const framesHtml = wasCoSigned ? `
-    <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">both passkeys · 2-of-2</div><div class="frame-status pass">✓</div></div>
-    <div class="frame-row"><div class="frame-mode" style="color:#f59e0b;">approve</div><div class="frame-desc">gas sponsored by grantr</div><div class="frame-status pass">✓</div></div>
-    <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">transfer $${amount.toLocaleString()} to ${r ? r.name : '—'}</div><div class="frame-status pass">✓</div></div>
-  ` : `
-    <div class="frame-row"><div class="frame-mode">verify</div><div class="frame-desc">your passkey · p-256</div><div class="frame-status pass">✓</div></div>
-    <div class="frame-row"><div class="frame-mode" style="color:#f59e0b;">approve</div><div class="frame-desc">gas sponsored by grantr</div><div class="frame-status pass">✓</div></div>
-    <div class="frame-row"><div class="frame-mode">sender</div><div class="frame-desc">transfer $${amount.toLocaleString()} to ${r ? r.name : '—'}</div><div class="frame-status pass">✓</div></div>
-  `;
+  const verifyFrame = wasCoSigned
+    ? { mode: 'verify', scope: 1, target: 'account', desc: 'both passkeys · 2-of-2' }
+    : { mode: 'verify', scope: 1, target: 'account', desc: 'your passkey · p-256' };
 
-  const frameDataList = wasCoSigned ? 'verify,approve,sender' : 'verify,approve,sender';
+  const newEntry = {
+    id: 'a' + Date.now(),
+    day: 'today',
+    title: `sent to ${recipientName}`,
+    sub: `just now${wasCoSigned ? ' · co-signed on laptop' : ''}`,
+    amount: `−$${amount.toLocaleString()}`,
+    amountSub: wasCoSigned ? '2-of-2' : '1 device',
+    amountClass: 'white',
+    kind: 'send', blocked: false, expanded: true,
+    avatarSeed: r ? r.seed : null,
+    avatarTone: r ? r.tone : null,
+    txHash: '0x' + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join(''),
+    frames: [
+      verifyFrame,
+      { mode: 'sender', fn: 'transfer()', desc: `transfer $${amount.toLocaleString()} to ${recipientName}` },
+      { mode: 'verify', scope: 2, target: 'sponsor', desc: 'grantr paymaster' },
+    ],
+  };
 
-  const entryHtml = `
-    <div class="entry expanded" onclick="toggleEntry(this)" data-frames="${frameDataList}" data-blocked="false">
-      <div class="entry-avatar">${avatarInner}</div>
-      <div class="entry-body">
-        <div class="entry-title">sent to ${r ? r.name : '—'}</div>
-        <div class="entry-sub">just now${wasCoSigned ? ' · co-signed on laptop' : ''}</div>
-      </div>
-      <div class="entry-right">
-        <div class="entry-amount white">−$${amount.toLocaleString()}</div>
-        <div class="entry-amount-sub">${wasCoSigned ? '2-of-2' : '1 device'}</div>
-      </div>
-      <div class="entry-chevron">›</div>
-      <div class="frames">${framesHtml}</div>
-    </div>
-  `;
+  // collapse any previously-expanded entries so the fresh one is the only expanded one
+  activityData.forEach(a => { a.expanded = false; });
+  activityData.unshift(newEntry);
+  renderActivity();
 
-  // find the first section-label ("today") and insert the new entry right after it.
-  // collapse any previously-expanded entry so only our fresh one is expanded (variant B behavior).
-  feed.querySelectorAll('.entry.expanded').forEach(e => e.classList.remove('expanded'));
-  const firstSection = feed.querySelector('.section-label');
-  if (firstSection) {
-    firstSection.insertAdjacentHTML('afterend', entryHtml);
-  } else {
-    feed.insertAdjacentHTML('afterbegin', entryHtml);
+  // render the avatar identicon for the new entry
+  if (newEntry.avatarSeed) {
+    const feed = document.getElementById('activity-feed');
+    if (feed) {
+      const el = feed.querySelector(`[data-id="${newEntry.id}"] .entry-avatar`);
+      if (el) el.innerHTML = identicon(newEntry.avatarSeed, newEntry.avatarTone);
+    }
   }
-  // if a filter was set, reset to 'all' so the new entry is visible
+  // reset filter
   filterActivity('all');
 }
 
@@ -4296,43 +4529,187 @@ function setTimelockDelay(val) {
   });
 }
 
-function addFrame(type, name, sub) {
-  buildQueue.push({ type, name, sub });
+// ---- slot model interactions ----
+// accepts either an id (new caller) or legacy (type, name, sub) tuple.
+// legacy callers pass type as first arg — we map to a best-fit library item.
+function addFrame(typeOrId, legacyName, legacySub) {
+  let step;
+  // new: single id string
+  const lib = frameLibrary.flatMap(g => g.items);
+  const byId = lib.find(i => i.id === typeOrId);
+  if (byId) {
+    step = { ...byId, uid: Date.now() + Math.random() };
+  } else if (legacyName != null) {
+    // legacy (type, name, sub)
+    const fallback = lib.find(i => i.mode === typeOrId) || { mode: typeOrId, name: legacyName, desc: legacySub };
+    step = { ...fallback, name: legacyName, desc: legacySub || fallback.desc, uid: Date.now() + Math.random() };
+  } else {
+    return;
+  }
+  // fill first empty slot; if none, append
+  const firstEmpty = queue.findIndex(q => q == null);
+  if (firstEmpty >= 0) queue[firstEmpty] = step;
+  else queue.push(step);
   renderBuildQueue();
 }
 
-function removeFrame(idx) {
-  buildQueue.splice(idx, 1);
+function clearSlot(idx) {
+  queue[idx] = null;
+  trimTrailingEmpties();
   renderBuildQueue();
+}
+
+function removeSlot(idx) {
+  queue.splice(idx, 1);
+  // always keep at least 3 slots
+  while (queue.length < 3) queue.push(null);
+  renderBuildQueue();
+}
+
+// alias retained for legacy callers that pass an index into the filled array
+function removeFrame(idx) {
+  // find the idx-th filled slot in queue
+  let seen = 0;
+  for (let i = 0; i < queue.length; i++) {
+    if (queue[i] && queue[i].uid) {
+      if (seen === idx) { clearSlot(i); return; }
+      seen++;
+    }
+  }
+}
+
+function addSlot() {
+  queue.push(null);
+  renderBuildQueue();
+}
+
+function trimTrailingEmpties() {
+  while (queue.length > 3 && queue[queue.length - 1] == null) queue.pop();
 }
 
 function resetBuildQueue() {
-  buildQueue = [];
+  queue = [null, null, null];
+  editingTemplateName = null;
   renderBuildQueue();
 }
 
-function renderBuildQueue() {
-  const queue = document.getElementById('build-queue');
-  const empty = document.getElementById('build-queue-empty');
-  const btn = document.getElementById('build-preview-btn');
-  const clear = document.getElementById('build-clear');
-  if (!queue) return;
-  if (buildQueue.length === 0) {
-    queue.innerHTML = '<div id="build-queue-empty" style="font-size: 12px; color: #555; font-style: italic;">empty — add frames above</div>';
-    if (btn) { btn.disabled = true; btn.style.opacity = '0.4'; }
-    if (clear) clear.style.display = 'none';
-  } else {
-    queue.innerHTML = buildQueue.map((f, i) =>
-      `<div style="display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid #1a1a1a;">
-        <span class="frame-badge ${f.type}">${f.type}</span>
-        <div style="flex: 1; font-size: 12px; color: var(--text-2);">${f.name}</div>
-        <button onclick="removeFrame(${i})" style="background: transparent; border: none; color: var(--text-4); font-size: 14px; cursor: pointer; padding: 0 4px;">×</button>
-      </div>`
-    ).join('');
-    if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
-    if (clear) clear.style.display = 'block';
-  }
+function useTemplate(id) {
+  const tpl = buildTemplates.find(t => t.id === id);
+  if (!tpl) return;
+  const lib = frameLibrary.flatMap(g => g.items);
+  // match library items to template frames by {mode, scope?, target?, fn?}
+  const resolved = tpl.frames.map(f => {
+    const match = lib.find(i =>
+      i.mode === f.mode &&
+      (f.scope == null || i.scope === f.scope) &&
+      (f.target == null || i.target === f.target) &&
+      (f.fn == null || i.fn === f.fn)
+    );
+    const base = match || { mode: f.mode, name: f.desc, desc: f.desc, scope: f.scope, target: f.target, fn: f.fn };
+    return { ...base, desc: f.desc, uid: Date.now() + Math.random() };
+  });
+  queue = [...resolved];
+  while (queue.length < 3) queue.push(null);
+  editingTemplateName = tpl.name;
+  renderBuildQueue();
 }
+
+function renderBuildLibrary() {
+  const el = document.getElementById('build-library');
+  if (!el) return;
+  el.innerHTML = frameLibrary.map(g => `
+    <div class="frame-group-label">${g.group}</div>
+    ${g.items.map(item => `
+      <div class="build-row" onclick="addFrame('${item.id}')">
+        <span class="frame-badge ${item.mode}">${item.mode}</span>
+        <div class="build-row-info">
+          <div class="build-row-name">${item.name}</div>
+          <div class="build-row-sub">${item.desc}</div>
+        </div>
+        <span style="color: var(--text-4); font-size: 14px;">+</span>
+      </div>
+    `).join('')}
+  `).join('');
+}
+
+function renderBuildTemplates() {
+  const el = document.getElementById('build-templates');
+  if (!el) return;
+  el.innerHTML = buildTemplates.map(t => `
+    <button class="tpl-tile" onclick="useTemplate('${t.id}')"
+            style="--tpl-fg:${t.color.fg}; --tpl-border:${t.color.border};">
+      <div class="tpl-tile-name">${t.name}</div>
+      <div class="tpl-tile-desc">${t.desc}</div>
+    </button>
+  `).join('');
+}
+
+function renderBuildQueue() {
+  const queueEl = document.getElementById('build-queue');
+  const btn = document.getElementById('build-preview-btn');
+  const sub = document.getElementById('build-queue-sub');
+  const tplBlock = document.getElementById('build-templates-block');
+  if (!queueEl) return;
+
+  const filled = filledSteps();
+  const totalSlots = queue.length;
+  const emptyCount = totalSlots - filled.length;
+
+  // render slots
+  queueEl.innerHTML = queue.map((q, i) => {
+    const num = String(i + 1).padStart(2, '0');
+    if (q == null) {
+      const removable = totalSlots > 3;
+      return `
+        <div class="slot slot-empty">
+          <div class="slot-num">${num}</div>
+          <div class="slot-empty-hint">drop a step here</div>
+          ${removable ? `<button class="slot-x" onclick="removeSlot(${i})" aria-label="remove slot">×</button>` : ''}
+        </div>
+      `;
+    }
+    const meta = frameMeta(q);
+    return `
+      <div class="slot slot-filled">
+        <div class="slot-num">${num}</div>
+        <span class="frame-badge ${q.mode}">${q.mode}</span>
+        <div class="slot-filled-info">
+          <div class="slot-filled-name">${q.name}</div>
+          ${meta ? `<div class="slot-filled-meta">${meta}</div>` : ''}
+        </div>
+        <button class="slot-x" onclick="clearSlot(${i})" aria-label="clear slot">×</button>
+      </div>
+    `;
+  }).join('');
+
+  // sub-copy
+  let subText;
+  if (filled.length === 0) {
+    subText = `${totalSlots} empty slots`;
+  } else if (emptyCount > 0) {
+    subText = `${filled.length} of ${totalSlots} filled`;
+  } else {
+    subText = `${filled.length} frames · ready`;
+  }
+  if (editingTemplateName) subText = `editing "${editingTemplateName}" · ${subText}`;
+  if (sub) sub.textContent = subText;
+
+  // templates visible only when queue is untouched (no filled, not editing)
+  if (tplBlock) {
+    tplBlock.style.display = (filled.length === 0 && !editingTemplateName) ? '' : 'none';
+  }
+
+  // preview button
+  if (btn) {
+    const ready = filled.length > 0;
+    btn.disabled = !ready;
+    btn.style.opacity = ready ? '1' : '0.4';
+  }
+
+  // keep buildQueue legacy mirror so older callers (tx preview, etc.) still see filled frames
+  buildQueue = filled.map(f => ({ type: f.mode, name: f.name, sub: f.desc, scope: f.scope, target: f.target, fn: f.fn }));
+}
+
 
 // ============== TX PREVIEW MODAL ==============
 
@@ -4341,16 +4718,16 @@ const txPreviewData = {
     title: 'let grantr rebalance your lp',
     desc: 'install a session key so the agent can rebalance this position and collect fees. it can\'t do anything else.',
     frames: [
-      { type: 'verify', name: 'passkey signature', sub: 'p-256 · your device' },
-      { type: 'approve', name: 'grantr pays gas', sub: 'sponsored paymaster' },
-      { type: 'default', name: 'add session key', sub: 'scope: rebalance() · collectFees()' }
+      { type: 'verify', name: 'passkey signature', sub: 'p-256 · your device', scope: 1, target: 'account' },
+      { type: 'verify', name: 'grantr pays gas',   sub: 'sponsored paymaster', scope: 2, target: 'sponsor' },
+      { type: 'default', name: 'add session key', sub: 'scope: rebalance() · collectFees()', fn: 'CREATE2' }
     ],
     details: [
       ['spending limit', '—'],
       ['access window', '—'],
       ['keep running', '—'],
       ['agent', 'lp rebalancer · ...9d8f'],
-      ['network', 'etherex devnet'],
+      ['network', 'ethrex devnet'],
       ['gas', '0 ETH · sponsored']
     ],
     onConfirm: () => { closeTxPreview(); go('rebalance-authorize'); setTimeout(() => grantRebalance(), 100); },
@@ -4365,13 +4742,13 @@ const txPreviewData = {
     title: 'sponsor their gas',
     desc: 'you pay the gas for this transaction. the recipient still signs the action.',
     frames: [
-      { type: 'verify', name: 'your passkey', sub: 'p-256 · authorizes the sponsor approval' },
-      { type: 'approve', name: 'pay recipient gas', sub: '—' }
+      { type: 'verify', name: 'your passkey', sub: 'p-256 · authorizes the sponsor approval', scope: 1, target: 'account' },
+      { type: 'verify', name: 'pay recipient gas', sub: '—', scope: 2, target: 'sponsor' }
     ],
     details: [
       ['recipient', '—'],
       ['max gas', '—'],
-      ['network', 'etherex devnet']
+      ['network', 'ethrex devnet']
     ],
     onConfirm: () => { closeTxPreview(); go('home'); },
     onOpen: () => {
@@ -4390,7 +4767,7 @@ const txPreviewData = {
     desc: 'these steps run together. if any fails, the whole thing reverts.',
     frames: [],
     details: [
-      ['network', 'etherex devnet'],
+      ['network', 'ethrex devnet'],
       ['gas', '0 ETH · sponsored']
     ],
     onConfirm: () => { closeTxPreview(); resetBuildQueue(); go('home'); }
@@ -4399,15 +4776,15 @@ const txPreviewData = {
     title: 'add your guardians',
     desc: '2-of-3 of them can co-sign a recovery if you lose your device. they can\'t sign transactions or see your activity.',
     frames: [
-      { type: 'verify', name: 'your passkey signs', sub: 'p-256 · this device' },
-      { type: 'approve', name: 'grantr pays gas', sub: 'sponsored paymaster' },
-      { type: 'default', name: 'install guardian policy', sub: '2-of-3 quorum' }
+      { type: 'verify', name: 'your passkey signs', sub: 'p-256 · this device', scope: 1, target: 'account' },
+      { type: 'verify', name: 'grantr pays gas', sub: 'sponsored paymaster', scope: 2, target: 'sponsor' },
+      { type: 'default', name: 'install guardian policy', sub: '2-of-3 quorum', fn: 'CREATE2' }
     ],
     details: [
       ['guardians', '—'],
       ['quorum', '2 of 3'],
       ['authority', 'key rotation only'],
-      ['network', 'etherex devnet'],
+      ['network', 'ethrex devnet'],
       ['gas', '0 ETH · sponsored']
     ],
     onConfirm: () => { closeTxPreview(); startAddingGuardians(); },
@@ -4424,16 +4801,16 @@ const txPreviewData = {
     title: 'add your laptop as a second signer',
     desc: 'below the threshold, either device works. above it, both have to sign.',
     frames: [
-      { type: 'verify', name: 'your phone passkey signs', sub: 'p-256 · this device' },
-      { type: 'approve', name: 'grantr pays gas', sub: 'sponsored paymaster' },
-      { type: 'default', name: 'add laptop key · set threshold', sub: '—' }
+      { type: 'verify', name: 'your phone passkey signs', sub: 'p-256 · this device', scope: 1, target: 'account' },
+      { type: 'verify', name: 'grantr pays gas', sub: 'sponsored paymaster', scope: 2, target: 'sponsor' },
+      { type: 'default', name: 'add laptop key · set threshold', sub: '—', fn: 'CREATE2' }
     ],
     details: [
       ['new device', 'macbook air'],
       ['threshold', '—'],
       ['below threshold', 'either device'],
       ['at or above', 'both devices'],
-      ['network', 'etherex devnet'],
+      ['network', 'ethrex devnet'],
       ['gas', '0 ETH · sponsored']
     ],
     onConfirm: () => { closeTxPreview(); startAddingDevice(); },
@@ -4447,15 +4824,15 @@ const txPreviewData = {
     title: 'revoke session',
     desc: 'the agent can\'t do anything after this. any future attempt fails at the verify frame.',
     frames: [
-      { type: 'verify', name: 'your passkey signs', sub: 'p-256 · this device' },
-      { type: 'approve', name: 'grantr pays gas', sub: 'sponsored paymaster' },
-      { type: 'default', name: 'remove session key', sub: '—' }
+      { type: 'verify', name: 'your passkey signs', sub: 'p-256 · this device', scope: 1, target: 'account' },
+      { type: 'verify', name: 'grantr pays gas', sub: 'sponsored paymaster', scope: 2, target: 'sponsor' },
+      { type: 'default', name: 'remove session key', sub: '—', fn: 'CREATE2' }
     ],
     details: [
       ['agent', '—'],
       ['executions so far', '—'],
       ['after revoke', 'agent can do nothing'],
-      ['network', 'etherex devnet'],
+      ['network', 'ethrex devnet'],
       ['gas', '0 ETH · sponsored']
     ],
     onConfirm: () => {
@@ -4488,15 +4865,15 @@ const txPreviewData = {
     title: 'send transaction',
     desc: 'transfer tokens to another address. grantr covers the gas.',
     frames: [
-      { type: 'verify', name: '—', sub: '—' },
-      { type: 'approve', name: 'gas sponsored', sub: 'grantr paymaster' },
-      { type: 'sender', name: '—', sub: '—' }
+      { type: 'verify', name: '—', sub: '—', scope: 1, target: 'account' },
+      { type: 'sender', name: '—', sub: '—', fn: 'transfer()' },
+      { type: 'verify', name: 'gas sponsored', sub: 'grantr paymaster', scope: 2, target: 'sponsor' }
     ],
     details: [
       ['recipient', '—'],
       ['amount', '—'],
       ['signing', '—'],
-      ['network', 'etherex devnet'],
+      ['network', 'ethrex devnet'],
       ['gas', '0 ETH · sponsored']
     ],
     onConfirm: () => {
@@ -4519,8 +4896,8 @@ const txPreviewData = {
       d[2][1] = above ? `2-of-2 · iphone + macbook` : `your passkey · this device`;
       txPreviewData.send.frames[0].name = above ? 'both passkeys' : 'your passkey';
       txPreviewData.send.frames[0].sub = above ? '2-of-2 · iphone + macbook' : 'p-256 · this device';
-      txPreviewData.send.frames[2].name = `transfer $${sendState.amount.toLocaleString()}`;
-      txPreviewData.send.frames[2].sub = r ? `to ${r.name}` : '—';
+      txPreviewData.send.frames[1].name = `transfer $${sendState.amount.toLocaleString()}`;
+      txPreviewData.send.frames[1].sub = r ? `to ${r.name}` : '—';
       // dynamic consequence-first title
       txPreviewData.send.title = r ? `send $${sendState.amount.toLocaleString()} to ${r.name.replace('.eth', '')}` : `send $${sendState.amount.toLocaleString()}`;
       txPreviewData.send.desc = above
@@ -4532,16 +4909,16 @@ const txPreviewData = {
     title: 'grant access',
     desc: 'the agent can only do what you\'ve scoped. revoke any time.',
     frames: [
-      { type: 'verify', name: 'your passkey signs', sub: 'p-256 · this device' },
-      { type: 'approve', name: 'grantr pays gas', sub: 'sponsored paymaster' },
-      { type: 'default', name: 'install session key', sub: '—' }
+      { type: 'verify', name: 'your passkey signs', sub: 'p-256 · this device', scope: 1, target: 'account' },
+      { type: 'verify', name: 'grantr pays gas', sub: 'sponsored paymaster', scope: 2, target: 'sponsor' },
+      { type: 'default', name: 'install session key', sub: '—', fn: 'CREATE2' }
     ],
     details: [
       ['agent', '—'],
       ['can do', '—'],
       ['spending limit', '—'],
       ['for', '—'],
-      ['network', 'etherex devnet'],
+      ['network', 'ethrex devnet'],
       ['gas', '0 ETH · sponsored']
     ],
     onConfirm: () => { closeTxPreview(); startGrantingDelegation(); },
@@ -4617,17 +4994,11 @@ function openTxPreview(key) {
   document.getElementById('tx-preview-desc').textContent = data.desc;
 
   // for build, use the live queue
-  const frames = key === 'build' ? buildQueue : data.frames;
+  const frames = key === 'build'
+    ? filledSteps().map(f => ({ mode: f.mode, scope: f.scope, target: f.target, fn: f.fn }))
+    : data.frames.map(f => ({ mode: f.type, scope: f.scope, target: f.target, fn: f.fn }));
 
-  document.getElementById('tx-preview-frames').innerHTML = frames.map(f =>
-    `<div style="display: flex; align-items: center; gap: 10px; padding: 8px 0;">
-      <span class="frame-badge ${f.type}">${f.type}</span>
-      <div style="flex: 1; text-align: right;">
-        <div style="font-size: 12px; color: var(--text-2); font-weight: 500;">${f.name}</div>
-        <div style="font-size: 10px; color: var(--text-4); margin-top: 2px;">${f.sub}</div>
-      </div>
-    </div>`
-  ).join('');
+  document.getElementById('tx-preview-frames').innerHTML = framePipelineHTML(frames, { eyebrow: 'frame pipeline' });
 
   document.getElementById('tx-preview-details').innerHTML = data.details.map(([k, v]) =>
     `<div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
@@ -4650,6 +5021,10 @@ function confirmTxPreview() {
   if (data && data.onConfirm) {
     data.onConfirm();
   }
+}
+
+function togglePrivacy() {
+  document.body.classList.toggle('privacy-on');
 }
 
 function togglePastSessions() {
@@ -4847,6 +5222,31 @@ function copyAddrRow(row, addr) {
   }, 1200);
 }
 
+// avatar helpers (hoisted so renderActivity can re-seed after re-render)
+function _pfpInner(seed) {
+  const palettes = [['#fca5a5','#c084fc'],['#fcd34d','#fb923c'],['#86efac','#67e8f9'],['#c4b5fd','#f9a8d4'],['#fdba74','#f472b6'],['#6ee7b7','#a5b4fc'],['#fde68a','#fca5a5'],['#93c5fd','#c4b5fd']];
+  let h = 0; for (let i = 0; i < seed.length; i++) h = ((h << 5) - h + seed.charCodeAt(i)) | 0;
+  const p = palettes[Math.abs(h) % palettes.length];
+  const angle = (Math.abs(h >> 3) % 8) * 45;
+  const gid = 'pfp-' + Math.abs(h).toString(36);
+  return `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;"><defs><linearGradient id="${gid}" gradientTransform="rotate(${angle} 16 16)"><stop offset="0%" stop-color="${p[0]}"/><stop offset="100%" stop-color="${p[1]}"/></linearGradient></defs><rect width="32" height="32" fill="url(#${gid})"/></svg>`;
+}
+function _logoInner(url) { return `<img src="${url}" style="width:72%;height:72%;object-fit:contain;display:block;margin:14%;" alt=""/>`; }
+function _setSlot(id, inner, whiteBg) {
+  const el = document.getElementById(id);
+  if (el) { el.innerHTML = inner; if (whiteBg) el.style.background = '#fff'; else el.style.background = ''; }
+}
+const _aliceInner = `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg>`;
+
+function seedActivityAvatars() {
+  _setSlot('actx-eth', _logoInner('https://assets.coingecko.com/coins/images/279/large/ethereum.png'), true);
+  _setSlot('actx-rebal-blocked', _pfpInner('lp-rebalancer'));
+  _setSlot('actx-uniswap', _logoInner('https://assets.coingecko.com/coins/images/12504/large/uni.jpg'), true);
+  _setSlot('actx-rebal-granted', _pfpInner('lp-rebalancer'));
+  _setSlot('actx-received', _logoInner('https://assets.coingecko.com/coins/images/6319/large/usdc.png'), true);
+  _setSlot('actx-alice', _aliceInner);
+}
+
 // initialize with own when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   filterAddresses('own');
@@ -4863,32 +5263,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (recov) recov.innerHTML = identicon(seed, tone);
   }
   renderGuardianPool();
-  // populate activity-feed avatars — slots are existing .entry-avatar divs, we set their inner content
-  const pfpInner = (seed) => {
-    const palettes = [['#fca5a5','#c084fc'],['#fcd34d','#fb923c'],['#86efac','#67e8f9'],['#c4b5fd','#f9a8d4'],['#fdba74','#f472b6'],['#6ee7b7','#a5b4fc'],['#fde68a','#fca5a5'],['#93c5fd','#c4b5fd']];
-    let h = 0; for (let i = 0; i < seed.length; i++) h = ((h << 5) - h + seed.charCodeAt(i)) | 0;
-    const p = palettes[Math.abs(h) % palettes.length];
-    const angle = (Math.abs(h >> 3) % 8) * 45;
-    const gid = 'pfp-' + Math.abs(h).toString(36);
-    return `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;"><defs><linearGradient id="${gid}" gradientTransform="rotate(${angle} 16 16)"><stop offset="0%" stop-color="${p[0]}"/><stop offset="100%" stop-color="${p[1]}"/></linearGradient></defs><rect width="32" height="32" fill="url(#${gid})"/></svg>`;
-  };
-  const logoInner = (url) => `<img src="${url}" style="width:72%;height:72%;object-fit:contain;display:block;margin:14%;" alt=""/>`;
-  const setSlot = (id, inner, whiteBg) => {
-    const el = document.getElementById(id);
-    if (el) { el.innerHTML = inner; if (whiteBg) el.style.background = '#fff'; }
-  };
-  const aliceInner = `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;"><rect width="32" height="32" fill="#c4b5fd"/><path d="M16 34 C 16 24, 6 24, 6 34 Z M 16 34 C 16 24, 26 24, 26 34 Z" fill="#f9a8d4"/><circle cx="16" cy="14" r="7" fill="#fcd5c6"/><path d="M9 14 Q 9 6, 16 6 Q 23 6, 23 14 L 23 11 Q 18 9, 16 12 Q 14 9, 9 11 Z" fill="#7c2d12"/><circle cx="13" cy="14" r="1" fill="#1f1f1f"/><circle cx="19" cy="14" r="1" fill="#1f1f1f"/><path d="M14 17 Q 16 18.5, 18 17" stroke="#be4a6e" stroke-width="1" fill="none" stroke-linecap="round"/></svg>`;
-  setSlot('actx-eth', logoInner('https://assets.coingecko.com/coins/images/279/large/ethereum.png'), true);
-  setSlot('actx-rebal-blocked', pfpInner('lp-rebalancer'));
-  setSlot('actx-uniswap', logoInner('https://assets.coingecko.com/coins/images/12504/large/uni.jpg'), true);
-  setSlot('actx-rebal-granted', pfpInner('lp-rebalancer'));
-  setSlot('actx-received', logoInner('https://assets.coingecko.com/coins/images/6319/large/usdc.png'), true);
-  setSlot('actx-alice', aliceInner);
-  setSlot('reb-dash-act-1', pfpInner('lp-rebalancer'));
-  setSlot('reb-dash-act-2', logoInner('https://assets.coingecko.com/coins/images/279/large/ethereum.png'), true);
+  // activity feed avatars are seeded after each renderActivity() via hook in go()
+  _setSlot('reb-dash-act-1', _pfpInner('lp-rebalancer'));
+  _setSlot('reb-dash-act-2', _logoInner('https://assets.coingecko.com/coins/images/279/large/ethereum.png'), true);
   // home screen feeds (1 session row + 1 activity row)
-  setSlot('home-feed-s1', pfpInner('lp-rebalancer'));
-  setSlot('home-feed-a1', pfpInner('bob.eth'));
+  _setSlot('home-feed-s1', _pfpInner('lp-rebalancer'));
+  _setSlot('home-feed-a1', _pfpInner('bob.eth'));
 });
 
 // ============== GUARDIAN SELECTION ==============
