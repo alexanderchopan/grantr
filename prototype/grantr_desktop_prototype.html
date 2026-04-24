@@ -3240,7 +3240,7 @@ button {
               </div>
               <span class="account-row-name">policies</span>
             </div>
-            <div class="account-row-right" id="account-policies-count">4 policies <span class="account-row-chev">›</span></div>
+            <div class="account-row-right" id="account-policies-count">2 installed <span class="account-row-chev">›</span></div>
           </div>
           <div class="account-row" onclick="openAccountDetailsModal()">
             <div class="account-row-left">
@@ -5001,6 +5001,13 @@ function renderPolicies() {
       </div>
     `;
   }).join('');
+
+  // also update the account-row count
+  const accountCountEl = document.getElementById('account-policies-count');
+  if (accountCountEl) {
+    const n = accountPolicies.length;
+    accountCountEl.innerHTML = `${n} installed <span class="account-row-chev">›</span>`;
+  }
 }
 
 function openPolicyPicker() {
