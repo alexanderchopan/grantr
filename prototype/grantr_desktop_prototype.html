@@ -615,36 +615,90 @@ button {
 /* ===== build screen ===== */
 .build {
   display: grid;
-  grid-template-columns: 360px 1fr;
-  gap: 24px;
-  min-height: 520px;
+  grid-template-columns: 280px 1fr;
+  gap: 16px;
+  align-items: stretch;
 }
 .build-pane {
   background: var(--card);
-  border-radius: 22px;
-  padding: 24px;
+  border-radius: 18px;
+  padding: 18px 18px 16px;
   display: flex;
   flex-direction: column;
+  min-width: 0;
+}
+.build-pane-lib {
+  max-height: 640px;
+  overflow: auto;
+}
+.build-pane-queue {
+  min-height: 520px;
 }
 .build-pane-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
+}
+.build-pane-head-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  min-height: 28px;
 }
 .build-pane-title {
   font-size: 15px;
   color: var(--text-1);
   font-weight: 500;
 }
+.build-pane-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 3px;
+}
 .build-pane-sub {
   font-size: 12px;
   color: var(--text-voice);
   font-style: italic;
 }
+.build-pane-sub-inline {
+  font-size: 12px;
+  color: var(--text-voice);
+  font-style: italic;
+  line-height: 1.3;
+}
+
+/* queue head: eyebrow+sub on left, template chips on right */
+.queue-head {
+  align-items: center;
+}
+.queue-head-left {
+  min-width: 0;
+}
+.queue-head-left .build-pane-eyebrow {
+  margin-bottom: 2px;
+}
+.queue-head-tpls {
+  display: flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+.queue-head-tpls .tpl-chip {
+  aspect-ratio: auto;
+  padding: 6px 12px;
+  font-size: 11px;
+  border-radius: 999px;
+  min-height: 26px;
+}
 
 .frame-group {
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 .frame-group:last-child { margin-bottom: 0; }
 .frame-group-label {
@@ -653,41 +707,36 @@ button {
   color: var(--text-4);
   text-transform: uppercase;
   letter-spacing: 1.2px;
-  margin-bottom: 10px;
-  padding: 0 14px;
+  margin-bottom: 6px;
+  padding: 0 10px;
 }
 .frame-option {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 10px 14px;
-  border-radius: 12px;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 9px;
   cursor: pointer;
   transition: background 0.15s;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 .frame-option:hover { background: var(--card-hover); }
-.frame-option > .frame-pill { flex-shrink: 0; min-width: 68px; text-align: center; justify-content: center; }
-.frame-option-body { flex: 1; min-width: 0; }
+.frame-option > .frame-pill { flex-shrink: 0; min-width: 56px; text-align: center; justify-content: center; }
 .frame-option-name {
-  font-size: 13px;
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
   color: var(--text-1);
   font-weight: 500;
-}
-.frame-option-desc {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--text-3);
-  margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .frame-option-add {
   color: var(--text-4);
-  font-size: 16px;
-  width: 24px;
-  height: 24px;
+  font-size: 14px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -702,17 +751,142 @@ button {
 
 /* ===== build queue ===== */
 .queue-empty {
-  flex: 1;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   color: var(--text-3);
-  font-size: 14px;
+  font-size: 13px;
   font-family: 'DM Mono', monospace;
   border: 0.5px dashed var(--border-2);
-  border-radius: 16px;
-  padding: 48px 24px;
+  border-radius: 14px;
+  padding: 32px 20px;
+}
+
+/* ===== template picker (empty-state of the queue pane) ===== */
+.tpl-picker-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.tpl-tile {
+  background: var(--bg);
+  border: 0.5px solid var(--border);
+  border-radius: 14px;
+  position: relative;
+  transition: border-color 0.15s, background 0.15s;
+  display: flex;
+  flex-direction: column;
+}
+.tpl-tile:hover {
+  border-color: var(--tpl-border, var(--text-4));
+  background: var(--card-hover);
+}
+.tpl-tile-body {
+  background: transparent;
+  border: none;
+  padding: 14px 40px 14px 16px;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font-family: inherit;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  min-height: 86px;
+}
+.tpl-tile-body:active { transform: scale(0.995); }
+.tpl-tile-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+.tpl-tile-name {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--tpl-fg, var(--text-1));
+}
+.tpl-tile-session {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  flex-shrink: 0;
+}
+.tpl-tile-desc {
+  font-size: 12px;
+  color: var(--text-voice);
+  font-style: italic;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tpl-tile-chev {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 8px;
+  background: transparent;
+  border: 0.5px solid var(--border);
+  color: var(--text-3);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s, transform 0.2s;
+}
+.tpl-tile-chev:hover {
+  background: var(--card-hover);
+  color: var(--text-1);
+}
+.tpl-tile.expanded .tpl-tile-chev {
+  transform: rotate(90deg);
+}
+.tpl-tile-preview {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+  padding: 0 16px;
+}
+.tpl-tile.expanded .tpl-tile-preview {
+  max-height: 300px;
+  padding: 0 16px 14px;
+  border-top: 0.5px solid var(--border);
+  padding-top: 10px;
+  margin-top: 2px;
+}
+.tpl-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+}
+.tpl-preview-row + .tpl-preview-row {
+  border-top: 0.5px dashed var(--border);
+}
+.tpl-preview-row .frame-pill {
+  min-width: 56px;
+  justify-content: center;
+}
+.tpl-preview-desc {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-3);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .queue-list {
   flex: 1;
@@ -765,10 +939,145 @@ button {
   border-radius: 50%;
   flex-shrink: 0;
   transition: background 0.15s, color 0.15s;
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 .queue-item-remove:hover {
   background: rgba(239,68,68,0.1);
   color: var(--red);
+}
+
+/* ===== slots (v37) ===== */
+.queue-slot {
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.12s;
+}
+.queue-slot-filled {
+  background: var(--bg);
+  border: 0.5px solid var(--border);
+}
+.queue-slot-empty {
+  background: transparent;
+  border: 0.5px dashed var(--border-2);
+  min-height: 52px;
+}
+.queue-slot-empty .queue-slot-hint {
+  flex: 1;
+  font-family: 'DM Sans', sans-serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--text-voice);
+}
+.queue-slot.drag-over {
+  border-color: var(--green);
+  background: rgba(0,214,50,0.06);
+  box-shadow: inset 0 0 0 0.5px var(--green);
+  transform: translateY(-1px);
+}
+.queue-slot-remove {
+  color: var(--text-4);
+  font-size: 14px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.queue-slot-remove:hover {
+  background: rgba(239,68,68,0.08);
+  color: var(--red);
+}
+
+.queue-add-slot {
+  margin-top: 4px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 0.5px dashed var(--border);
+  border-radius: 12px;
+  color: var(--text-3);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-style: italic;
+  cursor: pointer;
+  width: fit-content;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.queue-add-slot:hover {
+  border-color: var(--text-4);
+  color: var(--text-1);
+  background: var(--card-hover);
+  font-style: normal;
+}
+.queue-add-slot-plus {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--card-hover);
+  color: var(--text-2);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.frame-option.dragging {
+  opacity: 0.5;
+}
+
+/* ===== templates strip at bottom of library ===== */
+.tpl-strip-group {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 0.5px solid var(--border);
+}
+.tpl-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.tpl-chip {
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  background: var(--bg);
+  border: 0.5px solid var(--tpl-border, var(--border));
+  color: var(--tpl-fg, var(--text-1));
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition: background 0.15s, transform 0.12s, border-color 0.15s;
+}
+.tpl-chip:hover {
+  background: var(--card-hover);
+}
+.tpl-chip:active {
+  transform: scale(0.96);
+}
+.tpl-chip-name {
+  line-height: 1.2;
 }
 
 .queue-actions {
@@ -1944,13 +2253,13 @@ button {
 
 /* ===== account screen ===== */
 .account-wrap {
-  max-width: 720px;
+  max-width: 920px;
 }
 .account-identity {
   display: flex;
   align-items: center;
   gap: 18px;
-  padding: 0 4px 28px;
+  padding: 0 4px 24px;
   border-bottom: 0.5px solid var(--border);
   margin-bottom: 28px;
 }
@@ -1981,20 +2290,23 @@ button {
   color: var(--text-4);
   margin: 0 6px;
 }
-.account-explorer-btn {
-  font-size: 13px;
-  color: var(--text-2);
-  padding: 8px 16px;
-  border-radius: 999px;
-  border: 0.5px solid var(--border-2);
-  background: transparent;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-  flex-shrink: 0;
+.account-addr-explorer {
+  color: var(--text-3);
+  text-decoration: none;
+  transition: color 0.15s;
 }
-.account-explorer-btn:hover {
-  background: var(--card-hover);
+.account-addr-explorer:hover {
   color: var(--text-1);
-  border-color: var(--text-4);
+}
+
+.account-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.account-col {
+  min-width: 0;
 }
 
 .account-section-label {
@@ -2003,10 +2315,7 @@ button {
   color: var(--text-3);
   text-transform: uppercase;
   letter-spacing: 1.2px;
-  margin: 28px 4px 12px;
-}
-.account-section-label:first-of-type {
-  margin-top: 0;
+  margin: 0 4px 10px;
 }
 .account-rows {
   background: var(--card);
@@ -2018,7 +2327,7 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 14px 18px;
   cursor: pointer;
   transition: background 0.15s;
   text-decoration: none;
@@ -2034,17 +2343,33 @@ button {
 .account-row-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   min-width: 0;
 }
 .account-row-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+.account-row-icon.ic-blue {
+  background: rgba(10,132,255,0.12);
+  color: #85b7eb;
+}
+.account-row-icon.ic-green {
+  background: rgba(0,214,50,0.12);
+  color: #6ad678;
+}
+.account-row-icon.ic-amber {
+  background: rgba(255,159,10,0.12);
+  color: #f5b964;
+}
+.account-row-icon.ic-neutral {
+  background: var(--card-hover);
+  color: var(--text-2);
 }
 .account-row-name {
   font-size: 14px;
@@ -2065,6 +2390,26 @@ button {
 }
 .account-row-right .account-row-chev {
   font-family: 'DM Sans', sans-serif;
+}
+
+.account-footer {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 0.5px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+}
+.account-footer-link {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-3);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  transition: color 0.15s;
+}
+.account-footer-link:hover {
+  color: var(--text-1);
 }
 
 /* ===== addresses screen ===== */
@@ -3394,22 +3739,23 @@ button {
       </div>
     </div>
     <div id="screen-build" class="screen">
-      <div class="build-top" id="build-top">
-        <div class="template-grid" id="templates-grid"></div>
-      </div>
-
       <div class="build">
-        <!-- LIBRARY -->
-        <div class="build-pane">
+        <!-- LIBRARY (left) -->
+        <div class="build-pane build-pane-lib">
+          <div class="build-pane-head-compact">
+            <div class="build-pane-eyebrow">steps</div>
+          </div>
           <div id="frame-library"></div>
         </div>
 
-        <!-- QUEUE -->
-        <div class="build-pane">
-          <div class="build-pane-head">
-            <div>
-              <div class="build-pane-sub" id="queue-sub">empty — add frames from the left</div>
+        <!-- QUEUE (right) — slot-based composer, templates live in the header -->
+        <div class="build-pane build-pane-queue">
+          <div class="build-pane-head-compact queue-head">
+            <div class="queue-head-left">
+              <div class="build-pane-eyebrow" id="queue-eyebrow">your queue</div>
+              <div class="build-pane-sub-inline" id="queue-sub-inline"></div>
             </div>
+            <div class="queue-head-tpls" id="queue-head-tpls"></div>
           </div>
           <div id="queue-container"></div>
           <div class="queue-actions">
@@ -3426,7 +3772,6 @@ button {
             <div class="sessions-title">sessions</div>
             <div class="sessions-sub">agents and their instructions, live</div>
           </div>
-          <button class="policies-new" onclick="go('build')">new session</button>
         </div>
 
         <div class="sessions-section" id="sessions-active-wrap">
@@ -3481,98 +3826,82 @@ button {
             <div class="account-name">alice.eth</div>
             <div class="account-addr">
               <span class="tx-hash-copy" onclick="copyTxHash(this, '0x8f3ab94c7a')">0x8f3a...4c7a</span>
-              <span class="account-addr-sep">·</span> base mainnet
+              <span class="account-addr-sep">·</span>
+              <a href="https://basescan.org/address/0x8f3ab94c7a" target="_blank" rel="noopener" class="account-addr-explorer">view on explorer ↗</a>
             </div>
-          </div>
-          <a class="account-explorer-btn" href="https://basescan.org/address/0x8f3ab94c7a" target="_blank" rel="noopener" style="text-decoration:none;">view on explorer</a>
-        </div>
-
-        <div class="account-section-label">identity</div>
-        <div class="account-rows">
-          <div class="account-row" onclick="openRecoveryModal()">
-            <div class="account-row-left">
-              <div class="account-row-icon" style="background:#0a1428;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3 L20 7 V12 C20 17 16 20 12 21 C8 20 4 17 4 12 V7 Z" stroke="#0a84ff" stroke-width="1.5" fill="none"/></svg>
-              </div>
-              <span class="account-row-name">recovery</span>
-            </div>
-            <div class="account-row-right">3 guardians · email <span class="account-row-chev">›</span></div>
-          </div>
-          <div class="account-row" onclick="openKeysModal()">
-            <div class="account-row-left">
-              <div class="account-row-icon" style="background:#0a1f12;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="15" r="4" stroke="#00d632" stroke-width="1.5" fill="none"/><path d="M11 12 L20 3 M16 7 L19 10" stroke="#00d632" stroke-width="1.5"/></svg>
-              </div>
-              <span class="account-row-name">keys</span>
-            </div>
-            <div class="account-row-right">2 keys · macbook + yubikey <span class="account-row-chev">›</span></div>
-          </div>
-          <div class="account-row" onclick="go('policies')">
-            <div class="account-row-left">
-              <div class="account-row-icon" style="background:#0a1428;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 12 L11 14 L15 10" stroke="#0a84ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="#0a84ff" stroke-width="1.5" fill="none"/></svg>
-              </div>
-              <span class="account-row-name">policies</span>
-            </div>
-            <div class="account-row-right" id="account-policies-count">2 installed <span class="account-row-chev">›</span></div>
-          </div>
-          <div class="account-row" onclick="openAccountDetailsModal()">
-            <div class="account-row-left">
-              <div class="account-row-icon" style="background:#1a1a1a;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#fff" stroke-width="1.5" fill="none"/></svg>
-              </div>
-              <span class="account-row-name">account details</span>
-            </div>
-            <div class="account-row-right" style="font-family:'DM Mono',monospace;">...4c7a <span class="account-row-chev">›</span></div>
           </div>
         </div>
 
-        <div class="account-section-label">contacts</div>
-        <div class="account-rows">
-          <div class="account-row" onclick="go('addresses')">
-            <div class="account-row-left">
-              <div class="account-row-icon" style="background:#1a1a1a;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2.5" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M3 9 L21 9" stroke="#fff" stroke-width="1.5"/><path d="M7 14 L17 14" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/><path d="M7 17 L13 17" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div class="account-grid">
+          <div class="account-col">
+            <div class="account-section-label">security</div>
+            <div class="account-rows">
+              <div class="account-row" onclick="openRecoveryModal()">
+                <div class="account-row-left">
+                  <div class="account-row-icon ic-blue">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3 L20 7 V12 C20 17 16 20 12 21 C8 20 4 17 4 12 V7 Z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                  </div>
+                  <span class="account-row-name">recovery</span>
+                </div>
+                <div class="account-row-right">3 guardians · email <span class="account-row-chev">›</span></div>
               </div>
-              <span class="account-row-name">addresses</span>
+              <div class="account-row" onclick="openKeysModal()">
+                <div class="account-row-left">
+                  <div class="account-row-icon ic-green">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="15" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M11 12 L20 3 M16 7 L19 10" stroke="currentColor" stroke-width="1.5"/></svg>
+                  </div>
+                  <span class="account-row-name">keys</span>
+                </div>
+                <div class="account-row-right">2 keys · macbook + yubikey <span class="account-row-chev">›</span></div>
+              </div>
+              <div class="account-row" onclick="go('policies')">
+                <div class="account-row-left">
+                  <div class="account-row-icon ic-blue">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 12 L11 14 L15 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                  </div>
+                  <span class="account-row-name">policies</span>
+                </div>
+                <div class="account-row-right" id="account-policies-count">2 installed <span class="account-row-chev">›</span></div>
+              </div>
             </div>
-            <div class="account-row-right">12 contacts <span class="account-row-chev">›</span></div>
           </div>
-          <div class="account-row" onclick="openSponsorModal()">
-            <div class="account-row-left">
-              <div class="account-row-icon" style="background:#1f1708;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 8 L12 4 L20 8 L20 16 L12 20 L4 16 Z" stroke="#ff9f0a" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M12 4 L12 20" stroke="#ff9f0a" stroke-width="1.5"/><path d="M4 8 L20 8" stroke="#ff9f0a" stroke-width="1.5"/><path d="M4 16 L20 16" stroke="#ff9f0a" stroke-width="1.5"/></svg>
+
+          <div class="account-col">
+            <div class="account-section-label">preferences</div>
+            <div class="account-rows">
+              <div class="account-row" onclick="togglePrivacyMode()">
+                <div class="account-row-left">
+                  <div class="account-row-icon ic-neutral">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M2 12 C 5 6, 9 4, 12 4 C 15 4, 19 6, 22 12 C 19 18, 15 20, 12 20 C 9 20, 5 18, 2 12 Z" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                  </div>
+                  <span class="account-row-name">privacy mode</span>
+                </div>
+                <div class="account-row-right" id="account-privacy-state">off <span class="account-row-chev">›</span></div>
               </div>
-              <span class="account-row-name">sponsor</span>
+              <div class="account-row" onclick="go('addresses')">
+                <div class="account-row-left">
+                  <div class="account-row-icon ic-neutral">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M3 9 L21 9" stroke="currentColor" stroke-width="1.5"/><path d="M7 14 L17 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7 17 L13 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                  </div>
+                  <span class="account-row-name">addresses</span>
+                </div>
+                <div class="account-row-right">12 contacts <span class="account-row-chev">›</span></div>
+              </div>
+              <div class="account-row" onclick="openSponsorModal()">
+                <div class="account-row-left">
+                  <div class="account-row-icon ic-amber">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 8 L12 4 L20 8 L20 16 L12 20 L4 16 Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M12 4 L12 20" stroke="currentColor" stroke-width="1.5"/><path d="M4 8 L20 8" stroke="currentColor" stroke-width="1.5"/><path d="M4 16 L20 16" stroke="currentColor" stroke-width="1.5"/></svg>
+                  </div>
+                  <span class="account-row-name">sponsor</span>
+                </div>
+                <div class="account-row-right">pay someone's gas <span class="account-row-chev">›</span></div>
+              </div>
             </div>
-            <div class="account-row-right">pay someone's gas <span class="account-row-chev">›</span></div>
           </div>
         </div>
 
-        <div class="account-section-label">privacy</div>
-        <div class="account-rows">
-          <div class="account-row" onclick="togglePrivacyMode()">
-            <div class="account-row-left">
-              <div class="account-row-icon" style="background:#1a1a1a;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M2 12 C 5 6, 9 4, 12 4 C 15 4, 19 6, 22 12 C 19 18, 15 20, 12 20 C 9 20, 5 18, 2 12 Z" stroke="#fff" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="3" stroke="#fff" stroke-width="1.5" fill="none"/></svg>
-              </div>
-              <span class="account-row-name">privacy mode</span>
-            </div>
-            <div class="account-row-right" id="account-privacy-state">off · tap balance to toggle <span class="account-row-chev">›</span></div>
-          </div>
-        </div>
-
-        <div class="account-section-label">learn</div>
-        <div class="account-rows">
-          <a class="account-row" href="https://eip8141.io" target="_blank" rel="noopener">
-            <div class="account-row-left">
-              <div class="account-row-icon" style="background:#1a1a1a;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M8 8 L16 8 M8 12 L16 12 M8 16 L13 16" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
-              </div>
-              <span class="account-row-name">read the spec</span>
-            </div>
-            <div class="account-row-right">eip-8141.io <span class="account-row-chev" style="font-family:inherit;">↗</span></div>
-          </a>
+        <div class="account-footer">
+          <a href="https://eip8141.io" target="_blank" rel="noopener" class="account-footer-link">read the spec ↗</a>
         </div>
       </div>
     </div>
@@ -5097,7 +5426,14 @@ const frameLibrary = [
   },
 ];
 
-let queue = [];
+// queue is a sparse array: each element is either null (empty slot) or a step object.
+// default: 3 empty slots on landing.
+let queue = [null, null, null];
+
+// helper: only return the filled steps (skip nulls) — used for run/preview/activity
+function filledSteps() {
+  return queue.filter(q => q && q.uid);
+}
 
 function renderFrameLibrary() {
   const el = document.getElementById('frame-library');
@@ -5105,12 +5441,15 @@ function renderFrameLibrary() {
     <div class="frame-group">
       <div class="frame-group-label">${g.group}</div>
       ${g.items.map(item => `
-        <div class="frame-option" onclick="addFrame('${item.id}')">
+        <div class="frame-option"
+             draggable="true"
+             data-step-id="${item.id}"
+             ondragstart="onStepDragStart(event, '${item.id}')"
+             ondragend="onStepDragEnd(event)"
+             onclick="addFrame('${item.id}')"
+             title="${item.desc}">
           <div class="frame-pill ${item.mode}">${item.mode}</div>
-          <div class="frame-option-body">
-            <div class="frame-option-name">${item.name}</div>
-            <div class="frame-option-desc">${item.desc}</div>
-          </div>
+          <div class="frame-option-name">${item.name}</div>
           <div class="frame-option-add">+</div>
         </div>
       `).join('')}
@@ -5118,25 +5457,113 @@ function renderFrameLibrary() {
   `).join('');
 }
 
+function renderQueueTemplatesStrip() {
+  const el = document.getElementById('queue-head-tpls');
+  if (!el) return;
+  el.innerHTML = templates.map(t => {
+    const color = templateColor(t.id);
+    return `
+      <button
+        class="tpl-chip"
+        data-id="${t.id}"
+        onclick="useTemplate('${t.id}')"
+        title="${t.desc}"
+        style="--tpl-fg:${color.fg}; --tpl-border:${color.border};">
+        <span class="tpl-chip-name">${t.name}</span>
+      </button>
+    `;
+  }).join('');
+}
+
+// ===== drag state =====
+let dragStepId = null;
+
+function onStepDragStart(e, id) {
+  dragStepId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  // some browsers require setData for drag to work
+  try { e.dataTransfer.setData('text/plain', id); } catch (err) {}
+  e.currentTarget.classList.add('dragging');
+}
+function onStepDragEnd(e) {
+  e.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('.queue-slot.drag-over').forEach(s => s.classList.remove('drag-over'));
+  dragStepId = null;
+}
+function onSlotDragOver(e, idx) {
+  if (!dragStepId) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  e.currentTarget.classList.add('drag-over');
+}
+function onSlotDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+function onSlotDrop(e, idx) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if (dragStepId == null) return;
+  placeStepAt(idx, dragStepId);
+  dragStepId = null;
+}
+
+function placeStepAt(idx, stepId) {
+  const item = frameLibrary.flatMap(g => g.items).find(i => i.id === stepId);
+  if (!item) return;
+  const step = { ...item, uid: 'q' + Date.now() + Math.random().toString(36).slice(2, 6) };
+  // ensure the array is long enough
+  while (queue.length <= idx) queue.push(null);
+  queue[idx] = step;
+  renderQueue();
+}
+
 function addFrame(id) {
-  for (const g of frameLibrary) {
-    const item = g.items.find(i => i.id === id);
-    if (item) {
-      queue.push({ ...item, uid: 'q' + Date.now() + Math.random().toString(36).slice(2, 6) });
-      break;
-    }
+  // click-to-add: drop into the first empty slot, or append a new slot
+  const item = frameLibrary.flatMap(g => g.items).find(i => i.id === id);
+  if (!item) return;
+  const step = { ...item, uid: 'q' + Date.now() + Math.random().toString(36).slice(2, 6) };
+  const emptyIdx = queue.findIndex(s => s == null);
+  if (emptyIdx === -1) {
+    queue.push(step);
+  } else {
+    queue[emptyIdx] = step;
   }
   renderQueue();
 }
 
 function removeFrame(uid) {
-  queue = queue.filter(q => q.uid !== uid);
+  // clear the slot (leave it empty — slots are persistent). if the slot is
+  // beyond the default-3 and queue has extras, also drop the trailing slot.
+  const idx = queue.findIndex(q => q && q.uid === uid);
+  if (idx === -1) return;
+  queue[idx] = null;
+  // trim trailing empty slots above the minimum of 3
+  while (queue.length > 3 && queue[queue.length - 1] == null) {
+    queue.pop();
+  }
+  renderQueue();
+}
+
+function removeSlot(idx) {
+  // user explicitly drops a slot (different from clearing its content)
+  if (queue.length <= 3) {
+    // below/at minimum, just clear the slot instead of removing it
+    queue[idx] = null;
+  } else {
+    queue.splice(idx, 1);
+  }
+  renderQueue();
+}
+
+function addSlot() {
+  queue.push(null);
   renderQueue();
 }
 
 function renderQueue() {
   const container = document.getElementById('queue-container');
-  const sub = document.getElementById('queue-sub');
+  const sub = document.getElementById('queue-sub-inline');
+  const eyebrow = document.getElementById('queue-eyebrow');
   const btnRun = document.getElementById('btn-run');
   const btnSave = document.getElementById('btn-save-policy');
   const isEditing = !!editingTemplateId;
@@ -5144,40 +5571,84 @@ function renderQueue() {
 
   btnSave.textContent = isEditing ? 'update template' : 'save as template';
 
-  if (queue.length === 0) {
-    container.innerHTML = '<div class="queue-empty">add a frame to begin</div>';
-    sub.textContent = isEditing ? `editing "${editedName}" — empty` : 'empty — add frames from the left';
-    btnRun.disabled = true;
-    btnSave.disabled = true;
-    return;
+  const filled = filledSteps();
+  const emptyCount = queue.filter(s => s == null).length;
+  const allEmpty = filled.length === 0;
+  const allFull = emptyCount === 0;
+
+  // sub copy — tight, reads inline next to the eyebrow
+  if (eyebrow) eyebrow.textContent = 'your queue';
+  if (sub) {
+    if (allEmpty) {
+      sub.textContent = isEditing
+        ? `editing "${editedName}"`
+        : '';
+    } else if (allFull) {
+      sub.textContent = isEditing
+        ? `editing "${editedName}" · ${filled.length} ${filled.length === 1 ? 'step' : 'steps'}`
+        : `${filled.length} ${filled.length === 1 ? 'step' : 'steps'} · ready`;
+    } else {
+      sub.textContent = isEditing
+        ? `editing "${editedName}" · ${filled.length} of ${queue.length}`
+        : `${filled.length} of ${queue.length} filled`;
+    }
   }
 
-  sub.textContent = isEditing
-    ? `editing "${editedName}" · ${queue.length} ${queue.length === 1 ? 'frame' : 'frames'}`
-    : `${queue.length} ${queue.length === 1 ? 'frame' : 'frames'}`;
-  btnRun.disabled = false;
-  btnSave.disabled = false;
+  // run button: enabled when at least one step is filled AND no empty slots in the middle
+  // (we allow trailing empty slots to be trimmed automatically, but we want contiguous flow)
+  const runnable = filled.length > 0;
+  btnRun.disabled = !runnable;
+  btnSave.disabled = !runnable;
 
   container.innerHTML = `
     <div class="queue-list">
-      ${queue.map((q, i) => `
-        <div class="queue-item">
-          <div class="queue-item-num">${String(i + 1).padStart(2, '0')}</div>
-          <div class="frame-pill ${q.mode}">${q.mode}</div>
-          <div class="queue-item-body">
-            <div class="queue-item-name">${q.name}</div>
-            <div class="queue-item-desc">${q.desc}</div>
-          </div>
-          <button class="queue-item-remove" onclick="removeFrame('${q.uid}')">×</button>
-        </div>
-      `).join('')}
+      ${queue.map((s, i) => slotHTML(s, i)).join('')}
+      <button class="queue-add-slot" onclick="addSlot()" title="add another slot">
+        <span class="queue-add-slot-plus">+</span>
+        <span>add another</span>
+      </button>
     </div>
   `;
-  updateBuildTopVisibility();
 }
 
+function slotHTML(step, idx) {
+  const num = String(idx + 1).padStart(2, '0');
+  if (step == null) {
+    return `
+      <div class="queue-slot queue-slot-empty"
+           data-idx="${idx}"
+           ondragover="onSlotDragOver(event, ${idx})"
+           ondragleave="onSlotDragLeave(event)"
+           ondrop="onSlotDrop(event, ${idx})">
+        <div class="queue-item-num">${num}</div>
+        <div class="queue-slot-hint">drop a step here</div>
+        <button class="queue-slot-remove" onclick="removeSlot(${idx})" title="remove slot">×</button>
+      </div>
+    `;
+  }
+  return `
+    <div class="queue-slot queue-slot-filled"
+         data-idx="${idx}"
+         ondragover="onSlotDragOver(event, ${idx})"
+         ondragleave="onSlotDragLeave(event)"
+         ondrop="onSlotDrop(event, ${idx})">
+      <div class="queue-item-num">${num}</div>
+      <div class="frame-pill ${step.mode}">${step.mode}</div>
+      <div class="queue-item-body">
+        <div class="queue-item-name">${step.name}</div>
+        <div class="queue-item-desc">${step.desc}</div>
+      </div>
+      <button class="queue-item-remove" onclick="removeFrame('${step.uid}')" title="clear slot">×</button>
+    </div>
+  `;
+}
+
+// kept for back-compat; no-op since templates live in the library strip now
+function templatePickerHTML() { return ''; }
+function toggleTemplatePreview() {}
+
 function runQueue() {
-  if (queue.length === 0) return;
+  if (filledSteps().length === 0) return;
   // open a lightweight confirm flow
   runState = { step: 'review' };
   document.getElementById('run-modal').classList.add('open');
@@ -5207,7 +5678,8 @@ function renderRunStep() {
   if (runState.step === 'review') {
     framesPanel.style.display = '';
     const el = document.getElementById('run-frames-list');
-    el.innerHTML = queue.map(q => `
+    const filled = filledSteps();
+    el.innerHTML = filled.map(q => `
       <div class="frame-row">
         <div class="frame-pill ${q.mode}">${q.mode}</div>
         <div class="frame-desc">${q.desc}</div>
@@ -5220,7 +5692,7 @@ function renderRunStep() {
       <div class="preview-summary">
         <div class="preview-row">
           <span class="preview-label">frames</span>
-          <span class="preview-value">${queue.length}</span>
+          <span class="preview-value">${filled.length}</span>
         </div>
         <div class="preview-divider"></div>
         <div class="preview-row">
@@ -5253,11 +5725,12 @@ function renderRunStep() {
 
   else if (runState.step === 'done') {
     framesPanel.style.display = 'none';
+    const filled = filledSteps();
     body.innerHTML = `
       <div class="send-status">
         <div class="send-status-icon done">✓</div>
         <div class="send-status-title">ran</div>
-        <div class="send-status-sub">${queue.length} ${queue.length === 1 ? 'frame' : 'frames'} executed<br>see it in activity</div>
+        <div class="send-status-sub">${filled.length} ${filled.length === 1 ? 'step' : 'steps'} executed<br>see it in activity</div>
       </div>
     `;
     footer.innerHTML = `
@@ -5270,14 +5743,15 @@ function runSign() {
   runState.step = 'signing';
   renderRunStep();
   setTimeout(() => {
+    const filled = filledSteps();
     // write to activity
-    const frameData = queue.map(q => ({ mode: q.mode, desc: q.desc, status: 'pass' }));
+    const frameData = filled.map(q => ({ mode: q.mode, desc: q.desc, status: 'pass' }));
     activity.unshift({
       id: 'a' + Date.now(),
       title: 'ran composed queue',
-      sub: `${queue.length} frames · just now`,
+      sub: `${filled.length} steps · just now`,
       amount: 0,
-      narrative: { actor: 'you', verb: 'ran', object: `a ${queue.length}-frame custom queue`, context: 'composed from the build tab' },
+      narrative: { actor: 'you', verb: 'ran', object: `a ${filled.length}-step custom queue`, context: 'composed from the build tab' },
       txHash: '0x' + Math.random().toString(16).slice(2, 6) + '...' + Math.random().toString(16).slice(2, 6),
       block: 20847392,
       gas: '0.00058 eth',
@@ -5295,22 +5769,23 @@ function runSign() {
 
 function runDoneAndClose() {
   closeRun();
-  queue = [];
+  queue = [null, null, null];
   editingPolicyId = null;
   renderQueue();
   go('activity');
 }
 
 function savePolicy() {
-  if (queue.length === 0) return;
+  const filled = filledSteps();
+  if (filled.length === 0) return;
   // if editing, update in place
   if (editingTemplateId) {
     const t = templates.find(x => x.id === editingTemplateId);
     if (t) {
-      t.frames = queue.map(q => ({ mode: q.mode, desc: q.desc }));
+      t.frames = filled.map(q => ({ mode: q.mode, desc: q.desc }));
       editingTemplateId = null;
       editingPolicyId = null;
-      queue = [];
+      queue = [null, null, null];
       renderQueue();
       renderBuild();
       return;
@@ -5328,9 +5803,9 @@ function savePolicy() {
         desc: 'saved from build',
         starter: false,
         activeSessions: 0,
-        frames: queue.map(q => ({ mode: q.mode, desc: q.desc })),
+        frames: filled.map(q => ({ mode: q.mode, desc: q.desc })),
       });
-      queue = [];
+      queue = [null, null, null];
       renderQueue();
       renderBuild();
     },
@@ -5544,38 +6019,12 @@ function removeAccountPolicy(id) {
 function newPolicy() { openPolicyPicker(); }
 
 function renderTemplates() {
-  const el = document.getElementById('templates-grid');
-  if (!el) return;
-  el.innerHTML = templates.map(t => {
-    const color = templateColor(t.id);
-    const pills = (t.frames || []).map(f => {
-      const mode = typeof f === 'string' ? f : f.mode;
-      return `<div class="frame-pill ${mode}">${mode}</div>`;
-    }).join('');
-    const sessionTag = t.activeSessions > 0
-      ? `<span class="template-session-tag" style="color:${color.fg};">${t.activeSessions} active</span>`
-      : '';
-    return `
-      <div class="template-card" data-id="${t.id}" onclick="useTemplate('${t.id}')" style="--tpl-fg:${color.fg}; --tpl-border:${color.border};">
-        <div class="template-head">
-          <div class="template-name">${t.name}</div>
-          ${sessionTag}
-        </div>
-        <div class="template-desc">${t.desc}</div>
-        <div class="template-frames">
-          ${pills || '<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text-4);text-transform:uppercase;letter-spacing:0.8px;">empty</div>'}
-        </div>
-      </div>
-    `;
-  }).join('');
+  // templates now render inside the queue pane as its empty state;
+  // see templatePickerHTML(). kept as a no-op for any call sites.
 }
 
-// show/hide the "start from a template" section of build based on queue state
-function updateBuildTopVisibility() {
-  const top = document.getElementById('build-top');
-  if (!top) return;
-  top.style.display = (queue.length === 0 && !editingTemplateId) ? '' : 'none';
-}
+// legacy no-op (templates live inside queue pane now)
+function updateBuildTopVisibility() {}
 
 let editingTemplateId = null;
 // backwards-compat alias (some old callers)
@@ -5595,6 +6044,8 @@ function editTemplate(id) {
       desc: f.desc,
     };
   });
+  // pad to at least 3 slots so an editor still sees the "slots" shape
+  while (queue.length < 3) queue.push(null);
   renderQueue();
   go('build');
 }
@@ -5908,6 +6359,8 @@ function useTemplate(id) {
       }
     });
   }
+  // pad to at least 3 slots
+  while (queue.length < 3) queue.push(null);
   renderQueue();
   go('build');
 }
@@ -5916,7 +6369,7 @@ function useTemplate(id) {
 function newPolicyOld_unused() {
   editingTemplateId = null;
   editingPolicyId = null;
-  queue = [];
+  queue = [null, null, null];
   renderQueue();
   go('build');
 }
@@ -6587,6 +7040,7 @@ renderSpark();
 renderHomeSessions();
 renderHomeActivity();
 renderFrameLibrary();
+renderQueueTemplatesStrip();
 renderQueue();
 renderPolicies();
 renderTemplates();
@@ -6979,7 +7433,7 @@ function getSmartSuggestions() {
       { label: 'add verify frame',    run: () => { closeSearch(); if (typeof frameLibrary !== 'undefined') { const it = frameLibrary[0] && frameLibrary[0].items[0]; if (it) addFrame(it.id); } } },
       { label: 'add paymaster',       run: () => { closeSearch(); if (typeof frameLibrary !== 'undefined') { const it = frameLibrary.flatMap(g => g.items).find(i => i.id === 'verify-paymaster'); if (it) addFrame(it.id); } } },
       { label: 'save as policy',      run: () => { closeSearch(); const b = document.getElementById('btn-save-policy'); if (b && !b.disabled) b.click(); } },
-      { label: 'clear queue',         run: () => { closeSearch(); if (typeof queue !== 'undefined' && queue.length) { queue = []; renderQueue(); } } },
+      { label: 'clear queue',         run: () => { closeSearch(); queue = [null, null, null]; renderQueue(); } },
     ],
     'screen-sessions': [
       { label: 'authorize new agent',  run: () => { closeSearch(); openAuth(); } },
