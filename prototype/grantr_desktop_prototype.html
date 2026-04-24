@@ -66,6 +66,7 @@ button {
   padding: 20px 0 16px;
   border-bottom: 0.5px solid var(--border);
   position: relative;
+  z-index: 10;
 }
 .header-corners {
   display: flex;
@@ -75,6 +76,7 @@ button {
   top: 20px;
   left: 40px;
   right: 40px;
+  z-index: 10;
 }
 .brand {
   font-family: 'DM Mono', monospace;
@@ -445,7 +447,7 @@ button {
   font-family: 'DM Mono', monospace;
   font-size: 9px;
   padding: 4px 9px;
-  border-radius: 5px;
+  border-radius: 6px;
   text-transform: uppercase;
   letter-spacing: 0.6px;
   font-weight: 500;
@@ -643,20 +645,21 @@ button {
   color: var(--text-4);
   text-transform: uppercase;
   letter-spacing: 1.2px;
-  margin-bottom: 8px;
-  padding: 0 4px;
+  margin-bottom: 10px;
+  padding: 0 14px;
 }
 .frame-option {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
+  gap: 14px;
+  padding: 10px 14px;
   border-radius: 12px;
   cursor: pointer;
   transition: background 0.15s;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 .frame-option:hover { background: var(--card-hover); }
+.frame-option > .frame-pill { flex-shrink: 0; min-width: 68px; text-align: center; justify-content: center; }
 .frame-option-body { flex: 1; min-width: 0; }
 .frame-option-name {
   font-size: 13px;
@@ -5690,7 +5693,16 @@ function focusSearch() {
 }
 
 document.getElementById('search-input').addEventListener('input', (e) => {
-  runSearch(e.target.value);
+  const v = e.target.value;
+  if (v.trim() === '') {
+    // show contextual suggestions instead
+    renderSmartSuggestions();
+  } else {
+    // restore the nav-hint foot then run search
+    const foot = document.querySelector('#search-results .search-foot');
+    if (foot) foot.style.display = '';
+    runSearch(v);
+  }
 });
 document.getElementById('search-input').addEventListener('focus', () => {
   document.getElementById('search-kbd').textContent = 'esc';
@@ -5826,11 +5838,7 @@ renderWelcome();
     tl.appendChild(ph);
   });
 })();
-// re-run after renders that create new timelines
-const _origRenderHomeSessions = renderHomeSessions;
-renderHomeSessions = function() { _origRenderHomeSessions.apply(this, arguments); setTimeout(addPlayheadsAll, 0); };
-const _origRenderSessionsTab = renderSessionsTab;
-renderSessionsTab = function() { _origRenderSessionsTab.apply(this, arguments); setTimeout(addPlayheadsAll, 0); };
+// re-usable playhead adder — called by the MutationObserver below
 function addPlayheadsAll() {
   document.querySelectorAll('.stab-timeline').forEach(tl => {
     const fill = tl.querySelector('.stab-timeline-fill');
@@ -5846,20 +5854,32 @@ function addPlayheadsAll() {
     tl.appendChild(ph);
   });
 }
+addPlayheadsAll();
 
 // 5. frame added to queue: fly-in + green flash.
-// wraps addFrame() so each new queue item animates.
-const _origAddFrame = addFrame;
-addFrame = function(id) {
-  _origAddFrame.apply(this, arguments);
-  requestAnimationFrame(() => {
-    const items = document.querySelectorAll('.queue-item');
-    const last = items[items.length - 1];
-    if (!last) return;
-    last.style.animation = 'queue-flyin 420ms cubic-bezier(0.2, 0.8, 0.2, 1)';
-    last.addEventListener('animationend', () => { last.style.animation = ''; }, { once: true });
+// safe pattern: observe the queue-container, animate any newly-added queue items.
+(function queueFlyInObserver() {
+  const container = document.getElementById('queue-container');
+  if (!container) return;
+  const obs = new MutationObserver(muts => {
+    muts.forEach(m => {
+      m.addedNodes.forEach(node => {
+        if (node.nodeType !== 1) return;
+        // animate any .queue-item that appears
+        const items = node.matches && node.matches('.queue-item')
+          ? [node]
+          : Array.from((node.querySelectorAll && node.querySelectorAll('.queue-item')) || []);
+        items.forEach(item => {
+          if (item._flewIn) return;
+          item._flewIn = true;
+          item.style.animation = 'queue-flyin 420ms cubic-bezier(0.2, 0.8, 0.2, 1)';
+          item.addEventListener('animationend', () => { item.style.animation = ''; }, { once: true });
+        });
+      });
+    });
   });
-};
+  obs.observe(container, { childList: true, subtree: true });
+})();
 
 // 6. policy card hover — pick up the policy's color as a subtle outline.
 (function wirePolicyHover() {
@@ -5878,40 +5898,42 @@ addFrame = function(id) {
 })();
 
 // 7. FLIP sort animation for activity grid.
-// wraps the sort/re-render so rows slide to new positions instead of popping.
-const _origRenderActivityTab = renderActivityTab;
-renderActivityTab = function() {
-  const container = document.getElementById('activity-full-list');
-  if (!container) {
-    _origRenderActivityTab.apply(this, arguments);
-    return;
-  }
-  const firstRects = new Map();
-  container.querySelectorAll('.activity-grid-row').forEach(r => {
-    const id = r.dataset.id;
-    if (id) firstRects.set(id, r.getBoundingClientRect());
-  });
-
-  _origRenderActivityTab.apply(this, arguments);
-
-  requestAnimationFrame(() => {
+// safe pattern: intercept clicks on sortable header cells. capture positions,
+// let the normal sort happen, then play FLIP on the new positions.
+(function activityFlip() {
+  document.addEventListener('click', e => {
+    const head = e.target.closest('.activity-grid-head-cell');
+    if (!head) return;
+    const container = document.getElementById('activity-full-list');
+    if (!container) return;
+    // capture first positions BEFORE the sort re-renders
+    const firstRects = new Map();
     container.querySelectorAll('.activity-grid-row').forEach(r => {
       const id = r.dataset.id;
-      if (!id) return;
-      const first = firstRects.get(id);
-      if (!first) return;
-      const last = r.getBoundingClientRect();
-      const dy = first.top - last.top;
-      if (Math.abs(dy) < 1) return;
-      r.style.transform = `translateY(${dy}px)`;
-      r.style.transition = 'transform 0ms';
-      requestAnimationFrame(() => {
-        r.style.transition = 'transform 380ms cubic-bezier(0.2, 0.8, 0.2, 1)';
-        r.style.transform = '';
-      });
+      if (id) firstRects.set(id, r.getBoundingClientRect());
     });
+    // let the sort's re-render complete, then play FLIP
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        container.querySelectorAll('.activity-grid-row').forEach(r => {
+          const id = r.dataset.id;
+          if (!id) return;
+          const first = firstRects.get(id);
+          if (!first) return;
+          const last = r.getBoundingClientRect();
+          const dy = first.top - last.top;
+          if (Math.abs(dy) < 1) return;
+          r.style.transform = `translateY(${dy}px)`;
+          r.style.transition = 'transform 0ms';
+          requestAnimationFrame(() => {
+            r.style.transition = 'transform 380ms cubic-bezier(0.2, 0.8, 0.2, 1)';
+            r.style.transform = '';
+          });
+        });
+      });
+    }, 0);
   });
-};
+})();
 
 // 8. keyboard shortcuts:  g + [h/p/b/s/a] = tab nav.  ?  opens shortcut help.
 (function keyboardNav() {
@@ -5984,76 +6006,40 @@ function openShortcutHelp() {
   `);
 }
 
-// 9. privacy mode handshake — digits type in/out when toggling.
-const _origTogglePrivacy = togglePrivacyMode;
-togglePrivacyMode = function() {
-  _origTogglePrivacy.apply(this, arguments);
-  // after the toggle, find the hero and animate it.
-  const el = document.getElementById('hero-balance');
-  if (!el) return;
-  // detect current state from text content
-  const isPrivate = el.textContent.includes('•');
-  el.style.transition = 'opacity 140ms ease';
-  el.style.opacity = '0.4';
-  setTimeout(() => {
-    el.style.opacity = '1';
-  }, 160);
-};
+// 9. privacy mode handshake — brief dim on the hero balance when toggling.
+// safe pattern: listen for clicks on the hero element (which is the trigger).
+(function privacyHandshake() {
+  const hero = document.getElementById('hero-balance');
+  if (!hero) return;
+  // the original onclick is set to togglePrivacyMode(). we attach an addl listener.
+  hero.addEventListener('click', () => {
+    // let the original handler run first via microtask delay
+    setTimeout(() => {
+      hero.style.transition = 'opacity 140ms ease';
+      hero.style.opacity = '0.4';
+      setTimeout(() => { hero.style.opacity = '1'; }, 160);
+    }, 0);
+  });
+})();
 
-// 10. send success — expanding ring pulse.
-const _origSendDoneRender = (typeof renderSendStep === 'function') ? renderSendStep : null;
-if (_origSendDoneRender) {
-  renderSendStep = function() {
-    _origSendDoneRender.apply(this, arguments);
-    // if we landed on the done step, spawn the ring
-    if (typeof sendState !== 'undefined' && sendState && sendState.step === 'done') {
-      setTimeout(() => {
-        const icon = document.querySelector('.send-status-icon.done');
-        if (!icon || icon._ringed) return;
-        icon._ringed = true;
-        const ring = document.createElement('div');
-        ring.className = 'success-ring';
-        icon.appendChild(ring);
-      }, 50);
-    }
-  };
-}
-
-// authorize-done ring pulse
-const _origRenderAuthStep = (typeof renderAuthStep === 'function') ? renderAuthStep : null;
-if (_origRenderAuthStep) {
-  renderAuthStep = function() {
-    _origRenderAuthStep.apply(this, arguments);
-    if (typeof authState !== 'undefined' && authState && authState.step === 'done') {
-      setTimeout(() => {
-        const icon = document.querySelector('.send-status-icon.done');
-        if (!icon || icon._ringed) return;
-        icon._ringed = true;
-        const ring = document.createElement('div');
-        ring.className = 'success-ring';
-        icon.appendChild(ring);
-      }, 50);
-    }
-  };
-}
-
-// run-done ring pulse
-const _origRenderRunStep = (typeof renderRunStep === 'function') ? renderRunStep : null;
-if (_origRenderRunStep) {
-  renderRunStep = function() {
-    _origRenderRunStep.apply(this, arguments);
-    if (typeof runState !== 'undefined' && runState && runState.step === 'done') {
-      setTimeout(() => {
-        const icon = document.querySelector('.send-status-icon.done');
-        if (!icon || icon._ringed) return;
-        icon._ringed = true;
-        const ring = document.createElement('div');
-        ring.className = 'success-ring';
-        icon.appendChild(ring);
-      }, 50);
-    }
-  };
-}
+// 10. send/auth/run success — expanding ring pulse.
+// safe pattern: observe .send-status-icon.done appearing in modals.
+(function successRingObserver() {
+  const MODAL_IDS = ['send-modal', 'auth-modal', 'run-modal'];
+  MODAL_IDS.forEach(mid => {
+    const modal = document.getElementById(mid);
+    if (!modal) return;
+    const obs = new MutationObserver(() => {
+      const icon = modal.querySelector('.send-status-icon.done');
+      if (!icon || icon._ringed) return;
+      icon._ringed = true;
+      const ring = document.createElement('div');
+      ring.className = 'success-ring';
+      icon.appendChild(ring);
+    });
+    obs.observe(modal, { childList: true, subtree: true, attributes: true });
+  });
+})();
 
 // 11. brand wordmark easter egg — 5 clicks opens a credits splash.
 (function brandEasterEgg() {
@@ -6085,15 +6071,27 @@ if (_origRenderRunStep) {
 })();
 
 // 12. keyboard hint for empty queue.
-// if the queue is empty on the build page, replace the placeholder with a hint.
-const _origRenderQueue = renderQueue;
-renderQueue = function() {
-  _origRenderQueue.apply(this, arguments);
+// safe pattern: observe the queue-container; when .queue-empty appears, enrich it.
+(function emptyQueueHint() {
   const c = document.getElementById('queue-container');
-  if (c && c.querySelector('.queue-empty')) {
-    c.querySelector('.queue-empty').innerHTML = 'add a frame to begin <span class="kbd-tip">tip: press <kbd>1</kbd>–<kbd>5</kbd> to add frames fast</span>';
-  }
-};
+  if (!c) return;
+  const enrich = () => {
+    const empty = c.querySelector('.queue-empty');
+    if (!empty || empty._enriched) return;
+    empty._enriched = true;
+    empty.innerHTML = 'add a frame to begin <span class="kbd-tip">tip: press <kbd>1</kbd>–<kbd>5</kbd> to add frames fast</span>';
+  };
+  enrich();
+  const obs = new MutationObserver(enrich);
+  obs.observe(c, { childList: true, subtree: true });
+})();
+
+// re-run playhead add-on after any session-timeline re-render
+(function playheadObserver() {
+  const obs = new MutationObserver(() => addPlayheadsAll());
+  // observe the whole body — cheap, MutationObserver is efficient
+  obs.observe(document.body, { childList: true, subtree: true });
+})();
 
 // ⌘1-5 (or plain 1-5 on build page) add frames from library
 document.addEventListener('keydown', e => {
@@ -6113,8 +6111,124 @@ document.addEventListener('keydown', e => {
 });
 
 // ===============================================================
-// delight layer css — one big block, injected at runtime.
+// smart search chips — contextual suggestions above the input
 // ===============================================================
+function getCurrentScreenId() {
+  const active = document.querySelector('.screen.active');
+  return active ? active.id : null;
+}
+
+function getSmartSuggestions() {
+  const screenId = getCurrentScreenId();
+
+  // screen-specific chips come first, then always-available ones.
+  const perScreen = {
+    'screen-home': [
+      { label: 'authorize an agent', run: () => { closeSearch(); openAuth(); } },
+      { label: 'send to someone',    run: () => { closeSearch(); openSend(); } },
+      { label: 'see all activity',   run: () => { closeSearch(); go('activity'); } },
+      { label: 'toggle privacy',     run: () => { closeSearch(); togglePrivacyMode(); } },
+    ],
+    'screen-policies': [
+      { label: 'new policy',              run: () => { closeSearch(); go('build'); } },
+      { label: 'show only active',        run: () => { closeSearch(); /* no filter UI yet */ } },
+      { label: 'authorize with policy',   run: () => { closeSearch(); openAuth(); } },
+    ],
+    'screen-build': [
+      { label: 'add verify frame',    run: () => { closeSearch(); if (typeof frameLibrary !== 'undefined') { const it = frameLibrary[0] && frameLibrary[0].items[0]; if (it) addFrame(it.id); } } },
+      { label: 'add paymaster',       run: () => { closeSearch(); if (typeof frameLibrary !== 'undefined') { const g = frameLibrary.find(g => g.group === 'default'); const it = g && g.items[0]; if (it) addFrame(it.id); } } },
+      { label: 'save as policy',      run: () => { closeSearch(); const b = document.getElementById('btn-save-policy'); if (b && !b.disabled) b.click(); } },
+      { label: 'clear queue',         run: () => { closeSearch(); if (typeof queue !== 'undefined' && queue.length) { queue = []; renderQueue(); } } },
+    ],
+    'screen-sessions': [
+      { label: 'authorize new agent',  run: () => { closeSearch(); openAuth(); } },
+      { label: 'see recent executions', run: () => { closeSearch(); go('activity'); } },
+    ],
+    'screen-activity': [
+      { label: 'export csv',          run: () => { closeSearch(); const b = document.querySelector('.activity-export'); if (b) b.click(); } },
+      { label: 'only sends',          run: () => { closeSearch(); const btn = Array.from(document.querySelectorAll('#screen-activity .tab-filter')).find(t => t.textContent.trim() === 'sends'); if (btn) btn.click(); } },
+      { label: 'only sessions',       run: () => { closeSearch(); const btn = Array.from(document.querySelectorAll('#screen-activity .tab-filter')).find(t => t.textContent.trim() === 'sessions'); if (btn) btn.click(); } },
+      { label: 'reset filters',       run: () => { closeSearch(); const allBtn = Array.from(document.querySelectorAll('#screen-activity .tab-filter')).find(t => t.textContent.trim() === 'all'); if (allBtn) allBtn.click(); /* clear frame filters */ if (typeof activityFrameFilters !== 'undefined') { activityFrameFilters.clear(); renderActivityTab(); } } },
+    ],
+    'screen-account': [
+      { label: 'toggle privacy',      run: () => { closeSearch(); togglePrivacyMode(); } },
+      { label: 'see addresses',       run: () => { closeSearch(); const b = Array.from(document.querySelectorAll('#screen-account .account-row')).find(r => r.textContent.includes('addresses')); if (b) b.click(); } },
+    ],
+    'screen-addresses': [
+      { label: 'back to account',     run: () => { closeSearch(); go('account'); } },
+    ],
+  };
+
+  const screen = perScreen[screenId] || [];
+
+  // always-available chips (but only show 2-3 to not overwhelm)
+  const always = [
+    { label: 'help',     run: () => { closeSearch(); openShortcutHelp(); } },
+    { label: 'go home',  run: () => { closeSearch(); go('home'); }, hideOn: ['screen-home'] },
+  ].filter(c => !(c.hideOn && c.hideOn.includes(screenId)));
+
+  return [...screen, ...always];
+}
+
+function renderSmartSuggestions() {
+  const input = document.getElementById('search-input');
+  const panel = document.getElementById('search-results');
+  const body  = document.getElementById('search-results-body');
+  const count = document.getElementById('search-count');
+  const foot  = panel && panel.querySelector('.search-foot');
+  if (!input || !panel) return;
+  if (input.value.trim() !== '' || document.activeElement !== input) return;
+
+  const sugg = getSmartSuggestions();
+  if (sugg.length === 0) { panel.style.display = 'none'; return; }
+
+  const screenName = (getCurrentScreenId() || 'screen-home').replace('screen-', '');
+  const chipsHTML = sugg.map((s, i) =>
+    `<button class="smart-chip" data-idx="${i}">${s.label}</button>`
+  ).join('');
+
+  body.innerHTML = `
+    <div class="smart-suggest">
+      <div class="smart-suggest-label">on ${screenName} · try</div>
+      <div class="smart-chips-row">${chipsHTML}</div>
+    </div>
+  `;
+  if (foot) foot.style.display = 'none';
+  panel.style.display = 'block';
+
+  body.querySelectorAll('.smart-chip').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const idx = parseInt(btn.dataset.idx, 10);
+      const action = sugg[idx];
+      if (action && typeof action.run === 'function') action.run();
+    });
+  });
+}
+
+(function wireSmartSuggestions() {
+  const input = document.getElementById('search-input');
+  if (!input) return;
+  input.addEventListener('focus', renderSmartSuggestions);
+  input.addEventListener('input', () => {
+    // when user starts typing, let runSearch take over; when cleared, show suggestions
+    if (input.value.trim() === '' && document.activeElement === input) {
+      renderSmartSuggestions();
+    }
+  });
+  // also re-render on tab-nav changes (so chips update contextually)
+  // piggyback on the fact that `go()` mutates the active screen: observe .screen.active
+  const obs = new MutationObserver(() => {
+    if (input.value.trim() === '' && document.activeElement === input) {
+      renderSmartSuggestions();
+    }
+  });
+  document.querySelectorAll('.screen').forEach(s => {
+    obs.observe(s, { attributes: true, attributeFilter: ['class'] });
+  });
+})();
+
+
 (function injectDelightStyles() {
   const css = `
 @keyframes playhead-pulse {
@@ -6205,6 +6319,46 @@ document.addEventListener('keydown', e => {
   border: 0.5px solid var(--border-2);
   border-radius: 4px;
   margin: 0 1px;
+}
+
+/* smart search chips */
+.smart-suggest {
+  padding: 8px 0 4px;
+}
+.smart-suggest-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text-4);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: 0 18px 10px;
+}
+.smart-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 14px 6px;
+}
+.smart-chip {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-1);
+  background: var(--card);
+  border: 0.5px solid var(--border-2);
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  letter-spacing: -0.01em;
+}
+.smart-chip:hover {
+  background: var(--card-hover);
+  border-color: var(--text-4);
+  color: var(--text-1);
+}
+.smart-chip:active {
+  transform: scale(0.98);
 }
 
 /* respect reduced motion */
