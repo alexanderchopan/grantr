@@ -1545,6 +1545,149 @@ button {
 }
 .activity-summary-meta { color: var(--text-3); }
 
+/* ===== timeline view (narrative stream) ===== */
+.tl-wrap {
+  padding-top: 4px;
+}
+.tl-day-label {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-4);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0 0 14px 48px;
+}
+.tl-day-label:not(:first-child) { margin-top: 32px; }
+.tl-day-line {
+  flex: 1;
+  height: 0.5px;
+  background: var(--border);
+}
+.tl-stream {
+  position: relative;
+  padding-left: 48px;
+}
+.tl-stream::before {
+  content: "";
+  position: absolute;
+  left: 23px;
+  top: 6px;
+  bottom: 6px;
+  width: 0.5px;
+  background: var(--border);
+}
+.tl-event {
+  position: relative;
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+.tl-dot {
+  position: absolute;
+  left: -33px;
+  top: 20px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1.5px solid var(--border-2);
+  z-index: 2;
+  transition: transform 0.15s;
+}
+.tl-event:hover .tl-dot { transform: scale(1.15); }
+.tl-dot.you { border-color: var(--text-1); }
+.tl-dot.incoming { background: var(--green); border-color: var(--green); }
+.tl-time {
+  position: absolute;
+  left: -92px;
+  top: 19px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-4);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  text-align: right;
+  width: 50px;
+}
+.tl-card {
+  background: var(--card);
+  border: 0.5px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.tl-event:hover .tl-card {
+  border-color: var(--border-2);
+  background: var(--card-hover);
+}
+.tl-row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.tl-line {
+  font-size: 14px;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+  line-height: 1.45;
+  min-width: 0;
+}
+.tl-actor {
+  font-weight: 500;
+}
+.tl-subtle {
+  color: var(--text-voice);
+  font-style: italic;
+}
+.tl-amount {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  font-weight: 500;
+  flex-shrink: 0;
+  letter-spacing: -0.01em;
+}
+.tl-amount.neg { color: #e5e5e5; }
+.tl-amount.pos { color: var(--green); }
+.tl-amount.zero { color: var(--text-3); }
+.tl-meta {
+  display: flex;
+  gap: 14px;
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 0.5px solid var(--border);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  align-items: center;
+}
+.tl-meta .ok { color: var(--green); }
+.tl-meta .subtle { color: var(--text-4); }
+.tl-pill {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  border: 0.5px solid;
+  display: inline-flex;
+  align-items: center;
+}
+.tl-pill.you {
+  color: var(--text-2);
+  border-color: var(--border-2);
+}
+.tl-pill.incoming {
+  color: var(--green);
+  border-color: rgba(0,214,50,0.35);
+  background: rgba(0,214,50,0.08);
+}
+
 /* ===== frame-log view ===== */
 .frame-log-tx {
   margin-bottom: 16px;
@@ -1729,16 +1872,31 @@ button {
   font-size: 12px;
   color: var(--text-3);
 }
-.row-frame-count {
+.row-frame-cell {
+  display: flex;
+  align-items: center;
+}
+.row-frame-inline {
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+}
+.row-frame-mini {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  border: 0.5px solid;
+  background: transparent;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.row-frame-mini.verify { border-color: var(--green); background: rgba(0,214,50,0.15); }
+.row-frame-mini.sender { border-color: var(--text-3); background: rgba(163,163,163,0.15); }
+.row-frame-mini.default { border-color: var(--blue); background: rgba(10,132,255,0.15); }
+.row-frame-mini.approve { border-color: var(--amber); background: rgba(255,159,10,0.15); }
+.row-frame-empty {
   font-family: 'DM Mono', monospace;
   font-size: 12px;
-  color: var(--text-2);
-}
-.row-frame-count.highlight {
-  color: var(--amber);
-  font-weight: 500;
-}
-.row-frame-count.muted {
   color: var(--text-4);
 }
 .row-amount {
@@ -3254,24 +3412,12 @@ button {
     </div>
     <div id="screen-build" class="screen">
       <div class="build-top" id="build-top">
-        <div class="build-top-head">
-          <div>
-            <div class="build-top-title">start from a template</div>
-            <div class="build-top-sub">or compose below from scratch</div>
-          </div>
-        </div>
         <div class="template-grid" id="templates-grid"></div>
       </div>
 
       <div class="build">
         <!-- LIBRARY -->
         <div class="build-pane">
-          <div class="build-pane-head">
-            <div>
-              <div class="build-pane-title">add a frame</div>
-              <div class="build-pane-sub">click to add to queue</div>
-            </div>
-          </div>
           <div id="frame-library"></div>
         </div>
 
@@ -3279,14 +3425,13 @@ button {
         <div class="build-pane">
           <div class="build-pane-head">
             <div>
-              <div class="build-pane-title">your queue</div>
-              <div class="build-pane-sub" id="queue-sub">empty — add frames above</div>
+              <div class="build-pane-sub" id="queue-sub">empty — add frames from the left</div>
             </div>
           </div>
           <div id="queue-container"></div>
           <div class="queue-actions">
             <button class="queue-btn secondary" id="btn-save-policy" disabled onclick="savePolicy()">save as template</button>
-            <button class="queue-btn primary" id="btn-run" disabled onclick="runQueue()">sign &amp; run</button>
+            <button class="queue-btn primary" id="btn-run" disabled onclick="runQueue()">run</button>
           </div>
         </div>
       </div>
@@ -3298,7 +3443,7 @@ button {
             <div class="sessions-title">sessions</div>
             <div class="sessions-sub">agents and their instructions, live</div>
           </div>
-          <button class="policies-new" onclick="go('policies')">authorize new agent</button>
+          <button class="policies-new" onclick="go('build')">new session</button>
         </div>
 
         <div class="sessions-section" id="sessions-active-wrap">
@@ -3326,28 +3471,13 @@ button {
         </div>
         <div style="display:flex;gap:10px;align-items:center;">
           <div class="activity-view-toggle" role="tablist">
-            <button class="view-toggle-btn active" data-view="tx" onclick="setActivityView('tx')">by transaction</button>
-            <button class="view-toggle-btn" data-view="frame" onclick="setActivityView('frame')">by frame</button>
+            <button class="view-toggle-btn active" data-view="timeline" onclick="setActivityView('timeline')">timeline</button>
+            <button class="view-toggle-btn" data-view="tx" onclick="setActivityView('tx')">table</button>
           </div>
           <button class="activity-export" onclick="exportActivity()">export csv</button>
         </div>
       </div>
 
-      <div class="tabs-filter">
-        <button class="tab-filter active" data-filter="all" onclick="filterActivity('all')">all</button>
-        <button class="tab-filter" data-filter="send" onclick="filterActivity('send')">sends</button>
-        <button class="tab-filter" data-filter="agent" onclick="filterActivity('agent')">sessions</button>
-        <button class="tab-filter" data-filter="receive" onclick="filterActivity('receive')">receives</button>
-      </div>
-
-      <div class="frame-filters" id="frame-filters-row" style="display:none;">
-        <span class="frame-filters-label">frames</span>
-        <button class="frame-filter-pill verify" data-frame="verify" onclick="toggleFrameFilter('verify')">verify</button>
-        <button class="frame-filter-pill sender" data-frame="sender" onclick="toggleFrameFilter('sender')">sender</button>
-        <button class="frame-filter-pill default" data-frame="default" onclick="toggleFrameFilter('default')">default</button>
-      </div>
-
-      <div id="activity-summary" class="activity-summary" style="display:none;"></div>
       <div id="activity-full-list"></div>
     </div>
     <div id="screen-account" class="screen">
@@ -3661,6 +3791,7 @@ const pastSessions = [
 const activity = [
   {
     id: 'a1', title: 'sent to bob.eth', sub: '$100 usdc · just now', amount: -100,
+    narrative: { actor: 'you', verb: 'sent', object: 'bob.eth', context: 'signed with passkey, gas sponsored' },
     txHash: '0x4f2a...8e91', block: 20847392, gas: '0.00042 eth', source: 'you', kind: 'send', day: 'today',
     frames: [
       { mode: 'verify', desc: 'passkey · scope: execution', status: 'pass' },
@@ -3670,6 +3801,7 @@ const activity = [
   },
   {
     id: 'a2', title: 'rebalance executed', sub: 'lp rebalancer · 2m ago', amount: 14,
+    narrative: { actor: 'lp rebalancer', verb: 'rebalanced', object: 'a uniswap v3 position', context: 'within its session limits' },
     txHash: '0x8a31...c4f2', block: 20847380, gas: '0.00089 eth', source: 'lp rebalancer', kind: 'agent', day: 'today',
     frames: [
       { mode: 'verify', desc: 'session key · scope: execution', status: 'pass' },
@@ -3679,6 +3811,7 @@ const activity = [
   },
   {
     id: 'a3', title: 'dca swap', sub: 'dca bot · 14m ago', amount: -50,
+    narrative: { actor: 'dca bot', verb: 'swapped', object: 'eth into usdc', context: 'scheduled weekly' },
     txHash: '0x1c9b...77ad', block: 20847290, gas: '0.00064 eth', source: 'dca bot', kind: 'agent', day: 'today',
     frames: [
       { mode: 'verify', desc: 'session key · scope: execution', status: 'pass' },
@@ -3688,11 +3821,13 @@ const activity = [
   },
   {
     id: 'a4', title: 'received from alice.eth', sub: '$500 usdc · 1h ago', amount: 500,
+    narrative: { actor: 'alice.eth', verb: 'sent you', object: 'usdc', context: null },
     txHash: '0xfa02...e3b1', block: 20846892, gas: 'n/a', source: 'external', kind: 'receive', day: 'today',
     frames: [],
   },
   {
     id: 'a5', title: 'rebalance executed', sub: 'lp rebalancer · 2h ago', amount: 8,
+    narrative: { actor: 'lp rebalancer', verb: 'rebalanced', object: 'a uniswap v3 position', context: 'within its session limits' },
     txHash: '0x3e8c...91bd', block: 20846120, gas: '0.00081 eth', source: 'lp rebalancer', kind: 'agent', day: 'today',
     frames: [
       { mode: 'verify', desc: 'session key · scope: execution', status: 'pass' },
@@ -3702,6 +3837,7 @@ const activity = [
   },
   {
     id: 'a6', title: 'dca swap', sub: 'dca bot · yesterday 11pm', amount: -50,
+    narrative: { actor: 'dca bot', verb: 'swapped', object: 'eth into usdc', context: 'scheduled weekly' },
     txHash: '0x7b4f...e22a', block: 20840210, gas: '0.00071 eth', source: 'dca bot', kind: 'agent', day: 'yesterday',
     frames: [
       { mode: 'verify', desc: 'session key · scope: execution', status: 'pass' },
@@ -3711,6 +3847,7 @@ const activity = [
   },
   {
     id: 'a7', title: 'ens renewed', sub: 'ens renewer · yesterday 8am', amount: -12,
+    narrative: { actor: 'ens renewer', verb: 'renewed', object: 'alice.eth', context: 'kept your name from expiring' },
     txHash: '0x44d1...0fce', block: 20830512, gas: '0.00055 eth', source: 'ens renewer', kind: 'agent', day: 'yesterday',
     frames: [
       { mode: 'verify', desc: 'session key · scope: execution', status: 'pass' },
@@ -3720,6 +3857,7 @@ const activity = [
   },
   {
     id: 'a8', title: 'sent to charlie.eth', sub: '$250 usdc · 3 days ago', amount: -250,
+    narrative: { actor: 'you', verb: 'sent', object: 'charlie.eth', context: 'signed with passkey, gas sponsored' },
     txHash: '0xb10e...ffa1', block: 20801202, gas: '0.00049 eth', source: 'you', kind: 'send', day: 'earlier this week',
     frames: [
       { mode: 'verify', desc: 'passkey · scope: execution', status: 'pass' },
@@ -4240,21 +4378,13 @@ function renderSessionsTab() {
 let activityFilter = 'all';
 let activityFrameFilters = new Set(); // frame types to filter by
 let activitySort = { col: 'when', dir: 'desc' }; // when ↓ default
-let activityView = 'tx'; // 'tx' | 'frame'
+let activityView = 'timeline'; // 'timeline' | 'tx' | 'frame'
 
 function setActivityView(view) {
   activityView = view;
   document.querySelectorAll('#screen-activity .view-toggle-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.view === view);
   });
-  // frame filters are only meaningful in by-frame view
-  const row = document.getElementById('frame-filters-row');
-  if (row) row.style.display = (view === 'frame') ? '' : 'none';
-  // when leaving frame view, clear any active frame filters so tx view shows everything
-  if (view === 'tx') {
-    activityFrameFilters.clear();
-    document.querySelectorAll('#screen-activity .frame-filter-pill').forEach(p => p.classList.remove('active'));
-  }
   renderActivityTab();
 }
 
@@ -4282,10 +4412,12 @@ function parseAgoToMinutes(s) {
 function activityRowGridHTML(a) {
   const amtCls = a.amount > 0 ? 'positive' : (a.amount < 0 ? 'negative' : 'neutral');
   const hasFrames = a.frames && a.frames.length > 0;
-  const fc = frameCountOf(a);
-  const fcCls = fc === 0 ? 'muted' : (fc > 3 ? 'highlight' : '');
-  const fcText = fc === 0 ? '—' : fc;
   const whenText = a.sub.split('·').pop().trim();
+
+  // inline mini pills for the frames column — one dot per frame, colored by mode
+  const framesInlineHTML = hasFrames
+    ? `<div class="row-frame-inline">${a.frames.map(f => `<span class="row-frame-mini ${f.mode}" title="${f.mode}"></span>`).join('')}</div>`
+    : `<span class="row-frame-empty">—</span>`;
 
   return `
     <div class="activity-grid-row" data-id="${a.id}" onclick="toggleActivityGrid('${a.id}')">
@@ -4295,7 +4427,7 @@ function activityRowGridHTML(a) {
           <div class="row-sub">${redactSub(a.sub.split('·')[0].trim())}</div>
         </div>
         <div class="row-mono">${a.source}</div>
-        <div class="row-frame-count ${fcCls}">${fcText}</div>
+        <div class="row-frame-cell">${framesInlineHTML}</div>
         <div class="row-mono-muted">${whenText}</div>
         <div class="row-amount ${amtCls}">${fmtMoney(a.amount)}</div>
         <span class="row-chev">›</span>
@@ -4338,32 +4470,18 @@ function activityRowGridHTML(a) {
 }
 
 function getFilteredActivity() {
-  let filtered = activityFilter === 'all' ? [...activity] : activity.filter(a => a.kind === activityFilter);
-  // in tx view, frame filter requires tx to contain ALL selected frame modes
-  if (activityView === 'tx' && activityFrameFilters.size > 0) {
-    filtered = filtered.filter(a => {
-      const modes = new Set((a.frames || []).map(f => f.mode));
-      for (const f of activityFrameFilters) {
-        if (!modes.has(f)) return false;
-      }
-      return true;
-    });
-  }
-  // in frame view, we don't pre-filter by frame here — the flat-frame pass does it
-  return filtered;
+  return activityFilter === 'all' ? [...activity] : activity.filter(a => a.kind === activityFilter);
 }
 
 function renderActivityTab() {
   const el = document.getElementById('activity-full-list');
-  const summaryEl = document.getElementById('activity-summary');
 
-  if (activityView === 'frame') {
-    renderActivityFrameView(el, summaryEl);
+  if (activityView === 'timeline') {
+    renderActivityTimelineView(el);
     return;
   }
 
-  // ===== by-transaction view (existing) =====
-  if (summaryEl) summaryEl.style.display = 'none';
+  // ===== table view =====
 
   let filtered = getFilteredActivity();
 
@@ -4420,88 +4538,118 @@ function renderActivityTab() {
   `;
 }
 
-// ===== by-frame view =====
-function renderActivityFrameView(el, summaryEl) {
+
+// ===== timeline view (narrative stream with day spine) =====
+function renderActivityTimelineView(el) {
   const filtered = getFilteredActivity();
 
-  // build flat list of frame events, grouped by parent tx
-  const groups = filtered
-    .filter(a => a.frames && a.frames.length > 0)
-    .map(a => {
-      let events = a.frames.map((f, i) => ({ ...f, txId: a.id, idx: i }));
-      if (activityFrameFilters.size > 0) {
-        events = events.filter(f => activityFrameFilters.has(f.mode));
-      }
-      return { tx: a, events };
-    })
-    .filter(g => g.events.length > 0);
-
-  // summary
-  const totalEvents = groups.reduce((acc, g) => acc + g.events.length, 0);
-  const totalTxs = groups.length;
-  if (summaryEl) {
-    const filterText = activityFrameFilters.size === 0
-      ? 'all frame events'
-      : Array.from(activityFrameFilters).join(' + ') + ' frames';
-    summaryEl.innerHTML = `
-      <span>${totalEvents} ${filterText} across ${totalTxs} ${totalTxs === 1 ? 'transaction' : 'transactions'}</span>
-      <span class="activity-summary-meta">newest first</span>
-    `;
-    summaryEl.style.display = 'flex';
-  }
-
-  if (groups.length === 0) {
+  if (filtered.length === 0) {
     el.innerHTML = `
       <div class="empty-state">
-        <div class="empty-state-title">no frame events match</div>
-        <div class="empty-state-sub">try a different filter combo</div>
+        <div class="empty-state-title">no activity here</div>
+        <div class="empty-state-sub">try another filter, or wait for transactions to happen</div>
       </div>`;
     return;
   }
 
-  el.innerHTML = groups.map(g => {
-    const a = g.tx;
-    const amtCls = a.amount > 0 ? 'positive' : (a.amount < 0 ? 'negative' : 'neutral');
-    const when = a.sub.split('·').pop().trim();
-    // template chip if this tx ran within a session (kind: agent)
-    let tplChip = '';
-    if (a.kind === 'agent') {
-      const sess = sessions.find(s => s.name === a.source) || pastSessions.find(s => s.name === a.source);
-      if (sess && sess.templateId) {
-        const c = templateColor(sess.templateId);
-        tplChip = `<span class="tx-template-chip" style="background:${c.bg}; border-color:${c.border}; color:${c.fg};">${sess.templateName}</span>`;
-      }
-    }
-    const amtText = a.amount !== 0 ? fmtMoney(a.amount) : '';
-    const headMeta = [
-      `tx ${a.id}`,
-      a.title,
-      amtText,
-      when,
-    ].filter(Boolean).join(' · ');
+  // group by day
+  const dayOrder = ['today', 'yesterday', 'earlier this week', 'earlier'];
+  const grouped = {};
+  filtered.forEach(a => {
+    const k = a.day || 'earlier';
+    if (!grouped[k]) grouped[k] = [];
+    grouped[k].push(a);
+  });
 
-    const eventsHTML = g.events.map(f => `
-      <div class="frame-log-row" onclick="openTxFromFrame('${a.id}')">
-        <div class="frame-log-row-pill"><div class="frame-pill ${f.mode}">${f.mode}</div></div>
-        <div class="frame-log-row-desc">${f.desc}</div>
-        <div class="frame-log-row-status ${f.status === 'pass' ? '' : 'fail'}">${f.status === 'pass' ? '✓ pass' : '✗ fail'}</div>
-      </div>
-    `).join('');
+  const dayKeys = dayOrder.filter(k => grouped[k]);
+  Object.keys(grouped).forEach(k => { if (!dayKeys.includes(k)) dayKeys.push(k); });
 
+  const html = dayKeys.map(dayKey => {
+    const events = grouped[dayKey];
+    const rows = events.map(a => timelineEventHTML(a)).join('');
     return `
-      <div class="frame-log-tx" data-id="${a.id}">
-        <div class="frame-log-tx-head">
-          <span>${headMeta}</span>
-          ${tplChip}
-        </div>
-        <div class="frame-log-events">${eventsHTML}</div>
-      </div>
+      <div class="tl-day-label"><span>${dayKey}</span><div class="tl-day-line"></div></div>
+      <div class="tl-stream">${rows}</div>
     `;
   }).join('');
+
+  el.innerHTML = `<div class="tl-wrap">${html}</div>`;
 }
 
-function openTxFromFrame(txId) {
-  // switch to tx view and expand that tx
+function timelineEventHTML(a) {
+  const n = a.narrative || { actor: a.source, verb: '', object: a.title, context: null };
+
+  // dot color by source / kind
+  let dotCls = 'neutral';
+  let templateId = null;
+  if (a.kind === 'send') dotCls = 'you';
+  else if (a.kind === 'receive') dotCls = 'incoming';
+  else if (a.kind === 'agent') {
+    const sess = sessions.find(s => s.name === a.source) || pastSessions.find(s => s.name === a.source);
+    if (sess && sess.templateId) {
+      templateId = sess.templateId;
+      dotCls = 'tpl-' + templateId;
+    }
+  }
+
+  const color = templateId ? templateColor(templateId) : null;
+  const actorStyle = (a.kind === 'receive')
+    ? 'color: var(--green);'
+    : (color ? `color: ${color.fg};` : '');
+
+  // time string from sub (after last "·")
+  let timeText = 'now';
+  if (a.sub) {
+    const parts = a.sub.split('·').map(s => s.trim());
+    timeText = parts[parts.length - 1] || timeText;
+  }
+
+  // amount
+  let amtHTML = '';
+  if (a.amount > 0) amtHTML = `<div class="tl-amount pos">${fmtMoney(a.amount)}</div>`;
+  else if (a.amount < 0) amtHTML = `<div class="tl-amount neg">${fmtMoney(a.amount)}</div>`;
+  else amtHTML = `<div class="tl-amount zero">—</div>`;
+
+  // template chip + frame meta
+  const tplName = templateId ? ((templates.find(t => t.id === templateId) || {}).name || '') : '';
+  const tplChip = templateId && color
+    ? `<span class="tl-pill" style="color:${color.fg}; border-color:${color.border}; background:${color.bg};">${escapeHTML(tplName)}</span>`
+    : (a.kind === 'send' ? `<span class="tl-pill you">you · send</span>`
+      : a.kind === 'receive' ? `<span class="tl-pill incoming">incoming</span>`
+      : '');
+
+  const frameCount = (a.frames || []).length;
+  const frameMeta = frameCount > 0
+    ? `<span>${frameCount} frames</span><span class="ok">✓ confirmed</span>`
+    : (a.kind === 'receive' ? `<span class="subtle">external · no frame data</span>` : '');
+
+  const contextHTML = n.context
+    ? ` <span class="tl-subtle">— ${escapeHTML(n.context)}</span>`
+    : '';
+
+  const redactedObject = privacyMode && a.kind === 'send' ? '•••' : escapeHTML(n.object || '');
+
+  return `
+    <div class="tl-event" data-id="${a.id}" onclick="openTxFromTimeline('${a.id}')">
+      <div class="tl-time">${escapeHTML(timeText)}</div>
+      <div class="tl-dot ${dotCls}"${color ? ` style="background:${color.fg}; border-color:${color.fg};"` : ''}></div>
+      <div class="tl-card">
+        <div class="tl-row-top">
+          <div class="tl-line">
+            <span class="tl-actor" style="${actorStyle}">${escapeHTML(n.actor)}</span>
+            ${n.verb ? ' ' + escapeHTML(n.verb) : ''}
+            ${n.object ? ' ' + redactedObject : ''}
+            ${contextHTML}
+          </div>
+          ${amtHTML}
+        </div>
+        ${tplChip || frameMeta ? `<div class="tl-meta">${tplChip}${frameMeta}</div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function openTxFromTimeline(txId) {
   setActivityView('tx');
   setTimeout(() => {
     const row = document.querySelector(`.activity-grid-row[data-id="${txId}"]`);
@@ -4511,6 +4659,7 @@ function openTxFromFrame(txId) {
     }
   }, 50);
 }
+
 
 function toggleActivityGrid(id) {
   document.querySelectorAll(`.activity-grid-row[data-id="${id}"]`).forEach(r => r.classList.toggle('expanded'));
@@ -4527,23 +4676,7 @@ function sortActivity(col) {
 }
 
 function filterActivity(f) {
-  activityFilter = f;
-  document.querySelectorAll('#screen-activity .tab-filter').forEach(t => {
-    t.classList.toggle('active', t.dataset.filter === f);
-  });
-  renderActivityTab();
-}
-
-function toggleFrameFilter(mode) {
-  if (activityFrameFilters.has(mode)) {
-    activityFrameFilters.delete(mode);
-  } else {
-    activityFrameFilters.add(mode);
-  }
-  document.querySelectorAll('#screen-activity .frame-filter-pill').forEach(p => {
-    p.classList.toggle('active', activityFrameFilters.has(p.dataset.frame));
-  });
-  renderActivityTab();
+  // kind filters removed — function kept as a safe no-op for any lingering callers
 }
 
 function exportActivity() {
@@ -4929,6 +5062,7 @@ function sendSign() {
       title: `sent to ${sendState.recipient.name}`,
       sub: `${tk.formatBig(amt)} ${sendState.token === 'USDC' ? 'usdc' : 'eth'} · just now`,
       amount: activityAmount,
+      narrative: { actor: 'you', verb: 'sent', object: sendState.recipient.name, context: 'signed with passkey, gas sponsored' },
       txHash: '0x' + Math.random().toString(16).slice(2, 6) + '...' + Math.random().toString(16).slice(2, 6),
       block: 20847392,
       gas: '0.00042 eth',
@@ -5027,7 +5161,7 @@ function renderQueue() {
 
   if (queue.length === 0) {
     container.innerHTML = '<div class="queue-empty">add a frame to begin</div>';
-    sub.textContent = isEditing ? `editing "${editedName}" — empty` : 'empty — add frames above';
+    sub.textContent = isEditing ? `editing "${editedName}" — empty` : 'empty — add frames from the left';
     btnRun.disabled = true;
     btnSave.disabled = true;
     return;
@@ -5158,6 +5292,7 @@ function runSign() {
       title: 'ran composed queue',
       sub: `${queue.length} frames · just now`,
       amount: 0,
+      narrative: { actor: 'you', verb: 'ran', object: `a ${queue.length}-frame custom queue`, context: 'composed from the build tab' },
       txHash: '0x' + Math.random().toString(16).slice(2, 6) + '...' + Math.random().toString(16).slice(2, 6),
       block: 20847392,
       gas: '0.00058 eth',
