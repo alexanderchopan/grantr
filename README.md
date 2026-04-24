@@ -6,4 +6,4 @@ mobile
 **[alexanderchopan.github.io/grantr](https://alexanderchopan.github.io/grantr/)**
 
 desktop
-**[alexanderchopan.github.io/grantr](https://alexanderchopan.github.io/grantr/prototype/grantr_desktop_prototype.html)**
+**[alexanderchopan.github.io/grantr/prototype/grantr_desktop_prototype.html](https://alexanderchopan.github.io/grantr/prototype/grantr_desktop_prototype.html)**
