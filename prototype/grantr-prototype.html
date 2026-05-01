@@ -4275,12 +4275,16 @@ function go(id) {
   closeAction();
   if (typeof closeComposerPicker === 'function') closeComposerPicker();
 
+  // clear stale introjs dots immediately so they don't flash in wrong positions during
+  // the page transition. addScreenHints will re-add them after layout settles.
+  if (typeof clearAllHints === 'function') clearAllHints();
+
   // update dynamic balance readouts on any nav
   if (typeof updateBalanceReadouts === 'function') updateBalanceReadouts();
 
-  // run onboarding tour on first visit, then show persistent hints. small delay so layout
-  // settles before introjs measures element positions.
-  if (typeof onboardForScreen === 'function') setTimeout(() => onboardForScreen(id), 80);
+  // run onboarding tour on first visit, then show persistent hints. delay until after
+  // the page-transition animation settles (~280ms) so introjs measures correct positions.
+  if (typeof onboardForScreen === 'function') setTimeout(() => onboardForScreen(id), 320);
 
   // hooks: populate dynamic content per screen
   if (id === 'guardians-confirm') {
@@ -6783,52 +6787,49 @@ const screenTours = {
   ],
   sessions: [
     { element: '#screen-sessions .build-title',  title: 'Sessions', intro: '<b>Sessions are agents you\'ve delegated to.</b> Each one runs within scopes you set.', position: 'bottom' },
-    { element: '#sessions-feed > .session-card:nth-child(1)', title: 'A session card', intro: 'Shows the agent\'s name, usage, run history, and time left. Tap to inspect.', position: 'bottom' }
+    { element: '#sessions-feed .session-card', title: 'A session card', intro: 'Shows the agent\'s name, usage, run history, and time left. Tap to inspect.', position: 'bottom' }
   ],
   activity: [
-    { element: '#screen-activity .build-title', title: 'Activity', intro: '<b>Every transaction is a chain of frames.</b> Verify → Sender → Default — that\'s how eip-8141 composes.', position: 'bottom' },
-    { element: '#activity-feed > .entry:nth-child(1)', title: 'An activity entry', intro: 'Tap to expand the frame pipeline. Samples are tagged with a lilac pill.', position: 'top' }
+    { element: '#screen-activity .build-title', title: 'Activity', intro: '<b>Every transaction is a chain of frames.</b> Verify → Default → Sender — that\'s how eip-8141 composes.', position: 'bottom' },
+    { element: '#activity-feed .entry', title: 'An activity entry', intro: 'Tap to expand the frame pipeline. Samples are tagged with a lilac pill.', position: 'top' }
   ],
   addresses: [
     { element: '#screen-addresses .build-title', title: 'Address book', intro: '<b>Everyone your account has interacted with</b> — your own keys, guardians, agents, sponsors, and contacts.', position: 'bottom' },
     { element: '#addr-search-input', title: 'Search addresses', intro: 'Find anyone by name or address.', position: 'bottom' },
-    { element: '.addr-filters', title: 'filter by relationship', intro: 'own keys, guardians (recovery), agents (act for you), sponsors (pay gas), contracts, sent.', position: 'bottom' },
-    { element: '.addresses-list .entry:nth-child(1)', title: 'an address entry', intro: 'shows alias, address, and relationship. tap to inspect or send.', position: 'top' }
+    { element: '.addr-filters', title: 'Filter by relationship', intro: 'Own keys, guardians (recovery), agents (act for you), sponsors (pay gas), contracts, sent.', position: 'bottom' },
+    { element: '.addr-list .addr-row', title: 'An address entry', intro: 'Shows alias, address, and relationship. Tap to inspect or send.', position: 'top' }
   ],
   agents: [
-    { element: '#screen-agents .balance-label', title: 'agent directory', intro: '<b>agents you can delegate to.</b> third-party services that act on your behalf within rules you set.', position: 'bottom' },
-    { element: '#agents-track .setup-chip:nth-child(1)', title: 'tap to inspect', intro: 'tap any agent to see what it does, what it asks for, and how others use it.', position: 'top' }
+    { element: '#screen-agents .build-title', title: 'Agent directory', intro: '<b>Agents you can delegate to.</b> Third-party services that act on your behalf within rules you set.', position: 'bottom' },
+    { element: '#agents-track .setup-chip', title: 'Tap to inspect', intro: 'Tap any agent to see what it does, what it asks for, and how others use it.', position: 'top' }
   ],
   account: [
-    { element: '#screen-account .balance-label', title: 'your account', intro: '<b>your account\'s policies and identity.</b> recovery, keys, and policies all live on-chain.', position: 'bottom' },
-    { element: '#screen-account .home-rows .home-row:nth-child(1)', title: 'recovery', intro: 'guardians who can restore your account if you lose your devices.', position: 'bottom' },
-    { element: '#screen-account .home-rows .home-row:nth-child(2)', title: 'keys', intro: 'passkeys signed onto your account. add or revoke devices.', position: 'top' },
-    { element: '#screen-account .home-rows .home-row:nth-child(3)', title: 'policies', intro: 'account-level rules every transaction must pass.', position: 'top' }
+    { element: '#screen-account .home-section-label', title: 'Your account', intro: '<b>Your account\'s policies and identity.</b> Recovery, keys, and policies all live on-chain.', position: 'bottom' },
+    { element: '#screen-account .home-rows .home-row:nth-child(1)', title: 'Recovery', intro: 'Guardians who can restore your account if you lose your devices.', position: 'bottom' },
+    { element: '#screen-account .home-rows .home-row:nth-child(2)', title: 'Keys', intro: 'Passkeys signed onto your account. Add or revoke devices.', position: 'top' },
+    { element: '#screen-account .home-rows .home-row:nth-child(3)', title: 'Policies', intro: 'Account-level rules every transaction must pass.', position: 'top' }
   ],
   build: [
-    { element: '#screen-build .build-title', title: 'build a transaction', intro: '<b>compose a transaction from frames.</b> all frames run together — any failure aborts the whole tx.', position: 'bottom' },
-    { element: '#build-templates-track', title: 'start with a template', intro: 'pre-composed shapes for common patterns. tap one to load it into your queue.', position: 'bottom' },
-    { element: '#screen-build .build-kind-row', title: 'or compose your own', intro: 'tap <b>Verify</b>, <b>Sender</b>, or <b>Default</b> to add that kind of frame to the queue. configure each one inline.', position: 'top' },
-    { element: '#composer-run-btn', title: 'preview & run', intro: 'review the full pipeline before signing. all frames execute atomically.', position: 'top' }
+    { element: '#screen-build .build-title', title: 'Build a transaction', intro: '<b>Compose a transaction from frames.</b> All frames run together — any failure aborts the whole tx.', position: 'bottom' },
+    { element: '#build-templates-track', title: 'Start with a template', intro: 'Pre-composed shapes for common patterns. Tap one to load it into your queue.', position: 'bottom' },
+    { element: '#screen-build .build-kind-row', title: 'Or compose your own', intro: 'Tap <b>Verify</b>, <b>Sender</b>, or <b>Default</b> to add a frame. Configure each one in the picker that opens.', position: 'top' },
+    { element: '#composer-run-btn', title: 'Preview & run', intro: 'Review the full pipeline before signing. All frames execute atomically.', position: 'top' }
   ],
   send: [
-    { element: '#screen-send .onb-eyebrow, #send-amount-value', title: 'Send tokens', intro: '<b>transfer tokens to someone else.</b> grantr covers gas. above your threshold, both your devices have to sign.', position: 'bottom' },
-    { element: '#send-recipient-display', title: 'recipient', intro: 'pick from your address book or paste an address.', position: 'bottom' },
-    { element: '#device-frame-threshold', title: 'threshold', intro: 'the meta line shows whether this amount needs one passkey or two.', position: 'top' }
+    { element: '#send-amount-value', title: 'Send tokens', intro: '<b>Transfer tokens to someone else.</b> Grantr covers gas. Above your threshold, both your devices have to sign.', position: 'bottom' },
+    { element: '#screen-send .recipient-row', title: 'Recipient', intro: 'Pick from your address book or paste an address.', position: 'bottom' }
   ],
   sponsor: [
-    { element: '#sponsor-recipient-display', title: 'Sponsor someone', intro: '<b>pay gas for someone else\'s transaction.</b> they still sign the action — you cover the fee.', position: 'bottom' },
-    { element: '#screen-sponsor .frame-pipeline', title: 'two-frame pipeline', intro: 'verify your passkey, then a sponsor frame that pays the gas.', position: 'top' }
+    { element: '#screen-sponsor .recipient-row', title: 'Sponsor someone', intro: '<b>Pay gas for someone else\'s transaction.</b> They still sign the action — you cover the fee.', position: 'bottom' }
   ],
   'verify-policy': [
-    { element: '#screen-verify-policy .top', title: 'policies', intro: '<b>account-level rules</b> — every transaction has to pass them. you can add or remove protection any time, without making a new account.', position: 'bottom' },
-    { element: '#policies-installed', title: 'protecting you now', intro: 'these rules are <b>active on-chain.</b> if any one fails, the transaction is blocked.', position: 'bottom' },
-    { element: '#policies-catalog-track', title: 'add protection', intro: 'install more rules from this list. each one becomes a verify frame on every transaction.', position: 'top' },
-    { element: '#screen-verify-policy .top', title: 'recovery is built in', intro: '<b>your account is recoverable.</b> keys can rotate, your address stays the same, and your funds never move.', position: 'bottom' }
+    { element: '#screen-verify-policy .build-title', title: 'Policies', intro: '<b>Account-level rules</b> — every transaction has to pass them. You can add or remove protection any time, without making a new account.', position: 'bottom' },
+    { element: '#policies-installed', title: 'Protecting you now', intro: 'These rules are <b>active on-chain.</b> If any one fails, the transaction is blocked.', position: 'bottom' },
+    { element: '#policies-catalog-track', title: 'Add protection', intro: 'Install more rules from this list. Each one becomes a verify frame on every transaction.', position: 'top' }
   ],
   'template-live': [
-    { element: '#tlive-name', title: 'session detail', intro: 'the agent\'s name, scope, and current state.', position: 'bottom' },
-    { element: '#tlive-revoke-btn, #tlive-see-it-work', title: 'see it work', intro: 'tap to simulate the agent trying both an in-scope and an out-of-scope call.', position: 'top' }
+    { element: '#tlive-name', title: 'Session detail', intro: 'The agent\'s name, scope, and current state.', position: 'bottom' },
+    { element: '#tlive-revoke-btn, #tlive-see-it-work', title: 'See it work', intro: 'Tap to simulate the agent trying both an in-scope and an out-of-scope call.', position: 'top' }
   ]
 };
 
@@ -6841,8 +6842,29 @@ function hintsForScreen(id) {
   return steps.map(s => ({ element: s.element, hint: s.intro, position: s.position || 'bottom' }));
 }
 
-// session memory of which screens have already auto-run their tour. resets on reload.
-const screensSeen = new Set();
+// session memory of which screens have already auto-run their tour. persisted to
+// localStorage so tours don't replay on every reload (which was annoying).
+const screensSeen = (() => {
+  const s = new Set();
+  try {
+    const raw = localStorage.getItem('grantr-screens-seen');
+    if (raw) JSON.parse(raw).forEach(id => s.add(id));
+  } catch (e) {}
+  return s;
+})();
+function _persistScreensSeen() {
+  try { localStorage.setItem('grantr-screens-seen', JSON.stringify([...screensSeen])); }
+  catch (e) {}
+}
+// callable from devtools to replay all tours: resetOnboarding()
+function resetOnboarding() {
+  screensSeen.clear();
+  try {
+    localStorage.removeItem('grantr-screens-seen');
+    localStorage.removeItem('grantr-first-agent-celebrated');
+  } catch (e) {}
+  console.log('onboarding reset — refresh or navigate to a tab to replay tours');
+}
 let _hintsInstance = null;
 let _tourInstance = null;
 
@@ -6932,6 +6954,7 @@ function onboardForScreen(id) {
     addScreenHints(id);
   } else {
     screensSeen.add(id);
+    _persistScreensSeen();
     // small delay so the screen has rendered and elements have layout
     setTimeout(() => startScreenTour(id), 200);
   }
