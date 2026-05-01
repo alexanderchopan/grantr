@@ -565,6 +565,7 @@ body.light-mode .introjs-arrow.right { border-left-color: var(--card) !important
   font-size: 13px;
 }
 .empty-voice-strong { color: var(--text-1); font-style: normal; font-weight: 500; }
+.italic-voice { font-style: italic; color: var(--text-3); }
 #home-sessions {
   display: flex;
   flex-direction: column;
@@ -5173,7 +5174,7 @@ body.light-mode .choice-pill.active { color: #ffffff; }
         <div class="setups-track-wrap">
           <div id="agents-track" class="setups-track" role="list"></div>
         </div>
-        <div class="agents-helper-line">Tap an agent or register your own.</div>
+        <div class="agents-helper-line">Click an agent or register your own.</div>
       </div>
     </div>
     <div id="screen-sessions" class="screen">
@@ -5386,7 +5387,7 @@ body.light-mode .choice-pill.active { color: #ffffff; }
           <div class="recipient-avatar" id="send-recipient-avatar">—</div>
           <div class="recipient-row-body">
             <div class="recipient-row-name" id="send-recipient-name">Pick a recipient</div>
-            <div class="recipient-row-sub" id="send-recipient-sub">Tap to change</div>
+            <div class="recipient-row-sub" id="send-recipient-sub">Click to change</div>
           </div>
           <span class="recipient-row-chev">›</span>
         </div>
@@ -5439,7 +5440,7 @@ body.light-mode .choice-pill.active { color: #ffffff; }
           <div class="recipient-avatar" id="sponsor-recipient-avatar">—</div>
           <div class="recipient-row-body">
             <div class="recipient-row-name" id="sponsor-recipient-name">Pick a recipient</div>
-            <div class="recipient-row-sub" id="sponsor-recipient-sub">Tap to change</div>
+            <div class="recipient-row-sub" id="sponsor-recipient-sub">Click to change</div>
           </div>
           <span class="recipient-row-chev">›</span>
         </div>
@@ -6524,7 +6525,7 @@ const screenTours = {
     { element: '#screen-home .home-hero-balance', title: 'Your balance', intro: 'This is your account balance on ethrex devnet. Samples for now — real numbers when you start using Grantr.', position: 'bottom' },
     { element: '#screen-home .home-hero-meta', title: 'At a glance', intro: 'Active agent count and any blocked attempts this week. Quiet when nothing is happening.', position: 'bottom' },
     { element: '.tab.tab-send', title: 'Send tokens', intro: '<b>Send</b> moves tokens out of your account. Grantr covers gas.', position: 'bottom' },
-    { element: '#screen-home .section-label', title: 'Recent activity', intro: '<b>Recent</b> shows the last few actions on your account — by you or by an agent. Tap "See all" for the full history.', position: 'top' },
+    { element: '#screen-home .section-label', title: 'Recent activity', intro: '<b>Recent</b> shows the last few actions on your account — by you or by an agent. Click "See all" for the full history.', position: 'top' },
   ],
   build: [
     { element: '#screen-build .build-tpl-track', title: 'Templates', intro: '<b>Quick-start compositions.</b> Click a template to load its frames into the queue.', position: 'bottom' },
@@ -6533,7 +6534,7 @@ const screenTours = {
   ],
   agents: [
     { element: '#screen-agents .agents-title', title: 'Agents directory', intro: '<b>Productized agents</b> with predefined scopes. Click a chip to inspect; click ▶ to simulate.', position: 'bottom' },
-    { element: '#agents-track > .setup-chip:first-child .try-it-badge', title: 'Simulate', intro: 'Tap to simulate the agent trying both an in-scope and out-of-scope call.', position: 'left' },
+    { element: '#agents-track > .setup-chip:first-child .try-it-badge', title: 'Simulate', intro: 'Click to simulate the agent trying both an in-scope and out-of-scope call.', position: 'left' },
   ],
   sessions: [
     { element: '#screen-sessions .sessions-title', title: 'Sessions', intro: '<b>Agents you have delegated to.</b> Each runs within scopes you set.', position: 'bottom' },
@@ -6673,7 +6674,7 @@ function renderSendForm() {
     if (avatarEl) avatarEl.textContent = sendState.recipient.initials.toUpperCase();
   } else {
     if (nameEl) nameEl.textContent = 'Pick a recipient';
-    if (subEl) subEl.textContent = 'Tap to change';
+    if (subEl) subEl.textContent = 'Click to change';
     if (avatarEl) avatarEl.textContent = '—';
   }
   renderSendPipeline();
@@ -6825,7 +6826,7 @@ function renderSponsorForm() {
     if (avatarEl) avatarEl.textContent = sponsorState.recipient.initials.toUpperCase();
   } else {
     if (nameEl) nameEl.textContent = 'Pick a recipient';
-    if (subEl) subEl.textContent = 'Tap to change';
+    if (subEl) subEl.textContent = 'Click to change';
     if (avatarEl) avatarEl.textContent = '—';
   }
 }
@@ -6916,7 +6917,7 @@ let queue = [null, null, null];
 
 // ============== COMPOSER (mobile-style kind-first builder) ==============
 // each composer frame: { id, kind: 'verify'|'sender'|'default', specId: null|string }
-// when specId is null, the frame shows as "Tap to configure". once configured, shows the
+// when specId is null, the frame shows as "Click to configure". once configured, shows the
 // frame's display name + meta. order in the array = order in the queue.
 const composerState = { frames: [], openPickerId: null };
 let _composerNextId = 1;
@@ -6961,11 +6962,11 @@ const buildTemplates = [
 ];
 
 const buildTemplateGlyphs = {
-  't1': `<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M12 4 A 8 8 0 1 1 4.5 14.5" stroke="#fff" stroke-width="2.75" stroke-linecap="round" fill="none"/><path d="M12 1 L12 7 L17 4" stroke="#fff" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
-  't2': `<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><rect x="4" y="6" width="16" height="3" rx="1.25" fill="#fff"/><rect x="4" y="11" width="16" height="3" rx="1.25" fill="#fff"/><rect x="4" y="16" width="16" height="3" rx="1.25" fill="#fff"/></svg>`,
-  't3': `<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M5 9 A 7 7 0 0 1 17 5 L19 3 V9 H13" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 15 A 7 7 0 0 1 7 19 L5 21 V15 H11" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
-  't4': `<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><rect x="4" y="4" width="7" height="7" rx="1.5" fill="#fff"/><rect x="13" y="4" width="7" height="7" rx="1.5" fill="#fff"/><rect x="4" y="13" width="7" height="7" rx="1.5" fill="#fff"/><rect x="13" y="13" width="7" height="7" rx="1.5" fill="#fff"/></svg>`,
-  't5': `<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><circle cx="12" cy="12" r="9" fill="#fff"/><path d="M9.5 12 L14.5 12 M12.5 9 L15 12 L12.5 15" stroke="#0e0e0e" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+  't1': `<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M12 4 A 8 8 0 1 1 4.5 14.5" stroke="#0a0a0a" stroke-width="2.75" stroke-linecap="round" fill="none"/><path d="M12 1 L12 7 L17 4" stroke="#0a0a0a" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+  't2': `<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><rect x="4" y="6" width="16" height="3" rx="1.25" fill="#0a0a0a"/><rect x="4" y="11" width="16" height="3" rx="1.25" fill="#0a0a0a"/><rect x="4" y="16" width="16" height="3" rx="1.25" fill="#0a0a0a"/></svg>`,
+  't3': `<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M5 9 A 7 7 0 0 1 17 5 L19 3 V9 H13" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 15 A 7 7 0 0 1 7 19 L5 21 V15 H11" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+  't4': `<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><rect x="4" y="4" width="7" height="7" rx="1.5" fill="#0a0a0a"/><rect x="13" y="4" width="7" height="7" rx="1.5" fill="#0a0a0a"/><rect x="4" y="13" width="7" height="7" rx="1.5" fill="#0a0a0a"/><rect x="13" y="13" width="7" height="7" rx="1.5" fill="#0a0a0a"/></svg>`,
+  't5': `<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><circle cx="12" cy="12" r="9" stroke="#0a0a0a" stroke-width="2" fill="none"/><path d="M8 12 L16 12 M12.5 8.5 L16 12 L12.5 15.5" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
 };
 
 // title-case helper for spec names rendered in the composer (data is lowercase)
@@ -7067,7 +7068,7 @@ function renderComposer() {
       <div class="composer-frame" data-kind="${f.kind}">
         <span class="composer-frame-tag">${f.kind.toUpperCase()}</span>
         <div class="composer-frame-body">
-          <div class="composer-frame-name" style="color:var(--text-3);">Tap to configure</div>
+          <div class="composer-frame-name" style="color:var(--text-3);">Click to configure</div>
         </div>
         <button class="composer-frame-pick" onclick="composerOpenPicker('${f.id}')">Pick</button>
         <button class="composer-frame-remove" onclick="composerRemove('${f.id}')" title="Remove">×</button>
@@ -8665,7 +8666,7 @@ function openAccountDetailsModal() {
         <div class="sm-kv-row"><div class="sm-kv-key">ens</div><div class="sm-kv-val">alice.eth</div></div>
         <div class="sm-kv-row"><div class="sm-kv-key">address</div><div class="sm-kv-val">0x8f3a...4c7a</div></div>
         <div class="sm-kv-row"><div class="sm-kv-key">network</div><div class="sm-kv-val">ethrex devnet</div></div>
-        <div class="sm-kv-row"><div class="sm-kv-key">deployed</div><div class="sm-kv-val">mar 12, 2026</div></div>
+        <div class="sm-kv-row"><div class="sm-kv-key">deployed</div><div class="sm-kv-val">Mar 12, 2026</div></div>
         <div class="sm-kv-row"><div class="sm-kv-key">nonce</div><div class="sm-kv-val">247</div></div>
         <div class="sm-kv-row"><div class="sm-kv-key">balance</div><div class="sm-kv-val">${fmtMoneyPlain(2847.30)}</div></div>
       </div>
@@ -9105,7 +9106,7 @@ function openAgentRegister() {
       <button class="sm-close" onclick="closeSmallModal()">×</button>
     </div>
     <div class="sm-body">
-      <div style="font-size:13px; color:var(--text-2); line-height:1.55;">point grantr at a contract on ethrex devnet. it'll appear in your directory and you can install it on your account.</div>
+      <div style="font-size:13px; color:var(--text-2); line-height:1.55;">Point Grantr at a contract on ethrex devnet. It'll appear in your directory and you can install it on your account.</div>
       <div style="margin-top:14px; font-size:11px; color:var(--text-3); font-style:italic;">Prototype: registration not wired up yet.</div>
     </div>
     <div class="sm-foot">
