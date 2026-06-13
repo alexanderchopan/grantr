@@ -165,6 +165,38 @@ body {
   flex-shrink: 0;
 }
 
+/* language switcher — locale dropdown in the status bar */
+.lang-switch { position: relative; }
+.lang-switch-btn {
+  display: flex; align-items: center; gap: 5px; font-family: inherit;
+  background: none; border: none; cursor: pointer; padding: 4px 6px; border-radius: 8px;
+  color: var(--text-1); font-size: 12px; font-weight: 600; line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+.lang-switch-btn:hover { background: rgba(255,255,255,0.06); }
+.lang-switch-btn svg { opacity: 0.7; }
+.lang-menu {
+  position: absolute; top: calc(100% + 6px); right: 0; z-index: 60;
+  min-width: 132px; padding: 6px; border-radius: 14px;
+  background: var(--card); border: 0.5px solid var(--divider);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.45);
+  display: none; flex-direction: column; gap: 2px;
+}
+.lang-menu.open { display: flex; }
+.lang-opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 8px 10px; border-radius: 9px; cursor: pointer;
+  font-size: 13px; font-weight: 500; color: var(--text-2);
+  background: none; border: none; font-family: inherit; text-align: left; width: 100%;
+  transition: background 0.12s, color 0.12s;
+}
+.lang-opt:hover { background: rgba(255,255,255,0.05); color: var(--text-1); }
+.lang-opt.active { color: var(--green); }
+.lang-opt-check { font-size: 11px; opacity: 0; }
+.lang-opt.active .lang-opt-check { opacity: 1; }
+body.light-mode .lang-switch-btn:hover,
+body.light-mode .lang-opt:hover { background: rgba(0,0,0,0.05); }
+
 /* screen system */
 .screen { display: none; flex-direction: column; flex: 1; overflow: hidden; }
 .screen.active { display: flex; }
@@ -1768,7 +1800,16 @@ body.light-mode .build-tpl-card:hover { background: var(--card-2); border-color:
 <script>if (document.documentElement.classList.contains('light-mode-pre')) document.body.classList.add('light-mode');</script>
 
 <div class="phone">
-  <div class="status-bar"><span>9:41</span><span>•••</span></div>
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="lang-switch" id="lang-switch">
+      <button type="button" class="lang-switch-btn" id="lang-switch-btn" aria-haspopup="listbox" aria-expanded="false" onclick="toggleLangMenu(event)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg>
+        <span id="lang-switch-label">EN</span>
+      </button>
+      <div class="lang-menu" id="lang-menu" role="listbox" aria-label="Language"></div>
+    </div>
+  </div>
 
   <!-- ============== WELCOME ============== -->
   <div id="screen-welcome" class="screen onboarding active">
@@ -3337,22 +3378,22 @@ body.light-mode .build-tpl-card:hover { background: var(--card-2); border-color:
       <button class="tab tab-normal" data-tab="home" onclick="go('home')">
         <svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 11 L12 3 L21 11 V20 C21 20.5 20.5 21 20 21 H15 V14 H9 V21 H4 C3.5 21 3 20.5 3 20 Z" stroke="#a3a3a3" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>
         <svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 11 L12 3 L21 11 V20 C21 20.5 20.5 21 20 21 H15 V14 H9 V21 H4 C3.5 21 3 20.5 3 20 Z" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></svg>
-        <span>Home</span>
+        <span data-i18n="tab.home">Home</span>
       </button>
       <button class="tab tab-normal" data-tab="build" onclick="go('build')">
         <svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3.5" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><line x1="8" y1="12" x2="16" y2="12" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="8" x2="12" y2="16" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round"/></svg>
         <svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3.5" fill="currentColor"/><line x1="8" y1="12" x2="16" y2="12" stroke="#0e0e0e" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="8" x2="12" y2="16" stroke="#0e0e0e" stroke-width="2" stroke-linecap="round"/></svg>
-        <span>Build</span>
+        <span data-i18n="tab.build">Build</span>
       </button>
       <button class="tab tab-normal" data-tab="agents" onclick="go('agents')">
         <svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="3.5" width="7" height="7" rx="1.75" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.75" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.75" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.75" stroke="#a3a3a3" stroke-width="1.5" fill="none"/></svg>
         <svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="3.5" width="7" height="7" rx="1.75" fill="currentColor"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.75" fill="currentColor"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.75" fill="currentColor"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.75" fill="currentColor"/></svg>
-        <span>Agents</span>
+        <span data-i18n="tab.agents">Agents</span>
       </button>
       <button class="tab tab-normal" data-tab="sessions" onclick="go('sessions')">
         <svg class="icon-outlined" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#a3a3a3" stroke-width="1.5" fill="none"/><path d="M12 7 V12 L16 14" stroke="#a3a3a3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <svg class="icon-filled" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="currentColor"/><path d="M12 7 V12 L16 14" stroke="#0e0e0e" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        <span>Sessions</span>
+        <span data-i18n="tab.sessions">Sessions</span>
       </button>
     </div>
   </div>
@@ -7338,6 +7379,91 @@ function markGuardianAccepted(id) {
     spinner.outerHTML = `<div style="width:18px;height:18px;border-radius:50%;background:#00d632;display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;">✓</div>`;
   }
 }
+
+// ============== LOCALIZATION (chrome / primary nav) ==============
+// Scope: the persistent app chrome — tab bar + the locale switcher itself.
+// Strings live keyed by data-i18n; extend a screen by tagging its labels and
+// adding keys below. NOTE: machine-drafted strings — have a native speaker
+// review before shipping. CJK/KR/JP fall back to the system font (DM Sans has
+// no glyphs for them); add Noto Sans SC/KR/JP webfonts if brand type matters.
+const LOCALES = [
+  { code: 'en', short: 'EN',  name: 'English'  },
+  { code: 'zh', short: '中文', name: '中文'      },
+  { code: 'es', short: 'ES',  name: 'Español'  },
+  { code: 'ko', short: '한국어', name: '한국어'   },
+  { code: 'ja', short: '日本語', name: '日本語'   },
+  { code: 'ru', short: 'RU',  name: 'Русский'  },
+];
+const I18N = {
+  en: { 'tab.home': 'Home',  'tab.build': 'Build',   'tab.agents': 'Agents',   'tab.sessions': 'Sessions' },
+  zh: { 'tab.home': '首页',   'tab.build': '构建',     'tab.agents': '智能体',    'tab.sessions': '会话' },
+  es: { 'tab.home': 'Inicio', 'tab.build': 'Crear',   'tab.agents': 'Agentes',  'tab.sessions': 'Sesiones' },
+  ko: { 'tab.home': '홈',     'tab.build': '빌드',     'tab.agents': '에이전트',  'tab.sessions': '세션' },
+  ja: { 'tab.home': 'ホーム', 'tab.build': '作成',     'tab.agents': 'エージェント', 'tab.sessions': 'セッション' },
+  ru: { 'tab.home': 'Главная', 'tab.build': 'Создать', 'tab.agents': 'Агенты',   'tab.sessions': 'Сессии' },
+};
+let currentLocale = 'en';
+
+function t(key) {
+  const table = I18N[currentLocale] || I18N.en;
+  return table[key] || I18N.en[key] || key;
+}
+
+function applyLocale(code) {
+  if (!I18N[code]) code = 'en';
+  currentLocale = code;
+  document.documentElement.lang = code;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  const meta = LOCALES.find(l => l.code === code);
+  const label = document.getElementById('lang-switch-label');
+  if (label && meta) label.textContent = meta.short;
+  document.querySelectorAll('.lang-opt').forEach(opt => {
+    opt.classList.toggle('active', opt.dataset.code === code);
+  });
+  try { localStorage.setItem('grantr-locale', code); } catch (e) {}
+}
+
+function setLocale(code) {
+  applyLocale(code);
+  closeLangMenu();
+}
+
+function toggleLangMenu(ev) {
+  if (ev) ev.stopPropagation();
+  const menu = document.getElementById('lang-menu');
+  const btn = document.getElementById('lang-switch-btn');
+  const open = menu.classList.toggle('open');
+  if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+function closeLangMenu() {
+  const menu = document.getElementById('lang-menu');
+  const btn = document.getElementById('lang-switch-btn');
+  if (menu) menu.classList.remove('open');
+  if (btn) btn.setAttribute('aria-expanded', 'false');
+}
+
+function initLocale() {
+  const menu = document.getElementById('lang-menu');
+  if (menu) {
+    menu.innerHTML = LOCALES.map(l =>
+      `<button type="button" class="lang-opt" role="option" data-code="${l.code}" onclick="setLocale('${l.code}')">` +
+      `<span>${l.name}</span><span class="lang-opt-check">✓</span></button>`
+    ).join('');
+  }
+  // pick: saved > browser language > English
+  let saved = null;
+  try { saved = localStorage.getItem('grantr-locale'); } catch (e) {}
+  const browser = (navigator.language || 'en').slice(0, 2).toLowerCase();
+  const initial = (saved && I18N[saved]) ? saved : (I18N[browser] ? browser : 'en');
+  applyLocale(initial);
+  // dismiss the dropdown on outside click
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#lang-switch')) closeLangMenu();
+  });
+}
+initLocale();
 </script>
 
 </body>
